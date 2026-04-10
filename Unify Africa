@@ -1,317 +1,2063 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AFAYAI Unified Platform Demo</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>AFAYAI Nexus</title>
+  <style>
+    :root{
+      --bg:#08111f;
+      --bg-soft:#0d1a2e;
+      --panel:#11233d;
+      --panel-2:#152b4a;
+      --line:rgba(255,255,255,.08);
+      --text:#e9f1ff;
+      --muted:#afc2e6;
+      --blue:#4ea1ff;
+      --blue-2:#2d7de0;
+      --green:#33c27f;
+      --gold:#f4b942;
+      --danger:#ff7a7a;
+      --shadow:0 12px 30px rgba(0,0,0,.28);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,#07101d 0%,#0b1830 100%);color:var(--text)}
+    a{color:inherit}
+    button,select{font:inherit}
+
+    .topbar{
+      position:sticky;top:0;z-index:100;
+      backdrop-filter: blur(10px);
+      background:rgba(6,12,24,.82);
+      border-bottom:1px solid var(--line);
+    }
+
+    .topbar-inner{
+      max-width:1400px;margin:0 auto;padding:14px 18px;
+      display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+    }
+
+    .brand{
+      display:flex;align-items:center;gap:12px;
+    }
+
+    .brand-mark{
+      width:44px;height:44px;border-radius:14px;
+      background:linear-gradient(135deg,var(--blue),var(--green));
+      box-shadow:var(--shadow);
+      display:flex;align-items:center;justify-content:center;
+      font-weight:700;color:white;
+    }
+
+    .brand-copy h1{
+      margin:0;font-size:1.15rem;letter-spacing:.3px;
+    }
+
+    .brand-copy p{
+      margin:3px 0 0;color:var(--muted);font-size:.9rem;
+    }
+
+    .toolbar{
+      display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    }
+
+    .language-wrap,
+    .pill{
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:8px 12px;
+      color:var(--text);
+    }
+
+    select{
+      background:transparent;border:none;color:var(--text);outline:none;
+    }
+
+    select option{
+      color:#111;
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns:280px 1fr;
+      min-height:calc(100vh - 78px);
+    }
+
+    .sidebar{
+      border-right:1px solid var(--line);
+      background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01));
+      padding:20px 14px;
+    }
+
+    .nav-group-title{
+      color:var(--muted);
+      font-size:.82rem;
+      letter-spacing:.8px;
+      text-transform:uppercase;
+      margin:14px 10px 10px;
+    }
+
+    .nav-btn{
+      width:100%;
+      text-align:left;
+      border:none;
+      border-radius:14px;
+      padding:14px 14px;
+      margin-bottom:8px;
+      cursor:pointer;
+      color:var(--text);
+      background:transparent;
+      border:1px solid transparent;
+      transition:.2s ease;
+      display:flex;align-items:center;gap:10px;
+    }
+
+    .nav-btn:hover{
+      background:rgba(255,255,255,.05);
+      border-color:var(--line);
+    }
+
+    .nav-btn.active{
+      background:linear-gradient(135deg,rgba(78,161,255,.18),rgba(51,194,127,.12));
+      border-color:rgba(78,161,255,.32);
+      box-shadow:inset 0 0 0 1px rgba(78,161,255,.12);
+    }
+
+    .nav-icon{
+      width:32px;height:32px;border-radius:10px;
+      background:rgba(255,255,255,.06);
+      display:flex;align-items:center;justify-content:center;
+      font-size:.95rem;
+      flex-shrink:0;
+    }
+
+    .content{
+      padding:22px;
+    }
+
+    .section{display:none}
+    .section.active{display:block}
+
+    .hero{
+      background:
+        radial-gradient(circle at top right, rgba(78,161,255,.16), transparent 30%),
+        radial-gradient(circle at left bottom, rgba(51,194,127,.12), transparent 24%),
+        linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid var(--line);
+      border-radius:26px;
+      box-shadow:var(--shadow);
+      padding:26px;
+      margin-bottom:22px;
+    }
+
+    .hero-row{
+      display:flex;align-items:flex-start;justify-content:space-between;gap:18px;flex-wrap:wrap;
+    }
+
+    .hero h2{
+      margin:0 0 10px;font-size:2rem;
+    }
+
+    .hero p{
+      margin:0;color:var(--muted);max-width:950px;font-size:1rem;
+    }
+
+    .hero-badges{
+      display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;
+    }
+
+    .badge{
+      padding:8px 12px;border-radius:999px;font-size:.85rem;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+      color:var(--text);
+    }
+
+    .badge.blue{background:rgba(78,161,255,.14);border-color:rgba(78,161,255,.3)}
+    .badge.green{background:rgba(51,194,127,.14);border-color:rgba(51,194,127,.28)}
+    .badge.gold{background:rgba(244,185,66,.14);border-color:rgba(244,185,66,.28)}
+
+    .grid{
+      display:grid;
+      gap:16px;
+    }
+
+    .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.025));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px;
+      min-width:0;
+    }
+
+    .card h3{
+      margin:0 0 8px;font-size:1.02rem;
+    }
+
+    .card p{
+      margin:0;color:var(--muted);font-size:.96rem;
+    }
+
+    .card ul{
+      margin:10px 0 0 18px;color:var(--muted);
+      padding:0;
+    }
+
+    .stat-number{
+      font-size:2rem;
+      font-weight:700;
+      margin-bottom:6px;
+      color:var(--blue);
+    }
+
+    .section-title{
+      margin:28px 0 12px;
+      font-size:1.15rem;
+      color:#f4f8ff;
+    }
+
+    .progress-block{margin-top:14px}
+    .progress-row{
+      display:flex;justify-content:space-between;gap:10px;
+      margin-bottom:6px;color:var(--muted);font-size:.9rem;
+    }
+
+    .progress{
+      height:10px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden
+    }
+
+    .progress > span{
+      display:block;height:100%;border-radius:999px;
+      background:linear-gradient(90deg,var(--blue),var(--green));
+    }
+
+    .kpi{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+    }
+
+    .kpi small{display:block;color:var(--muted);margin-top:4px}
+
+    .label{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      color:var(--text);
+      font-size:.82rem;
+      margin:8px 8px 0 0;
+    }
+
+    .cta-row{
+      display:flex;gap:12px;flex-wrap:wrap;margin-top:18px;
+    }
+
+    .btn{
+      border:none;cursor:pointer;border-radius:12px;padding:12px 16px;font-weight:700;
+      transition:.2s ease;
+    }
+
+    .btn-primary{
+      background:linear-gradient(135deg,var(--blue),var(--blue-2));
+      color:#fff;
+      box-shadow:0 10px 22px rgba(45,125,224,.35);
+    }
+
+    .btn-secondary{
+      background:rgba(255,255,255,.05);
+      color:var(--text);
+      border:1px solid var(--line);
+    }
+
+    .btn:hover{transform:translateY(-1px)}
+
+    .table-wrap{
+      overflow:auto;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.02);
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      min-width:700px;
+    }
+
+    th,td{
+      padding:14px 12px;
+      border-bottom:1px solid var(--line);
+      text-align:left;
+      font-size:.95rem;
+    }
+
+    th{color:#d9e6ff;background:rgba(255,255,255,.03)}
+    td{color:var(--muted)}
+
+    .footer{
+      margin-top:24px;
+      text-align:center;
+      color:var(--muted);
+      font-size:.9rem;
+      padding:20px 0 10px;
+    }
+
+    @media (max-width: 1100px){
+      .layout{grid-template-columns:1fr}
+      .sidebar{border-right:none;border-bottom:1px solid var(--line)}
+      .grid-4{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .grid-3{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+
+    @media (max-width: 700px){
+      .content{padding:16px}
+      .hero{padding:18px}
+      .hero h2{font-size:1.55rem}
+      .grid-4,.grid-3,.grid-2{grid-template-columns:1fr}
+      .topbar-inner{padding:12px 14px}
+    }
+  </style>
 </head>
 <body>
-  <div class="app-shell">
-    <aside class="sidebar">
+  <div class="topbar">
+    <div class="topbar-inner">
       <div class="brand">
-        <div class="brand-mark">A</div>
-        <div>
-          <h1>AFAYAI Nexus</h1>
-          <p>Unified platform demo</p>
+        <div class="brand-mark">AN</div>
+        <div class="brand-copy">
+          <h1 id="brandName">AFAYAI Nexus</h1>
+          <p id="brandTagline">Connecting people to skills, health, agriculture, and opportunity.</p>
         </div>
       </div>
-      <nav>
-        <button class="nav-link active" data-section="dashboard">Dashboard</button>
-        <button class="nav-link" data-section="health">AFAYAI Health</button>
-        <button class="nav-link" data-section="agritech">Agritech</button>
-        <button class="nav-link" data-section="learning">Learning</button>
-        <button class="nav-link" data-section="workforce">Workforce</button>
-        <button class="nav-link" data-section="profile">Profile</button>
-      </nav>
-      <div class="sidebar-footer">
-        <span class="status-dot"></span>
-        Demo Mode
+
+      <div class="toolbar">
+        <div class="pill" id="platformMode">Unified Platform Demo</div>
+        <div class="language-wrap">
+          <label for="languageSelect" style="margin-right:8px;" id="languageLabel">Language</label>
+          <select id="languageSelect" onchange="changeLanguage(this.value)">
+            <option value="en">English</option>
+            <option value="fr">French</option>
+            <option value="ar">Arabic</option>
+            <option value="sw">Swahili</option>
+            <option value="ha">Hausa (Nigeria)</option>
+            <option value="yo">Yoruba (Nigeria)</option>
+            <option value="ig">Igbo (Nigeria)</option>
+          </select>
+        </div>
       </div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="nav-group-title" id="navGroupMain">Main Navigation</div>
+
+      <button class="nav-btn active" onclick="showSection('dashboard', this)">
+        <span class="nav-icon">⌂</span>
+        <span id="navDashboard">Dashboard</span>
+      </button>
+
+      <button class="nav-btn" onclick="showSection('learning', this)">
+        <span class="nav-icon">🎓</span>
+        <span id="navLearning">Learning & Development</span>
+      </button>
+
+      <button class="nav-btn" onclick="showSection('workforce', this)">
+        <span class="nav-icon">👥</span>
+        <span id="navWorkforce">Workforce</span>
+      </button>
+
+      <button class="nav-btn" onclick="showSection('health', this)">
+        <span class="nav-icon">✚</span>
+        <span id="navHealth">AFAYAI Health</span>
+      </button>
+
+      <button class="nav-btn" onclick="showSection('agritech', this)">
+        <span class="nav-icon">🌱</span>
+        <span id="navAgritech">Agritech</span>
+      </button>
+
+      <button class="nav-btn" onclick="showSection('agritrade', this)">
+        <span class="nav-icon">🚚</span>
+        <span id="navAgritrade">Agritrade</span>
+      </button>
+
+      <button class="nav-btn" onclick="showSection('profile', this)">
+        <span class="nav-icon">☻</span>
+        <span id="navProfile">Profile</span>
+      </button>
     </aside>
 
-    <main class="main-content">
-      <header class="topbar">
-        <div>
-          <h2 id="page-title">Dashboard</h2>
-          <p id="page-subtitle">Integrated telehealth, agritech, learning, and workforce development.</p>
-        </div>
-        <div class="topbar-actions">
-          <button class="secondary-btn">Export Demo Report</button>
-          <button class="primary-btn">Invite Partner</button>
-        </div>
-      </header>
-
-      <section id="dashboard" class="view active">
-        <div class="grid four">
-          <article class="card stat-card">
-            <span class="eyebrow">Active Learners</span>
-            <h3>1,248</h3>
-            <p>Across health, agritech, and workforce tracks.</p>
-          </article>
-          <article class="card stat-card">
-            <span class="eyebrow">Workforce Ready</span>
-            <h3>462</h3>
-            <p>Learners who completed pathway requirements.</p>
-          </article>
-          <article class="card stat-card">
-            <span class="eyebrow">Telehealth Visits</span>
-            <h3>318</h3>
-            <p>Remote consultations supported this month.</p>
-          </article>
-          <article class="card stat-card">
-            <span class="eyebrow">Agri Projects</span>
-            <h3>29</h3>
-            <p>Field operations and production pilots in progress.</p>
-          </article>
-        </div>
-
-        <div class="grid two">
-          <article class="card">
-            <div class="card-header">
-              <h3>Platform model</h3>
-              <span class="pill">Unified flow</span>
-            </div>
-            <div class="flow-row">
-              <div class="flow-step">Learn</div>
-              <div class="flow-arrow">→</div>
-              <div class="flow-step">Certify</div>
-              <div class="flow-arrow">→</div>
-              <div class="flow-step">Place</div>
-              <div class="flow-arrow">→</div>
-              <div class="flow-step">Support</div>
-            </div>
-            <p class="muted">This demo shows how one user profile connects learning progress, telehealth access, agritech pathways, and job readiness.</p>
-          </article>
-
-          <article class="card">
-            <div class="card-header">
-              <h3>Priority tracks</h3>
-              <span class="pill">Pilot-ready</span>
-            </div>
-            <ul class="clean-list">
-              <li>Community Health Navigator</li>
-              <li>Agritech Field Assistant</li>
-              <li>Digital Operations Support</li>
-              <li>Supply Chain & Market Access Coordinator</li>
-            </ul>
-          </article>
-        </div>
-
-        <div class="grid two">
-          <article class="card">
-            <div class="card-header">
-              <h3>Featured learner</h3>
-              <span class="pill success">Workforce eligible</span>
-            </div>
-            <div class="profile-block">
-              <div class="avatar">NM</div>
-              <div>
-                <h4>Nia M.</h4>
-                <p>Completed Digital Literacy, Telehealth Support Basics, and Agritech Foundations.</p>
-              </div>
-            </div>
-            <div class="progress-group">
-              <label>Learning Pathway Completion</label>
-              <div class="progress"><span style="width: 84%"></span></div>
-            </div>
-            <div class="progress-group">
-              <label>Job Readiness Score</label>
-              <div class="progress"><span style="width: 76%"></span></div>
-            </div>
-          </article>
-
-          <article class="card">
-            <div class="card-header">
-              <h3>Upcoming actions</h3>
-              <span class="pill">This week</span>
-            </div>
-            <ul class="timeline">
-              <li><strong>Mon:</strong> Review telehealth partner dashboard</li>
-              <li><strong>Tue:</strong> Approve agritech lesson content</li>
-              <li><strong>Wed:</strong> Validate workforce placements</li>
-              <li><strong>Thu:</strong> Demo platform to funding stakeholders</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section id="health" class="view">
-        <div class="grid two">
-          <article class="card">
-            <div class="card-header">
-              <h3>AFAYAI Health</h3>
-              <span class="pill">Telehealth</span>
-            </div>
-            <p>Remote consultations, referral pathways, maternal health support, and AI-assisted triage can be managed here.</p>
-            <div class="grid two compact">
-              <div class="mini-card">
-                <span>Consultations</span>
-                <strong>318</strong>
-              </div>
-              <div class="mini-card">
-                <span>Community agents</span>
-                <strong>92</strong>
-              </div>
-            </div>
-          </article>
-          <article class="card">
-            <div class="card-header">
-              <h3>Care pathways</h3>
-              <span class="pill">Modules</span>
-            </div>
-            <ul class="clean-list">
-              <li>Virtual Consult Scheduling</li>
-              <li>Rural Health Screening</li>
-              <li>Maternal & Child Support</li>
-              <li>Health Education Campaigns</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section id="agritech" class="view">
-        <div class="grid two">
-          <article class="card">
-            <div class="card-header">
-              <h3>Agritech Operations</h3>
-              <span class="pill">Production</span>
-            </div>
-            <p>Track farming cohorts, market access, logistics readiness, and production milestones in one place.</p>
-            <table>
-              <thead>
-                <tr><th>Site</th><th>Status</th><th>Focus</th></tr>
-              </thead>
-              <tbody>
-                <tr><td>Cluster A</td><td>Active</td><td>Vegetable production</td></tr>
-                <tr><td>Cluster B</td><td>Pilot</td><td>Cold-chain readiness</td></tr>
-                <tr><td>Cluster C</td><td>Onboarding</td><td>Women-led cooperative</td></tr>
-              </tbody>
-            </table>
-          </article>
-          <article class="card">
-            <div class="card-header">
-              <h3>Ag learning tie-in</h3>
-              <span class="pill">Skills</span>
-            </div>
-            <ul class="clean-list">
-              <li>Agritech Foundations</li>
-              <li>Digital Farm Recordkeeping</li>
-              <li>Post-Harvest Handling</li>
-              <li>Market Linkage Basics</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section id="learning" class="view">
-        <div class="grid two">
-          <article class="card">
-            <div class="card-header">
-              <h3>Koachlearn Lite</h3>
-              <span class="pill">Embedded</span>
-            </div>
-            <p>This is the scaled-down built-in learning system for the unified platform.</p>
-            <div class="course-list" id="course-list"></div>
-          </article>
-          <article class="card">
-            <div class="card-header">
-              <h3>Certification logic</h3>
-              <span class="pill success">Linked to jobs</span>
-            </div>
-            <ul class="clean-list">
-              <li>Complete lessons</li>
-              <li>Pass quiz threshold</li>
-              <li>Unlock skill badge</li>
-              <li>Sync to workforce eligibility</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section id="workforce" class="view">
-        <div class="grid two">
-          <article class="card">
-            <div class="card-header">
-              <h3>Workforce pathways</h3>
-              <span class="pill">Placement</span>
-            </div>
-            <div class="job-list">
-              <div class="job-item">
-                <div>
-                  <h4>Community Health Navigator</h4>
-                  <p>Requires Telehealth Support Basics + Community Outreach</p>
-                </div>
-                <button class="secondary-btn small">View Path</button>
-              </div>
-              <div class="job-item">
-                <div>
-                  <h4>Agritech Field Assistant</h4>
-                  <p>Requires Agritech Foundations + Farm Data Entry</p>
-                </div>
-                <button class="secondary-btn small">View Path</button>
-              </div>
-              <div class="job-item">
-                <div>
-                  <h4>Digital Operations Support</h4>
-                  <p>Requires Digital Literacy + Admin Systems Basics</p>
-                </div>
-                <button class="secondary-btn small">View Path</button>
-              </div>
-            </div>
-          </article>
-          <article class="card">
-            <div class="card-header">
-              <h3>Eligibility summary</h3>
-              <span class="pill">Live demo</span>
-            </div>
-            <div class="progress-group">
-              <label>Health role match</label>
-              <div class="progress"><span style="width: 72%"></span></div>
-            </div>
-            <div class="progress-group">
-              <label>Agritech role match</label>
-              <div class="progress"><span style="width: 88%"></span></div>
-            </div>
-            <div class="progress-group">
-              <label>Digital ops role match</label>
-              <div class="progress"><span style="width: 64%"></span></div>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section id="profile" class="view">
-        <article class="card">
-          <div class="card-header">
-            <h3>Unified learner-worker profile</h3>
-            <span class="pill">Single login</span>
-          </div>
-          <div class="grid two">
+    <main class="content">
+      <section id="dashboard" class="section active">
+        <div class="hero">
+          <div class="hero-row">
             <div>
-              <h4>Core profile</h4>
-              <ul class="clean-list">
-                <li>Name: Nia M.</li>
-                <li>Region: Pilot Region 01</li>
-                <li>Role type: Learner / Workforce Candidate</li>
-                <li>Health access: Enabled</li>
-              </ul>
-            </div>
-            <div>
-              <h4>Earned skills</h4>
-              <div class="badge-wrap">
-                <span class="badge">Digital Literacy</span>
-                <span class="badge">Telehealth Basics</span>
-                <span class="badge">Agritech Foundations</span>
-                <span class="badge">Community Outreach</span>
+              <h2 id="dashboardTitle">AFAYAI Nexus Overview</h2>
+              <p id="dashboardIntro">
+                AFAYAI Nexus is a unified platform combining AFAYAI telehealth, agritech services,
+                Agritrade market access, workforce development, and a scaled learning system into one experience.
+              </p>
+
+              <div class="hero-badges">
+                <span class="badge blue" id="badgeHealth">Telehealth</span>
+                <span class="badge green" id="badgeLearning">Learning</span>
+                <span class="badge gold" id="badgeTrade">Agritrade</span>
+                <span class="badge blue" id="badgeWorkforce">Workforce</span>
               </div>
             </div>
           </div>
-        </article>
+        </div>
+
+        <div class="grid grid-4">
+          <div class="card">
+            <div class="stat-number">4</div>
+            <h3 id="dashStat1Title">Core Service Engines</h3>
+            <p id="dashStat1Text">Health, agriculture, trade, and learning connected in one platform.</p>
+          </div>
+
+          <div class="card">
+            <div class="stat-number">1</div>
+            <h3 id="dashStat2Title">Unified User Journey</h3>
+            <p id="dashStat2Text">One profile connects skills, services, opportunities, and progress.</p>
+          </div>
+
+          <div class="card">
+            <div class="stat-number">Lite</div>
+            <h3 id="dashStat3Title">Embedded Learning</h3>
+            <p id="dashStat3Text">A scaled-down learning engine inspired by Koachlearn.</p>
+          </div>
+
+          <div class="card">
+            <div class="stat-number">Demo</div>
+            <h3 id="dashStat4Title">Testing Prototype</h3>
+            <p id="dashStat4Text">Built for GitHub Pages testing, partner walkthroughs, and early validation.</p>
+          </div>
+        </div>
+
+        <h3 class="section-title" id="dashValueTitle">Platform Value</h3>
+        <div class="grid grid-3">
+          <div class="card">
+            <h3 id="dashCard1Title">Learn to Earn</h3>
+            <p id="dashCard1Text">Users complete practical training and move into roles, assignments, and income pathways.</p>
+          </div>
+          <div class="card">
+            <h3 id="dashCard2Title">Health + Productivity</h3>
+            <p id="dashCard2Text">Telehealth access supports healthier communities and stronger workforce participation.</p>
+          </div>
+          <div class="card">
+            <h3 id="dashCard3Title">Farmer-Centered Growth</h3>
+            <p id="dashCard3Text">Agritech and Agritrade tools improve readiness, visibility, and access to markets.</p>
+          </div>
+        </div>
       </section>
+
+      <section id="learning" class="section">
+        <div class="hero">
+          <h2 id="learningTitle">Learning & Development</h2>
+          <p id="learningIntro">
+            This learning module is the built-in training engine of AFAYAI Nexus. It supports practical,
+            multilingual, workforce-aligned learning for farmers, youth, women, health workers, and community members.
+          </p>
+          <div class="hero-badges">
+            <span class="badge green" id="learnBadge1">Skill Tracks</span>
+            <span class="badge blue" id="learnBadge2">Micro-Certificates</span>
+            <span class="badge gold" id="learnBadge3">Workforce Readiness</span>
+          </div>
+        </div>
+
+        <div class="grid grid-3">
+          <div class="card">
+            <h3 id="learningPath1Title">Digital Foundations</h3>
+            <p id="learningPath1Text">Smartphone use, internet basics, messaging, online safety, and digital communication.</p>
+            <div class="progress-block">
+              <div class="progress-row"><span id="progressLabel1">Progress</span><span>82%</span></div>
+              <div class="progress"><span style="width:82%"></span></div>
+            </div>
+            <span class="label" id="tagBeginner">Beginner</span>
+            <span class="label" id="tagYouth">Youth</span>
+          </div>
+
+          <div class="card">
+            <h3 id="learningPath2Title">Agritech Skills</h3>
+            <p id="learningPath2Text">Crop planning, climate awareness, post-harvest handling, digital farm records, and input planning.</p>
+            <div class="progress-block">
+              <div class="progress-row"><span id="progressLabel2">Progress</span><span>56%</span></div>
+              <div class="progress"><span style="width:56%"></span></div>
+            </div>
+            <span class="label" id="tagFarmers">Farmers</span>
+            <span class="label" id="tagProduction">Production</span>
+          </div>
+
+          <div class="card">
+            <h3 id="learningPath3Title">Telehealth Support</h3>
+            <p id="learningPath3Text">Patient navigation, care access support, digital intake basics, and community health education.</p>
+            <div class="progress-block">
+              <div class="progress-row"><span id="progressLabel3">Progress</span><span>41%</span></div>
+              <div class="progress"><span style="width:41%"></span></div>
+            </div>
+            <span class="label" id="tagHealth">Health</span>
+            <span class="label" id="tagCommunity">Community</span>
+          </div>
+
+          <div class="card">
+            <h3 id="learningPath4Title">Work Readiness</h3>
+            <p id="learningPath4Text">Professional communication, reliability, problem solving, attendance, and basic task management.</p>
+            <div class="progress-block">
+              <div class="progress-row"><span id="progressLabel4">Progress</span><span>91%</span></div>
+              <div class="progress"><span style="width:91%"></span></div>
+            </div>
+            <span class="label" id="tagJobs">Jobs</span>
+            <span class="label" id="tagReadiness">Readiness</span>
+          </div>
+
+          <div class="card">
+            <h3 id="learningPath5Title">Entrepreneurship</h3>
+            <p id="learningPath5Text">Pricing, customer service, mobile money, market thinking, and small business basics.</p>
+            <div class="progress-block">
+              <div class="progress-row"><span id="progressLabel5">Progress</span><span>63%</span></div>
+              <div class="progress"><span style="width:63%"></span></div>
+            </div>
+            <span class="label" id="tagBusiness">Business</span>
+            <span class="label" id="tagGrowth">Growth</span>
+          </div>
+
+          <div class="card">
+            <h3 id="learningPath6Title">Learning Outcomes</h3>
+            <ul id="learningOutcomes">
+              <li>Practical training for multilingual users</li>
+              <li>Short learning paths tied to job roles</li>
+              <li>Farmer-friendly and mobile-friendly delivery</li>
+              <li>Certificate-based progression into workforce pathways</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="workforce" class="section">
+        <div class="hero">
+          <h2 id="workforceTitle">Workforce Development</h2>
+          <p id="workforceIntro">
+            AFAYAI Nexus connects learning directly to livelihoods. Users build verified skill profiles
+            and move into agriculture, health support, logistics, trade operations, and community service roles.
+          </p>
+          <div class="hero-badges">
+            <span class="badge blue" id="workBadge1">Role Matching</span>
+            <span class="badge green" id="workBadge2">Skill Profiles</span>
+            <span class="badge gold" id="workBadge3">Placement Pathways</span>
+          </div>
+        </div>
+
+        <div class="grid grid-3">
+          <div class="card">
+            <h3 id="workCard1Title">Workforce Profile</h3>
+            <p id="workCard1Text">Users build a readiness profile based on completed training, certifications, and service participation.</p>
+            <span class="label" id="labelReady">Placement Eligible</span>
+            <span class="label" id="labelScore">Readiness 82%</span>
+          </div>
+
+          <div class="card">
+            <h3 id="workCard2Title">Placement Channels</h3>
+            <ul id="placementChannels">
+              <li>Community agriculture support</li>
+              <li>Telehealth access assistant</li>
+              <li>Learning facilitator</li>
+              <li>Farmer network coordinator</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3 id="workCard3Title">Career Ladder</h3>
+            <p id="workCard3Text">Beginner learners can move into advanced roles through continued training, field performance, and supervisor validation.</p>
+          </div>
+        </div>
+
+        <h3 class="section-title" id="workRoleTableTitle">Sample Workforce Roles</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th id="thRole">Role</th>
+                <th id="thTrack">Training Track</th>
+                <th id="thStatus">Status</th>
+                <th id="thRegion">Region</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td id="role1">Community Agriculture Support Worker</td>
+                <td id="track1">Agritech Fundamentals + Work Readiness</td>
+                <td id="status1">Open</td>
+                <td id="region1">Rural / Regional</td>
+              </tr>
+              <tr>
+                <td id="role2">Telehealth Access Assistant</td>
+                <td id="track2">Telehealth Support + Digital Foundations</td>
+                <td id="status2">Open</td>
+                <td id="region2">Clinic / Community Hub</td>
+              </tr>
+              <tr>
+                <td id="role3">Farmer Network Coordinator</td>
+                <td id="track3">Agritrade Basics + Entrepreneurship</td>
+                <td id="status3">Pipeline</td>
+                <td id="region3">District / Cooperative</td>
+              </tr>
+              <tr>
+                <td id="role4">Learning Facilitator</td>
+                <td id="track4">Digital Foundations + Facilitation Skills</td>
+                <td id="status4">Pilot</td>
+                <td id="region4">Training Center / Mobile</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="health" class="section">
+        <div class="hero">
+          <h2 id="healthTitle">AFAYAI Health</h2>
+          <p id="healthIntro">
+            AFAYAI Health extends access to care, community health education, digital triage support,
+            and telehealth services for rural and underserved populations.
+          </p>
+        </div>
+
+        <div class="grid grid-3">
+          <div class="card">
+            <h3 id="healthCard1Title">Remote Access</h3>
+            <p id="healthCard1Text">Users can access telehealth support through mobile-first and community-based service models.</p>
+          </div>
+          <div class="card">
+            <h3 id="healthCard2Title">Community Health</h3>
+            <p id="healthCard2Text">Preventive education supports families, women, and local communities.</p>
+          </div>
+          <div class="card">
+            <h3 id="healthCard3Title">Health + Workforce</h3>
+            <p id="healthCard3Text">Health access improves attendance, retention, productivity, and economic participation.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="agritech" class="section">
+        <div class="hero">
+          <h2 id="agritechTitle">Agritech</h2>
+          <p id="agritechIntro">
+            The Agritech module supports farmers with digital guidance, production planning,
+            crop readiness, local data capture, and farmer-friendly workflows.
+          </p>
+        </div>
+
+        <div class="grid grid-3">
+          <div class="card">
+            <h3 id="agriCard1Title">Farmer Support Tools</h3>
+            <ul id="agriList1">
+              <li>Crop planning support</li>
+              <li>Weather awareness</li>
+              <li>Input readiness tracking</li>
+              <li>Training-linked guidance</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3 id="agriCard2Title">Freemium Model</h3>
+            <p id="agriCard2Text">Core services can remain free for farmers while buyers, NGOs, governments, and ecosystem partners fund scale.</p>
+          </div>
+          <div class="card">
+            <h3 id="agriCard3Title">Farmer Outcome</h3>
+            <p id="agriCard3Text">Improve productivity, build confidence, and prepare farmers for stronger participation in markets and supply systems.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="agritrade" class="section">
+        <div class="hero">
+          <h2 id="agritradeTitle">Agritrade</h2>
+          <p id="agritradeIntro">
+            Agritrade expands beyond production. It supports aggregation, pricing visibility,
+            trade readiness, logistics, buyer access, and movement from farm activity to market opportunity.
+          </p>
+          <div class="hero-badges">
+            <span class="badge gold" id="tradeBadge1">Market Access</span>
+            <span class="badge blue" id="tradeBadge2">Logistics</span>
+            <span class="badge green" id="tradeBadge3">Farmer Networks</span>
+          </div>
+        </div>
+
+        <div class="grid grid-3">
+          <div class="card">
+            <h3 id="tradeCard1Title">Aggregation</h3>
+            <p id="tradeCard1Text">Organize produce from individual farmers and cooperatives into visible, tradable supply groups.</p>
+          </div>
+          <div class="card">
+            <h3 id="tradeCard2Title">Market Linkages</h3>
+            <p id="tradeCard2Text">Connect communities to buyers, distributors, institutions, and future export channels.</p>
+          </div>
+          <div class="card">
+            <h3 id="tradeCard3Title">Trade Visibility</h3>
+            <p id="tradeCard3Text">Track readiness, pricing direction, order status, and opportunities across local and regional networks.</p>
+          </div>
+
+          <div class="card">
+            <h3 id="tradeCard4Title">Logistics Support</h3>
+            <ul id="tradeList1">
+              <li>Collection planning</li>
+              <li>Transport coordination</li>
+              <li>Storage readiness</li>
+              <li>Delivery visibility</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3 id="tradeCard5Title">Buyer Model</h3>
+            <p id="tradeCard5Text">Revenue can come from buyers, partners, trade facilitation fees, and institutional programs rather than farmers alone.</p>
+          </div>
+          <div class="card">
+            <h3 id="tradeCard6Title">Regional Impact</h3>
+            <p id="tradeCard6Text">Agritrade helps shift from isolated farming activity to coordinated economic participation and market access.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="profile" class="section">
+        <div class="hero">
+          <h2 id="profileTitle">Unified Profile</h2>
+          <p id="profileIntro">
+            One profile connects the user’s learning progress, workforce readiness, telehealth access,
+            agritech support, and Agritrade participation.
+          </p>
+        </div>
+
+        <div class="grid grid-3">
+          <div class="card">
+            <h3 id="profileCard1Title">Name</h3>
+            <p id="profileCard1Text">Demo User</p>
+          </div>
+          <div class="card">
+            <h3 id="profileCard2Title">Role</h3>
+            <p id="profileCard2Text">Learner / Farmer / Workforce Participant</p>
+          </div>
+          <div class="card">
+            <h3 id="profileCard3Title">Deployment</h3>
+            <p id="profileCard3Text">Pan-African multilingual model</p>
+          </div>
+          <div class="card">
+            <h3 id="profileCard4Title">Learning Status</h3>
+            <p id="profileCard4Text">4 active pathways in progress</p>
+          </div>
+          <div class="card">
+            <h3 id="profileCard5Title">Workforce Status</h3>
+            <p id="profileCard5Text">Placement eligible</p>
+          </div>
+          <div class="card">
+            <h3 id="profileCard6Title">Health Access</h3>
+            <p id="profileCard6Text">Telehealth enabled</p>
+          </div>
+        </div>
+
+        <div class="cta-row">
+          <button class="btn btn-primary" id="btnStartLearning" onclick="demoMessage('learning')">Start Learning</button>
+          <button class="btn btn-secondary" id="btnViewJobs" onclick="demoMessage('jobs')">View Opportunities</button>
+        </div>
+      </section>
+
+      <div class="footer" id="footerText">
+        AFAYAI Nexus Demo Prototype • Multilingual GitHub Pages version
+      </div>
     </main>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    function showSection(sectionId, button) {
+      const sections = document.querySelectorAll(".section");
+      const buttons = document.querySelectorAll(".nav-btn");
+      sections.forEach(section => section.classList.remove("active"));
+      buttons.forEach(btn => btn.classList.remove("active"));
+      document.getElementById(sectionId).classList.add("active");
+      if (button) button.classList.add("active");
+    }
+
+    function demoMessage(type){
+      const lang = currentLanguage;
+      const messages = {
+        en: {
+          learning: "Demo only: learning enrollment will connect to live course flows in the next build phase.",
+          jobs: "Demo only: workforce placement and job matching will connect in the next build phase."
+        },
+        fr: {
+          learning: "Démo uniquement : l’inscription à l’apprentissage sera connectée aux parcours réels lors de la prochaine phase.",
+          jobs: "Démo uniquement : le placement professionnel et l’appariement des emplois seront connectés lors de la prochaine phase."
+        },
+        ar: {
+          learning: "للعرض التجريبي فقط: سيتم ربط التسجيل بالتعلم بمسارات الدورات الفعلية في المرحلة القادمة.",
+          jobs: "للعرض التجريبي فقط: سيتم ربط التوظيف ومطابقة الوظائف في المرحلة القادمة."
+        },
+        sw: {
+          learning: "Hii ni demo tu: usajili wa mafunzo utaunganishwa na kozi halisi katika hatua inayofuata.",
+          jobs: "Hii ni demo tu: upangaji wa kazi na ulinganishaji wa nafasi utaunganishwa katika hatua inayofuata."
+        },
+        ha: {
+          learning: "Wannan demo ne kawai: za a haɗa rajistar koyarwa da ainihin darussa a mataki na gaba.",
+          jobs: "Wannan demo ne kawai: za a haɗa daidaita aiki da damar aiki a mataki na gaba."
+        },
+        yo: {
+          learning: "Eyi jẹ demo nikan: ìforúkọsílẹ ẹ̀kọ yóò so mọ́ àwọn kóòsì gidi ní ìpele tó kàn.",
+          jobs: "Eyi jẹ demo nikan: ìbámu iṣẹ́ àti fífi iṣẹ́ pọ̀ yóò so pọ̀ ní ìpele tó kàn."
+        },
+        ig: {
+          learning: "Nke a bụ naanị ngosi: ndebanye ọmụmụ ga-ejikọta na usoro ọmụmụ n’eziokwu n’oge na-abịa.",
+          jobs: "Nke a bụ naanị ngosi: itinye ọrụ na njikọta ọrụ ga-ejikọta n’oge na-abịa."
+        }
+      };
+      alert(messages[lang][type]);
+    }
+
+    const translations = {
+      en: {
+        pageDir: "ltr",
+        pageLang: "en",
+        languageLabel: "Language",
+        platformMode: "Unified Platform Demo",
+        brandTagline: "Connecting people to skills, health, agriculture, and opportunity.",
+        navGroupMain: "Main Navigation",
+        navDashboard: "Dashboard",
+        navLearning: "Learning & Development",
+        navWorkforce: "Workforce",
+        navHealth: "AFAYAI Health",
+        navAgritech: "Agritech",
+        navAgritrade: "Agritrade",
+        navProfile: "Profile",
+        dashboardTitle: "AFAYAI Nexus Overview",
+        dashboardIntro: "AFAYAI Nexus is a unified platform combining AFAYAI telehealth, agritech services, Agritrade market access, workforce development, and a scaled learning system into one experience.",
+        badgeHealth: "Telehealth",
+        badgeLearning: "Learning",
+        badgeTrade: "Agritrade",
+        badgeWorkforce: "Workforce",
+        dashStat1Title: "Core Service Engines",
+        dashStat1Text: "Health, agriculture, trade, and learning connected in one platform.",
+        dashStat2Title: "Unified User Journey",
+        dashStat2Text: "One profile connects skills, services, opportunities, and progress.",
+        dashStat3Title: "Embedded Learning",
+        dashStat3Text: "A scaled-down learning engine inspired by Koachlearn.",
+        dashStat4Title: "Testing Prototype",
+        dashStat4Text: "Built for GitHub Pages testing, partner walkthroughs, and early validation.",
+        dashValueTitle: "Platform Value",
+        dashCard1Title: "Learn to Earn",
+        dashCard1Text: "Users complete practical training and move into roles, assignments, and income pathways.",
+        dashCard2Title: "Health + Productivity",
+        dashCard2Text: "Telehealth access supports healthier communities and stronger workforce participation.",
+        dashCard3Title: "Farmer-Centered Growth",
+        dashCard3Text: "Agritech and Agritrade tools improve readiness, visibility, and access to markets.",
+        learningTitle: "Learning & Development",
+        learningIntro: "This learning module is the built-in training engine of AFAYAI Nexus. It supports practical, multilingual, workforce-aligned learning for farmers, youth, women, health workers, and community members.",
+        learnBadge1: "Skill Tracks",
+        learnBadge2: "Micro-Certificates",
+        learnBadge3: "Workforce Readiness",
+        learningPath1Title: "Digital Foundations",
+        learningPath1Text: "Smartphone use, internet basics, messaging, online safety, and digital communication.",
+        learningPath2Title: "Agritech Skills",
+        learningPath2Text: "Crop planning, climate awareness, post-harvest handling, digital farm records, and input planning.",
+        learningPath3Title: "Telehealth Support",
+        learningPath3Text: "Patient navigation, care access support, digital intake basics, and community health education.",
+        learningPath4Title: "Work Readiness",
+        learningPath4Text: "Professional communication, reliability, problem solving, attendance, and basic task management.",
+        learningPath5Title: "Entrepreneurship",
+        learningPath5Text: "Pricing, customer service, mobile money, market thinking, and small business basics.",
+        learningPath6Title: "Learning Outcomes",
+        progressLabel1: "Progress",
+        progressLabel2: "Progress",
+        progressLabel3: "Progress",
+        progressLabel4: "Progress",
+        progressLabel5: "Progress",
+        tagBeginner: "Beginner",
+        tagYouth: "Youth",
+        tagFarmers: "Farmers",
+        tagProduction: "Production",
+        tagHealth: "Health",
+        tagCommunity: "Community",
+        tagJobs: "Jobs",
+        tagReadiness: "Readiness",
+        tagBusiness: "Business",
+        tagGrowth: "Growth",
+        learningOutcomes: `
+          <li>Practical training for multilingual users</li>
+          <li>Short learning paths tied to job roles</li>
+          <li>Farmer-friendly and mobile-friendly delivery</li>
+          <li>Certificate-based progression into workforce pathways</li>
+        `,
+        workforceTitle: "Workforce Development",
+        workforceIntro: "AFAYAI Nexus connects learning directly to livelihoods. Users build verified skill profiles and move into agriculture, health support, logistics, trade operations, and community service roles.",
+        workBadge1: "Role Matching",
+        workBadge2: "Skill Profiles",
+        workBadge3: "Placement Pathways",
+        workCard1Title: "Workforce Profile",
+        workCard1Text: "Users build a readiness profile based on completed training, certifications, and service participation.",
+        labelReady: "Placement Eligible",
+        labelScore: "Readiness 82%",
+        workCard2Title: "Placement Channels",
+        placementChannels: `
+          <li>Community agriculture support</li>
+          <li>Telehealth access assistant</li>
+          <li>Learning facilitator</li>
+          <li>Farmer network coordinator</li>
+        `,
+        workCard3Title: "Career Ladder",
+        workCard3Text: "Beginner learners can move into advanced roles through continued training, field performance, and supervisor validation.",
+        workRoleTableTitle: "Sample Workforce Roles",
+        thRole: "Role",
+        thTrack: "Training Track",
+        thStatus: "Status",
+        thRegion: "Region",
+        role1: "Community Agriculture Support Worker",
+        track1: "Agritech Fundamentals + Work Readiness",
+        status1: "Open",
+        region1: "Rural / Regional",
+        role2: "Telehealth Access Assistant",
+        track2: "Telehealth Support + Digital Foundations",
+        status2: "Open",
+        region2: "Clinic / Community Hub",
+        role3: "Farmer Network Coordinator",
+        track3: "Agritrade Basics + Entrepreneurship",
+        status3: "Pipeline",
+        region3: "District / Cooperative",
+        role4: "Learning Facilitator",
+        track4: "Digital Foundations + Facilitation Skills",
+        status4: "Pilot",
+        region4: "Training Center / Mobile",
+        healthTitle: "AFAYAI Health",
+        healthIntro: "AFAYAI Health extends access to care, community health education, digital triage support, and telehealth services for rural and underserved populations.",
+        healthCard1Title: "Remote Access",
+        healthCard1Text: "Users can access telehealth support through mobile-first and community-based service models.",
+        healthCard2Title: "Community Health",
+        healthCard2Text: "Preventive education supports families, women, and local communities.",
+        healthCard3Title: "Health + Workforce",
+        healthCard3Text: "Health access improves attendance, retention, productivity, and economic participation.",
+        agritechTitle: "Agritech",
+        agritechIntro: "The Agritech module supports farmers with digital guidance, production planning, crop readiness, local data capture, and farmer-friendly workflows.",
+        agriCard1Title: "Farmer Support Tools",
+        agriList1: `
+          <li>Crop planning support</li>
+          <li>Weather awareness</li>
+          <li>Input readiness tracking</li>
+          <li>Training-linked guidance</li>
+        `,
+        agriCard2Title: "Freemium Model",
+        agriCard2Text: "Core services can remain free for farmers while buyers, NGOs, governments, and ecosystem partners fund scale.",
+        agriCard3Title: "Farmer Outcome",
+        agriCard3Text: "Improve productivity, build confidence, and prepare farmers for stronger participation in markets and supply systems.",
+        agritradeTitle: "Agritrade",
+        agritradeIntro: "Agritrade expands beyond production. It supports aggregation, pricing visibility, trade readiness, logistics, buyer access, and movement from farm activity to market opportunity.",
+        tradeBadge1: "Market Access",
+        tradeBadge2: "Logistics",
+        tradeBadge3: "Farmer Networks",
+        tradeCard1Title: "Aggregation",
+        tradeCard1Text: "Organize produce from individual farmers and cooperatives into visible, tradable supply groups.",
+        tradeCard2Title: "Market Linkages",
+        tradeCard2Text: "Connect communities to buyers, distributors, institutions, and future export channels.",
+        tradeCard3Title: "Trade Visibility",
+        tradeCard3Text: "Track readiness, pricing direction, order status, and opportunities across local and regional networks.",
+        tradeCard4Title: "Logistics Support",
+        tradeList1: `
+          <li>Collection planning</li>
+          <li>Transport coordination</li>
+          <li>Storage readiness</li>
+          <li>Delivery visibility</li>
+        `,
+        tradeCard5Title: "Buyer Model",
+        tradeCard5Text: "Revenue can come from buyers, partners, trade facilitation fees, and institutional programs rather than farmers alone.",
+        tradeCard6Title: "Regional Impact",
+        tradeCard6Text: "Agritrade helps shift from isolated farming activity to coordinated economic participation and market access.",
+        profileTitle: "Unified Profile",
+        profileIntro: "One profile connects the user’s learning progress, workforce readiness, telehealth access, agritech support, and Agritrade participation.",
+        profileCard1Title: "Name",
+        profileCard1Text: "Demo User",
+        profileCard2Title: "Role",
+        profileCard2Text: "Learner / Farmer / Workforce Participant",
+        profileCard3Title: "Deployment",
+        profileCard3Text: "Pan-African multilingual model",
+        profileCard4Title: "Learning Status",
+        profileCard4Text: "4 active pathways in progress",
+        profileCard5Title: "Workforce Status",
+        profileCard5Text: "Placement eligible",
+        profileCard6Title: "Health Access",
+        profileCard6Text: "Telehealth enabled",
+        btnStartLearning: "Start Learning",
+        btnViewJobs: "View Opportunities",
+        footerText: "AFAYAI Nexus Demo Prototype • Multilingual GitHub Pages version"
+      },
+
+      fr: {
+        pageDir: "ltr",
+        pageLang: "fr",
+        languageLabel: "Langue",
+        platformMode: "Démo de plateforme unifiée",
+        brandTagline: "Relier les personnes aux compétences, à la santé, à l’agriculture et aux opportunités.",
+        navGroupMain: "Navigation principale",
+        navDashboard: "Tableau de bord",
+        navLearning: "Apprentissage et développement",
+        navWorkforce: "Main-d’œuvre",
+        navHealth: "Santé AFAYAI",
+        navAgritech: "Agritech",
+        navAgritrade: "Agritrade",
+        navProfile: "Profil",
+        dashboardTitle: "Vue d’ensemble d’AFAYAI Nexus",
+        dashboardIntro: "AFAYAI Nexus est une plateforme unifiée combinant la télésanté AFAYAI, les services agritech, l’accès au marché Agritrade, le développement de la main-d’œuvre et un système d’apprentissage allégé.",
+        badgeHealth: "Télésanté",
+        badgeLearning: "Apprentissage",
+        badgeTrade: "Agritrade",
+        badgeWorkforce: "Main-d’œuvre",
+        dashStat1Title: "Moteurs de service",
+        dashStat1Text: "Santé, agriculture, commerce et apprentissage réunis sur une seule plateforme.",
+        dashStat2Title: "Parcours utilisateur unifié",
+        dashStat2Text: "Un seul profil relie compétences, services, opportunités et progression.",
+        dashStat3Title: "Apprentissage intégré",
+        dashStat3Text: "Un moteur d’apprentissage allégé inspiré de Koachlearn.",
+        dashStat4Title: "Prototype de test",
+        dashStat4Text: "Conçu pour GitHub Pages, les démonstrations partenaires et la validation précoce.",
+        dashValueTitle: "Valeur de la plateforme",
+        dashCard1Title: "Apprendre pour gagner",
+        dashCard1Text: "Les utilisateurs suivent des formations pratiques et accèdent à des rôles, des missions et des revenus.",
+        dashCard2Title: "Santé + Productivité",
+        dashCard2Text: "L’accès à la télésanté favorise des communautés plus saines et une meilleure participation au travail.",
+        dashCard3Title: "Croissance centrée sur l’agriculteur",
+        dashCard3Text: "Les outils Agritech et Agritrade améliorent la préparation, la visibilité et l’accès au marché.",
+        learningTitle: "Apprentissage et développement",
+        learningIntro: "Ce module d’apprentissage est le moteur de formation intégré d’AFAYAI Nexus. Il prend en charge un apprentissage pratique, multilingue et aligné sur la main-d’œuvre.",
+        learnBadge1: "Parcours de compétences",
+        learnBadge2: "Micro-certificats",
+        learnBadge3: "Préparation au travail",
+        learningPath1Title: "Bases numériques",
+        learningPath1Text: "Usage du smartphone, bases d’internet, messagerie, sécurité en ligne et communication numérique.",
+        learningPath2Title: "Compétences Agritech",
+        learningPath2Text: "Planification des cultures, climat, post-récolte, registres agricoles numériques et planification des intrants.",
+        learningPath3Title: "Soutien télésanté",
+        learningPath3Text: "Orientation des patients, soutien à l’accès aux soins, bases de l’accueil numérique et éducation sanitaire communautaire.",
+        learningPath4Title: "Préparation à l’emploi",
+        learningPath4Text: "Communication professionnelle, fiabilité, résolution de problèmes, assiduité et gestion simple des tâches.",
+        learningPath5Title: "Entrepreneuriat",
+        learningPath5Text: "Tarification, service client, mobile money, logique de marché et bases de petite entreprise.",
+        learningPath6Title: "Résultats d’apprentissage",
+        progressLabel1: "Progression",
+        progressLabel2: "Progression",
+        progressLabel3: "Progression",
+        progressLabel4: "Progression",
+        progressLabel5: "Progression",
+        tagBeginner: "Débutant",
+        tagYouth: "Jeunes",
+        tagFarmers: "Agriculteurs",
+        tagProduction: "Production",
+        tagHealth: "Santé",
+        tagCommunity: "Communauté",
+        tagJobs: "Emplois",
+        tagReadiness: "Préparation",
+        tagBusiness: "Entreprise",
+        tagGrowth: "Croissance",
+        learningOutcomes: `
+          <li>Formation pratique pour utilisateurs multilingues</li>
+          <li>Parcours courts liés aux rôles professionnels</li>
+          <li>Diffusion adaptée aux agriculteurs et au mobile</li>
+          <li>Progression vers l’emploi via certificats</li>
+        `,
+        workforceTitle: "Développement de la main-d’œuvre",
+        workforceIntro: "AFAYAI Nexus relie directement l’apprentissage aux moyens de subsistance. Les utilisateurs développent des profils de compétences vérifiés et accèdent à des rôles en agriculture, santé, logistique et commerce.",
+        workBadge1: "Correspondance des rôles",
+        workBadge2: "Profils de compétences",
+        workBadge3: "Parcours de placement",
+        workCard1Title: "Profil main-d’œuvre",
+        workCard1Text: "Les utilisateurs construisent un profil de préparation basé sur les formations suivies, les certificats et la participation aux services.",
+        labelReady: "Éligible au placement",
+        labelScore: "Préparation 82 %",
+        workCard2Title: "Canaux de placement",
+        placementChannels: `
+          <li>Soutien agricole communautaire</li>
+          <li>Assistant d’accès à la télésanté</li>
+          <li>Facilitateur d’apprentissage</li>
+          <li>Coordinateur de réseau agricole</li>
+        `,
+        workCard3Title: "Évolution de carrière",
+        workCard3Text: "Les apprenants débutants peuvent évoluer vers des rôles avancés grâce à la formation continue et à la performance sur le terrain.",
+        workRoleTableTitle: "Exemples de rôles",
+        thRole: "Rôle",
+        thTrack: "Parcours",
+        thStatus: "Statut",
+        thRegion: "Région",
+        role1: "Agent de soutien agricole communautaire",
+        track1: "Bases Agritech + Préparation au travail",
+        status1: "Ouvert",
+        region1: "Rural / Régional",
+        role2: "Assistant d’accès à la télésanté",
+        track2: "Soutien télésanté + Bases numériques",
+        status2: "Ouvert",
+        region2: "Clinique / Hub communautaire",
+        role3: "Coordinateur de réseau agricole",
+        track3: "Bases Agritrade + Entrepreneuriat",
+        status3: "Pipeline",
+        region3: "District / Coopérative",
+        role4: "Facilitateur d’apprentissage",
+        track4: "Bases numériques + Compétences d’animation",
+        status4: "Pilote",
+        region4: "Centre de formation / Mobile",
+        healthTitle: "Santé AFAYAI",
+        healthIntro: "AFAYAI Health élargit l’accès aux soins, à l’éducation sanitaire communautaire, au triage numérique et aux services de télésanté.",
+        healthCard1Title: "Accès à distance",
+        healthCard1Text: "Les utilisateurs peuvent accéder au soutien télésanté via des modèles mobiles et communautaires.",
+        healthCard2Title: "Santé communautaire",
+        healthCard2Text: "L’éducation préventive soutient les familles, les femmes et les communautés locales.",
+        healthCard3Title: "Santé + Travail",
+        healthCard3Text: "L’accès à la santé améliore la présence, la rétention, la productivité et la participation économique.",
+        agritechTitle: "Agritech",
+        agritechIntro: "Le module Agritech aide les agriculteurs avec des conseils numériques, la planification de production et des flux de travail adaptés.",
+        agriCard1Title: "Outils de soutien aux agriculteurs",
+        agriList1: `
+          <li>Aide à la planification des cultures</li>
+          <li>Veille météo</li>
+          <li>Suivi des intrants</li>
+          <li>Conseils liés à la formation</li>
+        `,
+        agriCard2Title: "Modèle freemium",
+        agriCard2Text: "Les services de base restent gratuits pour les agriculteurs, tandis que les acheteurs, ONG et gouvernements financent l’échelle.",
+        agriCard3Title: "Résultat agriculteur",
+        agriCard3Text: "Améliorer la productivité et préparer une meilleure participation aux marchés.",
+        agritradeTitle: "Agritrade",
+        agritradeIntro: "Agritrade va au-delà de la production. Il prend en charge l’agrégation, la visibilité des prix, la préparation commerciale, la logistique et l’accès aux acheteurs.",
+        tradeBadge1: "Accès au marché",
+        tradeBadge2: "Logistique",
+        tradeBadge3: "Réseaux d’agriculteurs",
+        tradeCard1Title: "Agrégation",
+        tradeCard1Text: "Organiser les produits des agriculteurs et coopératives en groupes d’approvisionnement visibles et commercialisables.",
+        tradeCard2Title: "Liens marché",
+        tradeCard2Text: "Connecter les communautés aux acheteurs, distributeurs et futurs canaux d’exportation.",
+        tradeCard3Title: "Visibilité commerciale",
+        tradeCard3Text: "Suivre la préparation, la tendance des prix et le statut des commandes.",
+        tradeCard4Title: "Soutien logistique",
+        tradeList1: `
+          <li>Planification de collecte</li>
+          <li>Coordination du transport</li>
+          <li>Préparation du stockage</li>
+          <li>Visibilité de la livraison</li>
+        `,
+        tradeCard5Title: "Modèle acheteur",
+        tradeCard5Text: "Les revenus peuvent provenir des acheteurs, partenaires et programmes institutionnels, plutôt que des agriculteurs seuls.",
+        tradeCard6Title: "Impact régional",
+        tradeCard6Text: "Agritrade aide à passer d’une agriculture isolée à une participation économique coordonnée.",
+        profileTitle: "Profil unifié",
+        profileIntro: "Un seul profil relie l’apprentissage, la préparation au travail, l’accès à la télésanté, le soutien agritech et la participation Agritrade.",
+        profileCard1Title: "Nom",
+        profileCard1Text: "Utilisateur démo",
+        profileCard2Title: "Rôle",
+        profileCard2Text: "Apprenant / Agriculteur / Participant main-d’œuvre",
+        profileCard3Title: "Déploiement",
+        profileCard3Text: "Modèle multilingue panafricain",
+        profileCard4Title: "Statut d’apprentissage",
+        profileCard4Text: "4 parcours actifs en cours",
+        profileCard5Title: "Statut main-d’œuvre",
+        profileCard5Text: "Éligible au placement",
+        profileCard6Title: "Accès santé",
+        profileCard6Text: "Télésanté activée",
+        btnStartLearning: "Commencer l’apprentissage",
+        btnViewJobs: "Voir les opportunités",
+        footerText: "Prototype AFAYAI Nexus • Version multilingue GitHub Pages"
+      },
+
+      ar: {
+        pageDir: "rtl",
+        pageLang: "ar",
+        languageLabel: "اللغة",
+        platformMode: "عرض المنصة الموحدة",
+        brandTagline: "ربط الناس بالمهارات والصحة والزراعة والفرص.",
+        navGroupMain: "التنقل الرئيسي",
+        navDashboard: "لوحة التحكم",
+        navLearning: "التعلم والتطوير",
+        navWorkforce: "القوى العاملة",
+        navHealth: "صحة AFAYAI",
+        navAgritech: "التقنيات الزراعية",
+        navAgritrade: "أغريتريد",
+        navProfile: "الملف الشخصي",
+        dashboardTitle: "نظرة عامة على AFAYAI Nexus",
+        dashboardIntro: "AFAYAI Nexus منصة موحدة تجمع بين خدمات الصحة عن بُعد من AFAYAI، والتقنيات الزراعية، والوصول إلى الأسواق عبر Agritrade، وتنمية القوى العاملة، ونظام تعلم مبسط داخل تجربة واحدة.",
+        badgeHealth: "الصحة عن بُعد",
+        badgeLearning: "التعلم",
+        badgeTrade: "أغريتريد",
+        badgeWorkforce: "القوى العاملة",
+        dashStat1Title: "محركات الخدمة الأساسية",
+        dashStat1Text: "الصحة والزراعة والتجارة والتعلم في منصة واحدة.",
+        dashStat2Title: "رحلة مستخدم موحدة",
+        dashStat2Text: "ملف واحد يربط المهارات والخدمات والفرص والتقدم.",
+        dashStat3Title: "تعلم مدمج",
+        dashStat3Text: "محرك تعلم مبسط مستوحى من Koachlearn.",
+        dashStat4Title: "نموذج للاختبار",
+        dashStat4Text: "مصمم للاختبار على GitHub Pages وعروض الشركاء والتحقق المبكر.",
+        dashValueTitle: "قيمة المنصة",
+        dashCard1Title: "تعلم لتكسب",
+        dashCard1Text: "يكمل المستخدمون التدريب العملي ثم ينتقلون إلى الأدوار والمهام ومسارات الدخل.",
+        dashCard2Title: "الصحة والإنتاجية",
+        dashCard2Text: "الوصول إلى الصحة عن بُعد يدعم مجتمعات أكثر صحة ومشاركة أقوى في العمل.",
+        dashCard3Title: "نمو يركز على المزارع",
+        dashCard3Text: "تعمل أدوات Agritech وAgritrade على تحسين الجاهزية والوضوح والوصول إلى الأسواق.",
+        learningTitle: "التعلم والتطوير",
+        learningIntro: "هذا هو محرك التدريب المدمج داخل AFAYAI Nexus. يدعم التعلم العملي متعدد اللغات والمتوافق مع القوى العاملة للمزارعين والشباب والنساء والعاملين الصحيين وأفراد المجتمع.",
+        learnBadge1: "مسارات المهارات",
+        learnBadge2: "شهادات قصيرة",
+        learnBadge3: "الجاهزية للعمل",
+        learningPath1Title: "الأساسيات الرقمية",
+        learningPath1Text: "استخدام الهاتف الذكي، أساسيات الإنترنت، المراسلة، الأمان الرقمي، والتواصل الإلكتروني.",
+        learningPath2Title: "مهارات التقنية الزراعية",
+        learningPath2Text: "تخطيط المحاصيل، الوعي المناخي، ما بعد الحصاد، السجلات الزراعية الرقمية، وتخطيط المدخلات.",
+        learningPath3Title: "دعم الصحة عن بُعد",
+        learningPath3Text: "إرشاد المرضى، دعم الوصول للرعاية، أساسيات الاستقبال الرقمي، والتثقيف الصحي المجتمعي.",
+        learningPath4Title: "الجاهزية للعمل",
+        learningPath4Text: "التواصل المهني، الاعتمادية، حل المشكلات، الالتزام، وإدارة المهام الأساسية.",
+        learningPath5Title: "ريادة الأعمال",
+        learningPath5Text: "التسعير، خدمة العملاء، المال عبر الهاتف، التفكير السوقي، وأساسيات الأعمال الصغيرة.",
+        learningPath6Title: "مخرجات التعلم",
+        progressLabel1: "التقدم",
+        progressLabel2: "التقدم",
+        progressLabel3: "التقدم",
+        progressLabel4: "التقدم",
+        progressLabel5: "التقدم",
+        tagBeginner: "مبتدئ",
+        tagYouth: "شباب",
+        tagFarmers: "مزارعون",
+        tagProduction: "إنتاج",
+        tagHealth: "صحة",
+        tagCommunity: "مجتمع",
+        tagJobs: "وظائف",
+        tagReadiness: "جاهزية",
+        tagBusiness: "أعمال",
+        tagGrowth: "نمو",
+        learningOutcomes: `
+          <li>تدريب عملي للمستخدمين متعددي اللغات</li>
+          <li>مسارات قصيرة مرتبطة بالأدوار الوظيفية</li>
+          <li>تقديم مناسب للمزارعين ومناسب للهاتف</li>
+          <li>الانتقال إلى مسارات العمل عبر الشهادات</li>
+        `,
+        workforceTitle: "تنمية القوى العاملة",
+        workforceIntro: "يربط AFAYAI Nexus التعلم مباشرة بسبل العيش. يبني المستخدمون ملفات مهارية موثقة وينتقلون إلى أدوار في الزراعة، ودعم الصحة، والخدمات اللوجستية، والعمليات التجارية، وخدمة المجتمع.",
+        workBadge1: "مطابقة الأدوار",
+        workBadge2: "ملفات المهارات",
+        workBadge3: "مسارات التوظيف",
+        workCard1Title: "ملف القوى العاملة",
+        workCard1Text: "يبني المستخدمون ملف جاهزية بناءً على التدريب المكتمل والشهادات والمشاركة في الخدمات.",
+        labelReady: "مؤهل للتوظيف",
+        labelScore: "الجاهزية 82٪",
+        workCard2Title: "قنوات التوظيف",
+        placementChannels: `
+          <li>دعم زراعي مجتمعي</li>
+          <li>مساعد وصول للصحة عن بُعد</li>
+          <li>مُيسر تعلم</li>
+          <li>منسق شبكة مزارعين</li>
+        `,
+        workCard3Title: "سلم التقدم المهني",
+        workCard3Text: "يمكن للمتعلمين المبتدئين الانتقال إلى أدوار متقدمة من خلال التدريب المستمر والأداء الميداني والتحقق من المشرف.",
+        workRoleTableTitle: "نماذج لأدوار القوى العاملة",
+        thRole: "الدور",
+        thTrack: "مسار التدريب",
+        thStatus: "الحالة",
+        thRegion: "المنطقة",
+        role1: "عامل دعم زراعي مجتمعي",
+        track1: "أساسيات Agritech + الجاهزية للعمل",
+        status1: "متاح",
+        region1: "ريفي / إقليمي",
+        role2: "مساعد وصول للصحة عن بُعد",
+        track2: "دعم الصحة عن بُعد + الأساسيات الرقمية",
+        status2: "متاح",
+        region2: "عيادة / مركز مجتمعي",
+        role3: "منسق شبكة مزارعين",
+        track3: "أساسيات Agritrade + ريادة الأعمال",
+        status3: "قيد التطوير",
+        region3: "منطقة / تعاونية",
+        role4: "مُيسر تعلم",
+        track4: "الأساسيات الرقمية + مهارات التيسير",
+        status4: "تجريبي",
+        region4: "مركز تدريب / متنقل",
+        healthTitle: "صحة AFAYAI",
+        healthIntro: "توسع AFAYAI Health الوصول إلى الرعاية، والتثقيف الصحي المجتمعي، ودعم الفرز الرقمي، وخدمات الصحة عن بُعد للمجتمعات الريفية والمحرومة.",
+        healthCard1Title: "وصول عن بُعد",
+        healthCard1Text: "يمكن للمستخدمين الوصول إلى دعم الصحة عن بُعد عبر نماذج تعتمد على الهاتف والمجتمع.",
+        healthCard2Title: "الصحة المجتمعية",
+        healthCard2Text: "يدعم التعليم الوقائي الأسر والنساء والمجتمعات المحلية.",
+        healthCard3Title: "الصحة والعمل",
+        healthCard3Text: "يؤدي الوصول إلى الصحة إلى تحسين الحضور والاستبقاء والإنتاجية والمشاركة الاقتصادية.",
+        agritechTitle: "التقنيات الزراعية",
+        agritechIntro: "يدعم قسم Agritech المزارعين من خلال الإرشاد الرقمي وتخطيط الإنتاج وجاهزية المحاصيل وجمع البيانات المحلية وسير العمل المناسب للمزارعين.",
+        agriCard1Title: "أدوات دعم المزارعين",
+        agriList1: `
+          <li>دعم تخطيط المحاصيل</li>
+          <li>الوعي بالطقس</li>
+          <li>تتبع جاهزية المدخلات</li>
+          <li>إرشاد مرتبط بالتدريب</li>
+        `,
+        agriCard2Title: "نموذج مجاني أساسي",
+        agriCard2Text: "يمكن أن تبقى الخدمات الأساسية مجانية للمزارعين بينما يمول المشترون والمنظمات والحكومات والشركاء التوسع.",
+        agriCard3Title: "نتيجة المزارع",
+        agriCard3Text: "تحسين الإنتاجية وبناء الثقة وإعداد المزارعين للمشاركة الأقوى في الأسواق وسلاسل التوريد.",
+        agritradeTitle: "أغريتريد",
+        agritradeIntro: "يتجاوز Agritrade الإنتاج. فهو يدعم التجميع، ووضوح الأسعار، والاستعداد التجاري، والخدمات اللوجستية، والوصول إلى المشترين، والانتقال من نشاط المزرعة إلى فرصة سوقية.",
+        tradeBadge1: "الوصول إلى السوق",
+        tradeBadge2: "الخدمات اللوجستية",
+        tradeBadge3: "شبكات المزارعين",
+        tradeCard1Title: "التجميع",
+        tradeCard1Text: "تنظيم منتجات المزارعين الأفراد والتعاونيات في مجموعات توريد واضحة وقابلة للتداول.",
+        tradeCard2Title: "روابط السوق",
+        tradeCard2Text: "ربط المجتمعات بالمشترين والموزعين والمؤسسات وقنوات التصدير المستقبلية.",
+        tradeCard3Title: "وضوح التجارة",
+        tradeCard3Text: "متابعة الجاهزية واتجاه الأسعار وحالة الطلبات والفرص عبر الشبكات المحلية والإقليمية.",
+        tradeCard4Title: "الدعم اللوجستي",
+        tradeList1: `
+          <li>تخطيط الجمع</li>
+          <li>تنسيق النقل</li>
+          <li>جاهزية التخزين</li>
+          <li>وضوح التسليم</li>
+        `,
+        tradeCard5Title: "نموذج المشترين",
+        tradeCard5Text: "يمكن أن تأتي الإيرادات من المشترين والشركاء ورسوم التيسير التجاري والبرامج المؤسسية بدلاً من المزارعين فقط.",
+        tradeCard6Title: "الأثر الإقليمي",
+        tradeCard6Text: "يساعد Agritrade على الانتقال من نشاط زراعي معزول إلى مشاركة اقتصادية منسقة ووصول للأسواق.",
+        profileTitle: "الملف الموحد",
+        profileIntro: "يربط ملف واحد تقدم التعلم وجاهزية العمل والوصول للصحة عن بُعد ودعم التقنية الزراعية والمشاركة في Agritrade.",
+        profileCard1Title: "الاسم",
+        profileCard1Text: "مستخدم تجريبي",
+        profileCard2Title: "الدور",
+        profileCard2Text: "متعلم / مزارع / مشارك في القوى العاملة",
+        profileCard3Title: "النشر",
+        profileCard3Text: "نموذج أفريقي متعدد اللغات",
+        profileCard4Title: "حالة التعلم",
+        profileCard4Text: "4 مسارات نشطة قيد التقدم",
+        profileCard5Title: "حالة القوى العاملة",
+        profileCard5Text: "مؤهل للتوظيف",
+        profileCard6Title: "الوصول الصحي",
+        profileCard6Text: "الصحة عن بُعد مفعلة",
+        btnStartLearning: "ابدأ التعلم",
+        btnViewJobs: "عرض الفرص",
+        footerText: "النموذج التجريبي AFAYAI Nexus • إصدار متعدد اللغات لـ GitHub Pages"
+      },
+
+      sw: {
+        pageDir: "ltr",
+        pageLang: "sw",
+        languageLabel: "Lugha",
+        platformMode: "Demo ya jukwaa moja",
+        brandTagline: "Kuunganisha watu na ujuzi, afya, kilimo, na fursa.",
+        navGroupMain: "Urambazaji Mkuu",
+        navDashboard: "Dashibodi",
+        navLearning: "Mafunzo na Maendeleo",
+        navWorkforce: "Nguvu Kazi",
+        navHealth: "AFAYAI Health",
+        navAgritech: "Agritech",
+        navAgritrade: "Agritrade",
+        navProfile: "Wasifu",
+        dashboardTitle: "Muhtasari wa AFAYAI Nexus",
+        dashboardIntro: "AFAYAI Nexus ni jukwaa moja linalounganisha telehealth ya AFAYAI, huduma za agritech, ufikiaji wa soko kupitia Agritrade, maendeleo ya nguvu kazi, na mfumo mdogo wa kujifunza ndani ya uzoefu mmoja.",
+        badgeHealth: "Telehealth",
+        badgeLearning: "Mafunzo",
+        badgeTrade: "Agritrade",
+        badgeWorkforce: "Nguvu Kazi",
+        dashStat1Title: "Mifumo ya Huduma",
+        dashStat1Text: "Afya, kilimo, biashara, na mafunzo katika jukwaa moja.",
+        dashStat2Title: "Safari Moja ya Mtumiaji",
+        dashStat2Text: "Wasifu mmoja unaunganisha ujuzi, huduma, fursa, na maendeleo.",
+        dashStat3Title: "Mafunzo Yaliyopachikwa",
+        dashStat3Text: "Mfumo mdogo wa mafunzo uliohamasishwa na Koachlearn.",
+        dashStat4Title: "Mfano wa Majaribio",
+        dashStat4Text: "Umetengenezwa kwa majaribio ya GitHub Pages na uwasilishaji kwa washirika.",
+        dashValueTitle: "Thamani ya Jukwaa",
+        dashCard1Title: "Jifunze Uingize Kipato",
+        dashCard1Text: "Watumiaji wanamaliza mafunzo ya vitendo na kuingia katika nafasi, kazi, na njia za kipato.",
+        dashCard2Title: "Afya + Uzalishaji",
+        dashCard2Text: "Upatikanaji wa telehealth unasaidia jamii zenye afya bora na ushiriki mkubwa wa kazi.",
+        dashCard3Title: "Ukuaji unaomweka Mkulima Kwanza",
+        dashCard3Text: "Zana za Agritech na Agritrade huongeza utayari, mwonekano, na upatikanaji wa masoko.",
+        learningTitle: "Mafunzo na Maendeleo",
+        learningIntro: "Huu ndio mfumo wa mafunzo uliojengwa ndani ya AFAYAI Nexus. Unasaidia mafunzo ya vitendo, ya lugha nyingi, yanayoendana na nguvu kazi kwa wakulima, vijana, wanawake, wahudumu wa afya, na wanajamii.",
+        learnBadge1: "Njia za Ujuzi",
+        learnBadge2: "Vyeti Vidogo",
+        learnBadge3: "Utayari wa Kazi",
+        learningPath1Title: "Misingi ya Kidijitali",
+        learningPath1Text: "Matumizi ya simu janja, misingi ya intaneti, ujumbe, usalama mtandaoni, na mawasiliano ya kidijitali.",
+        learningPath2Title: "Ujuzi wa Agritech",
+        learningPath2Text: "Upangaji wa mazao, uelewa wa hali ya hewa, baada ya mavuno, rekodi za shamba za kidijitali, na upangaji wa pembejeo.",
+        learningPath3Title: "Msaada wa Telehealth",
+        learningPath3Text: "Uongozi wa wagonjwa, msaada wa upatikanaji wa huduma, misingi ya usajili wa kidijitali, na elimu ya afya ya jamii.",
+        learningPath4Title: "Utayari wa Kazi",
+        learningPath4Text: "Mawasiliano ya kitaaluma, kutegemewa, utatuzi wa matatizo, mahudhurio, na usimamizi wa kazi za msingi.",
+        learningPath5Title: "Ujasiriamali",
+        learningPath5Text: "Bei, huduma kwa wateja, fedha kwa simu, fikra za soko, na misingi ya biashara ndogo.",
+        learningPath6Title: "Matokeo ya Mafunzo",
+        progressLabel1: "Maendeleo",
+        progressLabel2: "Maendeleo",
+        progressLabel3: "Maendeleo",
+        progressLabel4: "Maendeleo",
+        progressLabel5: "Maendeleo",
+        tagBeginner: "Mwanzo",
+        tagYouth: "Vijana",
+        tagFarmers: "Wakulima",
+        tagProduction: "Uzalishaji",
+        tagHealth: "Afya",
+        tagCommunity: "Jamii",
+        tagJobs: "Ajira",
+        tagReadiness: "Utayari",
+        tagBusiness: "Biashara",
+        tagGrowth: "Ukuaji",
+        learningOutcomes: `
+          <li>Mafunzo ya vitendo kwa watumiaji wa lugha nyingi</li>
+          <li>Njia fupi za mafunzo zinazohusishwa na kazi</li>
+          <li>Utoaji unaofaa kwa wakulima na simu</li>
+          <li>Vyeti vinavyoongoza kwenye nafasi za kazi</li>
+        `,
+        workforceTitle: "Maendeleo ya Nguvu Kazi",
+        workforceIntro: "AFAYAI Nexus inaunganisha mafunzo moja kwa moja na maisha ya kiuchumi. Watumiaji hujenga wasifu wa ujuzi uliothibitishwa na kuingia kwenye nafasi za kilimo, afya, usafirishaji, biashara, na huduma za jamii.",
+        workBadge1: "Ulinganifu wa Kazi",
+        workBadge2: "Wasifu wa Ujuzi",
+        workBadge3: "Njia za Kupangiwa",
+        workCard1Title: "Wasifu wa Nguvu Kazi",
+        workCard1Text: "Watumiaji hujenga wasifu wa utayari kulingana na mafunzo waliyokamilisha, vyeti, na ushiriki wao.",
+        labelReady: "Anastahili Kupangiwa",
+        labelScore: "Utayari 82%",
+        workCard2Title: "Njia za Kazi",
+        placementChannels: `
+          <li>Msaada wa kilimo cha jamii</li>
+          <li>Msaidizi wa upatikanaji wa telehealth</li>
+          <li>Mwezeshaji wa mafunzo</li>
+          <li>Mratibu wa mtandao wa wakulima</li>
+        `,
+        workCard3Title: "Ngazi ya Kazi",
+        workCard3Text: "Wanaojifunza wa mwanzo wanaweza kusonga hadi nafasi za juu kupitia mafunzo endelevu na utendaji wa shambani.",
+        workRoleTableTitle: "Mifano ya Nafasi za Kazi",
+        thRole: "Nafasi",
+        thTrack: "Njia ya Mafunzo",
+        thStatus: "Hali",
+        thRegion: "Eneo",
+        role1: "Mfanyakazi wa Msaada wa Kilimo cha Jamii",
+        track1: "Misingi ya Agritech + Utayari wa Kazi",
+        status1: "Wazi",
+        region1: "Vijijini / Kikanda",
+        role2: "Msaidizi wa Upatikanaji wa Telehealth",
+        track2: "Msaada wa Telehealth + Misingi ya Kidijitali",
+        status2: "Wazi",
+        region2: "Kliniki / Kituo cha Jamii",
+        role3: "Mratibu wa Mtandao wa Wakulima",
+        track3: "Misingi ya Agritrade + Ujasiriamali",
+        status3: "Mlolongo",
+        region3: "Wilaya / Ushirika",
+        role4: "Mwezeshaji wa Mafunzo",
+        track4: "Misingi ya Kidijitali + Uwezeshaji",
+        status4: "Jaribio",
+        region4: "Kituo cha Mafunzo / Simu",
+        healthTitle: "AFAYAI Health",
+        healthIntro: "AFAYAI Health inaongeza upatikanaji wa huduma, elimu ya afya ya jamii, msaada wa kidijitali wa uchunguzi, na huduma za telehealth.",
+        healthCard1Title: "Upatikanaji wa Mbali",
+        healthCard1Text: "Watumiaji wanaweza kupata msaada wa telehealth kupitia mifumo ya simu na jamii.",
+        healthCard2Title: "Afya ya Jamii",
+        healthCard2Text: "Elimu ya kinga inasaidia familia, wanawake, na jamii za mahali.",
+        healthCard3Title: "Afya + Kazi",
+        healthCard3Text: "Upatikanaji wa afya unaongeza mahudhurio, uendelevu, uzalishaji, na ushiriki wa kiuchumi.",
+        agritechTitle: "Agritech",
+        agritechIntro: "Moduli ya Agritech inawasaidia wakulima kupitia mwongozo wa kidijitali, upangaji wa uzalishaji, utayari wa mazao, na mifumo rafiki kwa mkulima.",
+        agriCard1Title: "Zana za Wakulima",
+        agriList1: `
+          <li>Msaada wa kupanga mazao</li>
+          <li>Uelewa wa hali ya hewa</li>
+          <li>Ufuatiliaji wa pembejeo</li>
+          <li>Mwongozo unaohusishwa na mafunzo</li>
+        `,
+        agriCard2Title: "Mfumo wa Freemium",
+        agriCard2Text: "Huduma za msingi zinaweza kubaki bure kwa wakulima huku wanunuzi, NGOs, serikali, na washirika wakifadhili upanuzi.",
+        agriCard3Title: "Matokeo kwa Mkulima",
+        agriCard3Text: "Kuboresha uzalishaji, kujenga kujiamini, na kuwaandaa wakulima kwa ushiriki mkubwa zaidi wa soko.",
+        agritradeTitle: "Agritrade",
+        agritradeIntro: "Agritrade inapanuka zaidi ya uzalishaji. Inasaidia ukusanyaji, mwonekano wa bei, utayari wa biashara, usafirishaji, upatikanaji wa wanunuzi, na safari kutoka shambani hadi sokoni.",
+        tradeBadge1: "Soko",
+        tradeBadge2: "Usafirishaji",
+        tradeBadge3: "Mitandao ya Wakulima",
+        tradeCard1Title: "Ukusanyaji",
+        tradeCard1Text: "Kupanga mazao kutoka kwa wakulima binafsi na ushirika kuwa vikundi vinavyoonekana na kuuzwa.",
+        tradeCard2Title: "Viunganishi vya Soko",
+        tradeCard2Text: "Kuunganisha jamii na wanunuzi, wasambazaji, taasisi, na njia za baadaye za usafirishaji nje.",
+        tradeCard3Title: "Mwonekano wa Biashara",
+        tradeCard3Text: "Kufuatilia utayari, mwelekeo wa bei, hali ya oda, na fursa katika mitandao ya eneo na mikoa.",
+        tradeCard4Title: "Msaada wa Usafirishaji",
+        tradeList1: `
+          <li>Upangaji wa ukusanyaji</li>
+          <li>Uratibu wa usafiri</li>
+          <li>Utayari wa uhifadhi</li>
+          <li>Mwonekano wa utoaji</li>
+        `,
+        tradeCard5Title: "Mfumo wa Wanunuzi",
+        tradeCard5Text: "Mapato yanaweza kutoka kwa wanunuzi, washirika, ada za biashara, na programu za taasisi badala ya wakulima pekee.",
+        tradeCard6Title: "Athari ya Kikanda",
+        tradeCard6Text: "Agritrade husaidia kubadilisha shughuli za kilimo zilizotengwa kuwa ushiriki wa kiuchumi uliooratibiwa.",
+        profileTitle: "Wasifu Mmoja",
+        profileIntro: "Wasifu mmoja unaunganisha maendeleo ya mafunzo, utayari wa kazi, upatikanaji wa telehealth, msaada wa agritech, na ushiriki wa Agritrade.",
+        profileCard1Title: "Jina",
+        profileCard1Text: "Mtumiaji wa Demo",
+        profileCard2Title: "Jukumu",
+        profileCard2Text: "Mwanafunzi / Mkulima / Mshiriki wa Nguvu Kazi",
+        profileCard3Title: "Utekelezaji",
+        profileCard3Text: "Mfumo wa Afrika nzima wa lugha nyingi",
+        profileCard4Title: "Hali ya Mafunzo",
+        profileCard4Text: "Njia 4 zinaendelea",
+        profileCard5Title: "Hali ya Nguvu Kazi",
+        profileCard5Text: "Anastahili kupangiwa",
+        profileCard6Title: "Upatikanaji wa Afya",
+        profileCard6Text: "Telehealth imewezeshwa",
+        btnStartLearning: "Anza Mafunzo",
+        btnViewJobs: "Tazama Fursa",
+        footerText: "Demo ya AFAYAI Nexus • Toleo la lugha nyingi la GitHub Pages"
+      },
+
+      ha: {
+        pageDir: "ltr",
+        pageLang: "ha",
+        languageLabel: "Harshe",
+        platformMode: "Demo na dandali guda ɗaya",
+        brandTagline: "Haɗa mutane da ƙwarewa, lafiya, noma, da dama.",
+        navGroupMain: "Babban Jagora",
+        navDashboard: "Allon Bayanai",
+        navLearning: "Koyo da Ci Gaba",
+        navWorkforce: "Ma'aikata",
+        navHealth: "Lafiyar AFAYAI",
+        navAgritech: "Agritech",
+        navAgritrade: "Agritrade",
+        navProfile: "Bayanan Mai Amfani",
+        dashboardTitle: "Bayyani na AFAYAI Nexus",
+        dashboardIntro: "AFAYAI Nexus dandali ne guda ɗaya da ke haɗa telehealth na AFAYAI, agritech, damar kasuwa ta Agritrade, haɓaka ma'aikata, da tsarin koyo mai sauƙi.",
+        badgeHealth: "Telehealth",
+        badgeLearning: "Koyo",
+        badgeTrade: "Agritrade",
+        badgeWorkforce: "Ma'aikata",
+        dashStat1Title: "Manyan Sassa",
+        dashStat1Text: "Lafiya, noma, kasuwanci, da koyo a cikin dandali guda ɗaya.",
+        dashStat2Title: "Hanyar Mai Amfani Guda ɗaya",
+        dashStat2Text: "Bayanan mutum guda suna haɗa ƙwarewa, ayyuka, dama, da ci gaba.",
+        dashStat3Title: "Koyon Ciki",
+        dashStat3Text: "Tsarin koyo mai sauƙi da aka gina bisa tunanin Koachlearn.",
+        dashStat4Title: "Samfurin Gwaji",
+        dashStat4Text: "An gina shi don gwajin GitHub Pages da nuna wa abokan hulɗa.",
+        dashValueTitle: "Darajar Dandali",
+        dashCard1Title: "Koyi don Samun Kuɗi",
+        dashCard1Text: "Masu amfani suna kammala horo na aiki sannan su shiga ayyuka da hanyoyin samun kuɗi.",
+        dashCard2Title: "Lafiya da Aiki",
+        dashCard2Text: "Samun telehealth yana tallafawa al'umma masu koshin lafiya da ƙarin shiga aiki.",
+        dashCard3Title: "Ci gaban Manoma",
+        dashCard3Text: "Kayan Agritech da Agritrade suna ƙara shiri, gani, da damar kasuwa.",
+        learningTitle: "Koyo da Ci Gaba",
+        learningIntro: "Wannan ɓangaren koyo shi ne injin horo na AFAYAI Nexus. Yana tallafawa koyo mai amfani da harsuna da yawa ga manoma, matasa, mata, ma'aikatan lafiya, da al'umma.",
+        learnBadge1: "Hanyoyin Ƙwarewa",
+        learnBadge2: "Takardun Shaida",
+        learnBadge3: "Shirye-shiryen Aiki",
+        learningPath1Title: "Tushen Dijital",
+        learningPath1Text: "Amfani da wayar hannu, tushen intanet, saƙonni, tsaro a yanar gizo, da sadarwar dijital.",
+        learningPath2Title: "Ƙwarewar Agritech",
+        learningPath2Text: "Tsarin amfanin gona, yanayi, kula bayan girbi, rubutun gona na dijital, da shirin kayan aiki.",
+        learningPath3Title: "Tallafin Telehealth",
+        learningPath3Text: "Jagorancin marasa lafiya, tallafin samun kulawa, rajistar dijital, da ilimin lafiyar al'umma.",
+        learningPath4Title: "Shiryen Aiki",
+        learningPath4Text: "Sadarwar aiki, aminci, warware matsala, halarta, da kula da ayyuka na asali.",
+        learningPath5Title: "Kasuwanci",
+        learningPath5Text: "Farashi, kula da kwastomomi, kuɗin waya, tunanin kasuwa, da tushen ƙananan sana'o'i.",
+        learningPath6Title: "Sakamakon Koyo",
+        progressLabel1: "Ci gaba",
+        progressLabel2: "Ci gaba",
+        progressLabel3: "Ci gaba",
+        progressLabel4: "Ci gaba",
+        progressLabel5: "Ci gaba",
+        tagBeginner: "Farko",
+        tagYouth: "Matasa",
+        tagFarmers: "Manoma",
+        tagProduction: "Samarwa",
+        tagHealth: "Lafiya",
+        tagCommunity: "Al'umma",
+        tagJobs: "Ayyuka",
+        tagReadiness: "Shiri",
+        tagBusiness: "Kasuwanci",
+        tagGrowth: "Ci gaba",
+        learningOutcomes: `
+          <li>Horo mai amfani ga masu harsuna daban-daban</li>
+          <li>Gajerun hanyoyin koyo masu alaƙa da aiki</li>
+          <li>Tsarin da ya dace da manoma da wayar hannu</li>
+          <li>Ci gaba zuwa hanyoyin aiki ta takardun shaida</li>
+        `,
+        workforceTitle: "Haɓaka Ma'aikata",
+        workforceIntro: "AFAYAI Nexus yana haɗa koyo kai tsaye da rayuwa. Masu amfani suna gina bayanan ƙwarewa sannan su shiga ayyuka a noma, lafiya, sufuri, kasuwanci, da hidimar al'umma.",
+        workBadge1: "Daidaita Ayyuka",
+        workBadge2: "Bayanan Ƙwarewa",
+        workBadge3: "Hanyoyin Sanya Aiki",
+        workCard1Title: "Bayanan Ma'aikata",
+        workCard1Text: "Masu amfani suna gina bayanin shiri bisa horo da takardun shaida da suka kammala.",
+        labelReady: "Ya Cancanci Aiki",
+        labelScore: "Shiri 82%",
+        workCard2Title: "Hanyoyin Sanya Aiki",
+        placementChannels: `
+          <li>Taimakon noma na al'umma</li>
+          <li>Mataimakin samun telehealth</li>
+          <li>Mai sauƙaƙa koyo</li>
+          <li>Mai kula da cibiyar manoma</li>
+        `,
+        workCard3Title: "Matakin Sana'a",
+        workCard3Text: "Masu farawa za su iya motsawa zuwa manyan ayyuka ta ci gaba da horo da aikin fili.",
+        workRoleTableTitle: "Misalan Ayyuka",
+        thRole: "Aiki",
+        thTrack: "Hanyar Horo",
+        thStatus: "Matsayi",
+        thRegion: "Yanki",
+        role1: "Ma'aikacin Tallafin Noma na Al'umma",
+        track1: "Tushen Agritech + Shiryen Aiki",
+        status1: "A Buɗe",
+        region1: "Karkara / Yanki",
+        role2: "Mataimakin Samun Telehealth",
+        track2: "Tallafin Telehealth + Tushen Dijital",
+        status2: "A Buɗe",
+        region2: "Asibiti / Cibiyar Al'umma",
+        role3: "Mai Kula da Cibiyar Manoma",
+        track3: "Tushen Agritrade + Kasuwanci",
+        status3: "A Hanya",
+        region3: "Gunduma / Ƙungiya",
+        role4: "Mai Sauƙaƙa Koyo",
+        track4: "Tushen Dijital + Ƙwarewar Koyarwa",
+        status4: "Gwaji",
+        region4: "Cibiyar Horo / Wayar Hannu",
+        healthTitle: "Lafiyar AFAYAI",
+        healthIntro: "AFAYAI Health yana faɗaɗa samun kulawa, ilimin lafiyar al'umma, tallafin dijital, da telehealth ga yankunan karkara da marasa gata.",
+        healthCard1Title: "Samun Kulawa daga Nesa",
+        healthCard1Text: "Masu amfani za su iya samun tallafin telehealth ta wayar hannu da tsarin al'umma.",
+        healthCard2Title: "Lafiyar Al'umma",
+        healthCard2Text: "Ilimin kariya yana tallafawa iyalai, mata, da al'ummomi.",
+        healthCard3Title: "Lafiya da Aiki",
+        healthCard3Text: "Samun lafiya yana ƙara halarta, tsayawa a aiki, yawan aiki, da shiga tattalin arziki.",
+        agritechTitle: "Agritech",
+        agritechIntro: "Agritech yana tallafawa manoma ta jagorar dijital, tsarin samarwa, shirye-shiryen amfanin gona, da tsarin da ya dace da manoma.",
+        agriCard1Title: "Kayan Tallafin Manoma",
+        agriList1: `
+          <li>Taimakon tsara amfanin gona</li>
+          <li>Sanin yanayi</li>
+          <li>Binciken kayan aiki</li>
+          <li>Jagorar da ta danganci horo</li>
+        `,
+        agriCard2Title: "Tsarin Freemium",
+        agriCard2Text: "Babban sabis na iya zama kyauta ga manoma yayin da masu saya, NGOs, gwamnatoci, da abokan hulɗa ke tallafawa girma.",
+        agriCard3Title: "Sakamakon Manomi",
+        agriCard3Text: "Inganta samarwa, gina kwarin gwiwa, da shirya manoma don shiga kasuwa sosai.",
+        agritradeTitle: "Agritrade",
+        agritradeIntro: "Agritrade ya wuce samarwa kawai. Yana tallafawa tattarawa, ganin farashi, shirye-shiryen kasuwanci, sufuri, samun masu saya, da motsi daga gona zuwa kasuwa.",
+        tradeBadge1: "Kasuwanni",
+        tradeBadge2: "Sufuri",
+        tradeBadge3: "Hanyoyin Manoma",
+        tradeCard1Title: "Tattarawa",
+        tradeCard1Text: "Tsara kayan manoma da ƙungiyoyi zuwa rukunan kaya masu gani da sayarwa.",
+        tradeCard2Title: "Haɗin Kasuwa",
+        tradeCard2Text: "Haɗa al'ummomi da masu saya, masu rarrabawa, cibiyoyi, da hanyoyin fitarwa nan gaba.",
+        tradeCard3Title: "Bayyanar Kasuwanci",
+        tradeCard3Text: "Bibiya ga shiri, yanayin farashi, matsayin oda, da dama a cibiyoyin gida da yankuna.",
+        tradeCard4Title: "Tallafin Sufuri",
+        tradeList1: `
+          <li>Tsarin tattarawa</li>
+          <li>Daidaita sufuri</li>
+          <li>Shiryen ajiya</li>
+          <li>Bayyanar isarwa</li>
+        `,
+        tradeCard5Title: "Tsarin Masu Saya",
+        tradeCard5Text: "Kuɗaɗen shiga na iya zuwa daga masu saya, abokan hulɗa, kuɗin kasuwanci, da shirye-shiryen cibiyoyi maimakon manoma kaɗai.",
+        tradeCard6Title: "Tasirin Yanki",
+        tradeCard6Text: "Agritrade yana taimakawa sauyawa daga noma mai ware zuwa shiga tattalin arziki cikin tsari.",
+        profileTitle: "Bayanan Guda ɗaya",
+        profileIntro: "Bayanan guda ɗaya suna haɗa ci gaban koyo, shiryen aiki, samun telehealth, tallafin agritech, da shiga Agritrade.",
+        profileCard1Title: "Suna",
+        profileCard1Text: "Mai amfani na Demo",
+        profileCard2Title: "Matsayi",
+        profileCard2Text: "Mai Koyo / Manomi / Mai shiga Ma'aikata",
+        profileCard3Title: "Faɗaɗawa",
+        profileCard3Text: "Samfurin Afirka mai harsuna da yawa",
+        profileCard4Title: "Matsayin Koyo",
+        profileCard4Text: "Hanyoyi 4 na ci gaba",
+        profileCard5Title: "Matsayin Ma'aikata",
+        profileCard5Text: "Ya cancanci aiki",
+        profileCard6Title: "Samun Lafiya",
+        profileCard6Text: "Telehealth a kunne yake",
+        btnStartLearning: "Fara Koyo",
+        btnViewJobs: "Duba Dama",
+        footerText: "Samfurin AFAYAI Nexus • Sigar GitHub Pages mai harsuna da yawa"
+      },
+
+      yo: {
+        pageDir: "ltr",
+        pageLang: "yo",
+        languageLabel: "Èdè",
+        platformMode: "Àwòrán ìdánwò pẹpẹ kan ṣoṣo",
+        brandTagline: "Sísopọ àwọn ènìyàn mọ́ ọgbọ́n, ìlera, iṣẹ́-ogbin, àti àǹfààní.",
+        navGroupMain: "Ìtọ́sọ́nà Àkọ́kọ́",
+        navDashboard: "Dashibodi",
+        navLearning: "Ẹ̀kọ́ àti Ìdàgbàsókè",
+        navWorkforce: "Agbára Iṣẹ́",
+        navHealth: "AFAYAI Health",
+        navAgritech: "Agritech",
+        navAgritrade: "Agritrade",
+        navProfile: "Profaili",
+        dashboardTitle: "Akopọ AFAYAI Nexus",
+        dashboardIntro: "AFAYAI Nexus jẹ́ pẹpẹ kan ṣoṣo tí ó ṣopọ telehealth AFAYAI, iṣẹ́ agritech, iraye si ọjà Agritrade, ìdàgbàsókè agbára iṣẹ́, àti eto ẹ̀kọ́ kékeré sínú irírí kan.",
+        badgeHealth: "Telehealth",
+        badgeLearning: "Ẹ̀kọ́",
+        badgeTrade: "Agritrade",
+        badgeWorkforce: "Agbára Iṣẹ́",
+        dashStat1Title: "Ẹrọ Iṣẹ́ Pataki",
+        dashStat1Text: "Ìlera, iṣẹ́-ogbin, ìṣòwò, àti ẹ̀kọ́ ní pẹpẹ kan ṣoṣo.",
+        dashStat2Title: "Ìrìnàjò Olùmúlò Kan",
+        dashStat2Text: "Profaili kan ṣoṣo ni ń so ọgbọ́n, iṣẹ́, àǹfààní, àti ìlera pọ̀.",
+        dashStat3Title: "Ẹ̀kọ́ Tí A Kọ Sínú Rẹ̀",
+        dashStat3Text: "Ẹrọ ẹ̀kọ́ kékeré tí a dá lórí ìmọ̀ràn Koachlearn.",
+        dashStat4Title: "Àpẹrẹ Ìdánwò",
+        dashStat4Text: "A kọ́ ọ́ fún GitHub Pages, ìfihàn sí alábàáṣiṣẹ́pọ̀, àti ìmúdájú tete.",
+        dashValueTitle: "Ìyebíye Pẹpẹ",
+        dashCard1Title: "Kọ́ Láti Jèrè",
+        dashCard1Text: "Àwọn olùmúlò parí ẹ̀kọ́ ìṣe gidi, wọ́n sì lọ sí ipa iṣẹ́ àti àwọn ọ̀nà owó-wiwọlé.",
+        dashCard2Title: "Ìlera àti Ìmúṣẹ́ Iṣẹ́",
+        dashCard2Text: "Iraye si telehealth ń ṣe atilẹyin fún àwùjọ aláìlera dáadáa àti agbára iṣẹ́ tó lágbára.",
+        dashCard3Title: "Ìdàgbàsókè Tó Dojúkọ Agbe",
+        dashCard3Text: "Awọn irinṣẹ Agritech ati Agritrade ń mú ìmúrasilẹ, ìhàn gbangba, àti iraye si ọjà pọ si.",
+        learningTitle: "Ẹ̀kọ́ àti Ìdàgbàsókè",
+        learningIntro: "Ẹ̀ka ẹ̀kọ́ yìí ni ẹ̀rọ ikẹ́kọ̀ọ́ inú AFAYAI Nexus. Ó ń ṣe atilẹyin fún ẹ̀kọ́ oníṣe, èdè púpọ̀, tí ó bá agbára iṣẹ́ mu fún agbẹ, ọdọ, obìnrin, oṣiṣẹ ìlera, àti ọmọ ìlú.",
+        learnBadge1: "Ọ̀nà Ọgbọ́n",
+        learnBadge2: "Àwọn Ẹ̀rí Kékèké",
+        learnBadge3: "Ìmúrasilẹ Iṣẹ́",
+        learningPath1Title: "Ipilẹ̀ Dídìjítàlì",
+        learningPath1Text: "Lílò fóònù alágbèéká ọlọ́gbọ́n, ìpilẹ̀ intanẹẹti, ìfiránṣẹ́, ààbò lórí ayélujára, àti ìbánisọ̀rọ̀ dídìjítàlì.",
+        learningPath2Title: "Ọgbọ́n Agritech",
+        learningPath2Text: "Ètò irugbin, ìmọ̀ ojú-ọjọ́, iṣẹ́ lẹ́yìn ìkórè, ìforúkọsílẹ̀ oko lórí ẹrọ, àti ètò èròjà.",
+        learningPath3Title: "Atilẹyin Telehealth",
+        learningPath3Text: "Ìtọ́sọ́nà aláìsàn, iranlọwọ iraye si ìtọju, ìforúkọsílẹ̀ dídìjítàlì, àti ẹ̀kọ́ ìlera àwùjọ.",
+        learningPath4Title: "Ìmúrasilẹ Iṣẹ́",
+        learningPath4Text: "Ìbánisọ̀rọ̀ amọ̀ja, ìgbẹ́kẹ̀lé, ìtúpalẹ̀ ìṣòro, wíwà sí iṣẹ́, àti ìṣàkóso iṣẹ́ ìpilẹ̀.",
+        learningPath5Title: "Ìṣòwò Kékèké",
+        learningPath5Text: "Ìdíyelé, ìtọju oníbàárà, owó lórí fóònù, ìrònú ọjà, àti ìpilẹ̀ ìṣòwò.",
+        learningPath6Title: "Abajade Ẹ̀kọ́",
+        progressLabel1: "Ìlọsíwájú",
+        progressLabel2: "Ìlọsíwájú",
+        progressLabel3: "Ìlọsíwájú",
+        progressLabel4: "Ìlọsíwájú",
+        progressLabel5: "Ìlọsíwájú",
+        tagBeginner: "Olubere",
+        tagYouth: "Ọdọ",
+        tagFarmers: "Agbe",
+        tagProduction: "Ìṣelọpọ",
+        tagHealth: "Ìlera",
+        tagCommunity: "Àwùjọ",
+        tagJobs: "Iṣẹ́",
+        tagReadiness: "Ìmúrasilẹ",
+        tagBusiness: "Ìṣòwò",
+        tagGrowth: "Ìdàgbàsókè",
+        learningOutcomes: `
+          <li>Ẹ̀kọ́ oníṣe fún àwọn olùmúlò èdè púpọ̀</li>
+          <li>Ọ̀nà ẹ̀kọ́ kúkúrú tó ní ìbáṣepọ̀ pẹ̀lú ipa iṣẹ́</li>
+          <li>Ìfìmọ̀ sílẹ̀ tó yẹ fún agbe àti fóònù alágbèéká</li>
+          <li>Ìlọsíwájú sí agbára iṣẹ́ nípasẹ̀ ẹ̀rí</li>
+        `,
+        workforceTitle: "Ìdàgbàsókè Agbára Iṣẹ́",
+        workforceIntro: "AFAYAI Nexus ń so ẹ̀kọ́ mọ́ ìgbé ayé lọ́nà taara. Àwọn olùmúlò ń kọ́ profaili ọgbọ́n tí a fọwọ́sowọpọ̀ sí, wọ́n sì le wọ ipa iṣẹ́ nínú ogbin, ìlera, eekaderi, ìṣòwò, àti iṣẹ́ àwùjọ.",
+        workBadge1: "Ìbámu Ipa Iṣẹ́",
+        workBadge2: "Profaili Ọgbọ́n",
+        workBadge3: "Ọ̀nà Ìfi Iṣẹ́ Sílẹ̀",
+        workCard1Title: "Profaili Agbára Iṣẹ́",
+        workCard1Text: "Àwọn olùmúlò ń kọ́ profaili ìmúrasilẹ lórí ẹ̀kọ́ tí wọ́n ti parí, ẹ̀rí, àti ìkópa iṣẹ́.",
+        labelReady: "Ó Ṣetan Fún Ìfiṣẹ́",
+        labelScore: "Ìmúrasilẹ 82%",
+        workCard2Title: "Ọ̀nà Ìfiṣẹ́ Sílẹ̀",
+        placementChannels: `
+          <li>Atilẹyin ogbin àwùjọ</li>
+          <li>Olùrànlọ́wọ́ iraye si telehealth</li>
+          <li>Olùdásílẹ̀ ẹ̀kọ́</li>
+          <li>Olùṣàkóso nẹ́tíwọ́ọ̀kì agbe</li>
+        `,
+        workCard3Title: "Òpó Ìdàgbàsókè Iṣẹ́",
+        workCard3Text: "Àwọn akẹ́kọ̀ọ́ tuntun lè gòkè lọ sí ipa iṣẹ́ tó ga jù lọ nípasẹ̀ ikẹ́kọ̀ọ́ tó tẹ̀síwájú àti iṣẹ́ pápá.",
+        workRoleTableTitle: "Àpẹẹrẹ Ipa Iṣẹ́",
+        thRole: "Ipa Iṣẹ́",
+        thTrack: "Ọ̀nà Ikẹ́kọ̀ọ́",
+        thStatus: "Ipò",
+        thRegion: "Agbègbè",
+        role1: "Osise Atilẹyin Ogbin Àwùjọ",
+        track1: "Ipilẹ̀ Agritech + Ìmúrasilẹ Iṣẹ́",
+        status1: "Ṣíṣi",
+        region1: "Ìgbèríko / Agbègbè",
+        role2: "Olùrànlọ́wọ́ Iraye si Telehealth",
+        track2: "Atilẹyin Telehealth + Ipilẹ̀ Dídìjítàlì",
+        status2: "Ṣíṣi",
+        region2: "Ilé-iwosan / Ibùdó Àwùjọ",
+        role3: "Olùṣàkóso Nẹ́tíwọ́ọ̀kì Agbe",
+        track3: "Ipilẹ̀ Agritrade + Ìṣòwò Kékèké",
+        status3: "Nínú Eto",
+        region3: "Agbègbè / Ẹgbẹ́ Alájọṣe",
+        role4: "Olùdásílẹ̀ Ẹ̀kọ́",
+        track4: "Ipilẹ̀ Dídìjítàlì + Ọgbọ́n Ìtọ́sọ́nà",
+        status4: "Pilot",
+        region4: "Ilé-ìkẹ́kọ̀ọ́ / Alágbèéká",
+        healthTitle: "AFAYAI Health",
+        healthIntro: "AFAYAI Health ń faagun iraye si ìtọju, ẹ̀kọ́ ìlera àwùjọ, atilẹyin ayẹwo dídìjítàlì, àti iṣẹ́ telehealth fún àwọn agbegbe tí kò ní ìrísí tó peye.",
+        healthCard1Title: "Iraye si Látọ̀nà Jìnà",
+        healthCard1Text: "Àwọn olùmúlò lè wọle sí atilẹyin telehealth nípasẹ̀ foonu alágbèéká àti àwùjọ.",
+        healthCard2Title: "Ìlera Àwùjọ",
+        healthCard2Text: "Ẹ̀kọ́ ìdènà ń ṣe atilẹyin fún ẹbí, obìnrin, àti àwùjọ ibìkan.",
+        healthCard3Title: "Ìlera àti Iṣẹ́",
+        healthCard3Text: "Iraye si ìlera ń mú wíwà sí iṣẹ́, ìdúró, ìmúṣẹ́, àti ìkópa ọrọ̀ ajé pọ si.",
+        agritechTitle: "Agritech",
+        agritechIntro: "Ẹ̀ka Agritech ń ran àwọn agbe lọ́wọ́ pẹ̀lú ìtọ́sọ́nà dídìjítàlì, ètò iṣelọpọ, ìmúrasilẹ irugbin, àti sísẹ̀ tó bá agbe mu.",
+        agriCard1Title: "Àwọn Irinṣẹ́ Fún Agbe",
+        agriList1: `
+          <li>Atilẹyin ètò irugbin</li>
+          <li>Ìmọ̀ ojú-ọjọ́</li>
+          <li>Tẹ̀lé ìmúrasilẹ èròjà</li>
+          <li>Ìtọ́sọ́nà tó dá lórí ẹ̀kọ́</li>
+        `,
+        agriCard2Title: "Àpẹẹrẹ Freemium",
+        agriCard2Text: "Àwọn iṣẹ́ àkọ́kọ́ lè wà ní ọ̀fẹ́ fún agbe, nígbà tí àwọn olùra, NGO, ìjọba, àti alábàáṣiṣẹ́pọ̀ yóò ṣe ináwó fún ìtẹ̀síwájú.",
+        agriCard3Title: "Abajade Agbe",
+        agriCard3Text: "Mú iṣelọpọ pọ si, kọ́ ìgboyà, kí o sì mura agbe sí ìkópa tó lágbára jù lọ nínú ọjà.",
+        agritradeTitle: "Agritrade",
+        agritradeIntro: "Agritrade kọja iṣelọpọ. Ó ń ṣe atilẹyin ìkójọpọ̀, ìhàn gbangba ìye owó, ìmúrasilẹ ìṣòwò, eekaderi, iraye si olùra, àti ìrìnàjò láti oko sí ọjà.",
+        tradeBadge1: "Iraye si Ọjà",
+        tradeBadge2: "Eekaderi",
+        tradeBadge3: "Nẹ́tíwọ́ọ̀kì Agbe",
+        tradeCard1Title: "Ìkójọpọ̀",
+        tradeCard1Text: "Ṣètò àkójọpọ̀ ọja láti ọ̀dọ̀ agbe àti ẹgbẹ́ àjọṣe sí àwọn ẹgbẹ́ ipese tó hàn gbangba tí a lè ta.",
+        tradeCard2Title: "Asopọ Ọjà",
+        tradeCard2Text: "So àwùjọ pọ̀ mọ́ àwọn olùra, olùpínpín, ilé-iṣẹ́, àti ọ̀nà títà òkè òkun lọ́jọ́ iwájú.",
+        tradeCard3Title: "Ìhàn Gbangba Ìṣòwò",
+        tradeCard3Text: "Tẹ̀lé ìmúrasilẹ, ìtòsí ìye owó, ipo àṣẹ, àti àǹfààní kọjá àwọn nẹ́tíwọ́ọ̀kì agbègbè.",
+        tradeCard4Title: "Atilẹyin Eekaderi",
+        tradeList1: `
+          <li>Ètò ìkójọpọ̀</li>
+          <li>Ìṣọ̀kan ìrìnàjò</li>
+          <li>Ìmúrasilẹ ìpamọ́</li>
+          <li>Ìhàn gbangba ìfiránṣẹ́</li>
+        `,
+        tradeCard5Title: "Àpẹẹrẹ Olùra",
+        tradeCard5Text: "Owó-wiwọlé lè wá láti ọ̀dọ̀ olùra, alábàáṣiṣẹ́pọ̀, owó iṣẹ́ ìṣòwò, àti eto ilé-iṣẹ́ dípò agbe nìkan.",
+        tradeCard6Title: "Ìpa Agbègbè",
+        tradeCard6Text: "Agritrade ń ràn lọ́wọ́ láti yí iṣẹ́-ogbin aláìsọ̀kan padà sí ìkópa ọrọ̀ ajé tó ṣọ̀kan.",
+        profileTitle: "Profaili Kan Ṣoṣo",
+        profileIntro: "Profaili kan ń so ìlọsíwájú ẹ̀kọ́, ìmúrasilẹ iṣẹ́, iraye si telehealth, atilẹyin agritech, àti ìkópa Agritrade pọ̀.",
+        profileCard1Title: "Orúkọ",
+        profileCard1Text: "Olùmúlò Demo",
+        profileCard2Title: "Ipa",
+        profileCard2Text: "Akẹ́kọ̀ọ́ / Agbe / Olùkópa Agbára Iṣẹ́",
+        profileCard3Title: "Ìfàgbékalẹ̀",
+        profileCard3Text: "Àpẹẹrẹ Afirika gbogbo pẹ̀lú èdè púpọ̀",
+        profileCard4Title: "Ipo Ẹ̀kọ́",
+        profileCard4Text: "Ọ̀nà mẹ́rin ń tẹ̀síwájú",
+        profileCard5Title: "Ipo Agbára Iṣẹ́",
+        profileCard5Text: "Ó ṣetan fún ìfiṣẹ́",
+        profileCard6Title: "Iraye si Ìlera",
+        profileCard6Text: "Telehealth ti ṣiṣẹ́",
+        btnStartLearning: "Bẹ̀rẹ̀ Ẹ̀kọ́",
+        btnViewJobs: "Wo Àwọn Àǹfààní",
+        footerText: "Àpẹrẹ AFAYAI Nexus • Ẹ̀dà GitHub Pages oní èdè púpọ̀"
+      },
+
+      ig: {
+        pageDir: "ltr",
+        pageLang: "ig",
+        languageLabel: "Asụsụ",
+        platformMode: "Ngosi ikpo okwu jikọtara ọnụ",
+        brandTagline: "Ijikọ ndị mmadụ na nka, ahụike, ugbo, na ohere.",
+        navGroupMain: "Nduzi Isi",
+        navDashboard: "Dashbọọdụ",
+        navLearning: "Mmụta na Mmepe",
+        navWorkforce: "Ndị Ọrụ",
+        navHealth: "AFAYAI Health",
+        navAgritech: "Agritech",
+        navAgritrade: "Agritrade",
+        navProfile: "Profaịlụ",
+        dashboardTitle: "Nchịkọta AFAYAI Nexus",
+        dashboardIntro: "AFAYAI Nexus bụ otu ikpo okwu jikọtara telehealth AFAYAI, ọrụ agritech, ohere ahịa Agritrade, mmepe ndị ọrụ, na usoro mmụta pere mpe n’otu ahụmahụ.",
+        badgeHealth: "Telehealth",
+        badgeLearning: "Mmụta",
+        badgeTrade: "Agritrade",
+        badgeWorkforce: "Ndị Ọrụ",
+        dashStat1Title: "Ngwaọrụ Isi",
+        dashStat1Text: "Ahụike, ugbo, azụmahịa, na mmụta n’otu ikpo okwu.",
+        dashStat2Title: "Ụzọ Onye Ọrụ Otu",
+        dashStat2Text: "Otu profaịlụ na-ejikọta nka, ọrụ, ohere, na mmepe.",
+        dashStat3Title: "Mmụta Dị n’ime Ya",
+        dashStat3Text: "Usoro mmụta dị mfe sitere n’echiche Koachlearn.",
+        dashStat4Title: "Ngosi Nnwale",
+        dashStat4Text: "E wuru ya maka GitHub Pages, ngosipụta ndị mmekọ, na nkwenye mbụ.",
+        dashValueTitle: "Uru Ikpo Okwu",
+        dashCard1Title: "Mụta ka I nweta ego",
+        dashCard1Text: "Ndị ọrụ na-emecha ọzụzụ bara uru ma banye n’ọrụ, ọrụ ekenyere ha, na ụzọ isi nweta ego.",
+        dashCard2Title: "Ahụike na Mmepụta",
+        dashCard2Text: "Inweta telehealth na-akwado obodo ka mma ma na-eme ka ndị ọrụ sonye nke ọma.",
+        dashCard3Title: "Mmepe Maka Ndị Ọrụ Ugbo",
+        dashCard3Text: "Ngwaọrụ Agritech na Agritrade na-eme ka ịdị njikere, ịdị anya, na ohere ahịa bawanye.",
+        learningTitle: "Mmụta na Mmepe",
+        learningIntro: "Nke a bụ injin ọzụzụ e wuru n’ime AFAYAI Nexus. Ọ na-akwado mmụta bara uru, asụsụ ọtụtụ, na kwekọrọ na ọrụ maka ndị ọrụ ugbo, ndị ntorobịa, ụmụ nwanyị, ndị ọrụ ahụike, na obodo.",
+        learnBadge1: "Ụzọ Nka",
+        learnBadge2: "Asambodo Nta",
+        learnBadge3: "Njikere Maka Ọrụ",
+        learningPath1Title: "Ndabere Dijital",
+        learningPath1Text: "Iji ekwentị smart, ntọala intanet, izi ozi, nchekwa n’ịntanetị, na nkwurịta okwu dijital.",
+        learningPath2Title: "Nka Agritech",
+        learningPath2Text: "Atụmatụ mkpụrụ osisi, nghọta ihu igwe, ọrụ mgbe owuwe ihe ubi gasịrị, ndekọ ugbo dijital, na atụmatụ ntinye ihe.",
+        learningPath3Title: "Nkwado Telehealth",
+        learningPath3Text: "Nduzi ndị ọrịa, nkwado ịnweta nlekọta, ndebanye dijital, na mmụta ahụike obodo.",
+        learningPath4Title: "Njikere Maka Ọrụ",
+        learningPath4Text: "Nkwurịta okwu ọkachamara, ntụkwasị obi, idozi nsogbu, ịga ọrụ oge, na njikwa ọrụ ndị bụ isi.",
+        learningPath5Title: "Ịzụ Ahịa",
+        learningPath5Text: "Ịtọ ọnụahịa, nlekọta ndị ahịa, ego site na ekwentị, echiche ahịa, na ntọala azụmahịa nta.",
+        learningPath6Title: "Nsonaazụ Mmụta",
+        progressLabel1: "Ọganihu",
+        progressLabel2: "Ọganihu",
+        progressLabel3: "Ọganihu",
+        progressLabel4: "Ọganihu",
+        progressLabel5: "Ọganihu",
+        tagBeginner: "Mbido",
+        tagYouth: "Ntorobịa",
+        tagFarmers: "Ndị Ọrụ Ugbo",
+        tagProduction: "Mmepụta",
+        tagHealth: "Ahụike",
+        tagCommunity: "Obodo",
+        tagJobs: "Ọrụ",
+        tagReadiness: "Njikere",
+        tagBusiness: "Azụmahịa",
+        tagGrowth: "Mmepe",
+        learningOutcomes: `
+          <li>Ọzụzụ bara uru maka ndị ọrụ nwere asụsụ dị iche iche</li>
+          <li>Ụzọ mmụta mkpirikpi jikọtara na ọrụ</li>
+          <li>Usoro dabara adaba maka ndị ọrụ ugbo na ekwentị</li>
+          <li>Ịga n’ihu n’ọrụ site na asambodo</li>
+        `,
+        workforceTitle: "Mmepe Ndị Ọrụ",
+        workforceIntro: "AFAYAI Nexus na-ejikọta mmụta ozugbo na ibi ndụ. Ndị ọrụ na-ewu profaịlụ nka a kwadoro ma banye n’ọrụ ugbo, ahụike, ngagharị, azụmahịa, na ọrụ obodo.",
+        workBadge1: "Nkọrọ Ọrụ",
+        workBadge2: "Profaịlụ Nka",
+        workBadge3: "Ụzọ Itinye N’ọrụ",
+        workCard1Title: "Profaịlụ Ndị Ọrụ",
+        workCard1Text: "Ndị ọrụ na-ewu profaịlụ njikere dabere na ọzụzụ ha gụchara, asambodo, na isonye ha.",
+        labelReady: "Tozuru Etu Esi Etinye Ya N’ọrụ",
+        labelScore: "Njikere 82%",
+        workCard2Title: "Ụzọ Itinye N’ọrụ",
+        placementChannels: `
+          <li>Nkwado ugbo obodo</li>
+          <li>Onye enyemaka ịnweta telehealth</li>
+          <li>Onye na-eme ka mmụta dị mfe</li>
+          <li>Onye nhazi netwọkụ ndị ọrụ ugbo</li>
+        `,
+        workCard3Title: "Ụzọ Ịrị Elu n’ọrụ",
+        workCard3Text: "Ndị mbido nwere ike ịga n’ọrụ dị elu site n’ọzụzụ na-aga n’ihu na arụmọrụ n’ubi.",
+        workRoleTableTitle: "Ihe Nlereanya Ọrụ",
+        thRole: "Ọrụ",
+        thTrack: "Ụzọ Ọzụzụ",
+        thStatus: "Ọnọdụ",
+        thRegion: "Mpaghara",
+        role1: "Onye Ọrụ Nkwado Ugbo Obodo",
+        track1: "Ndabere Agritech + Njikere Maka Ọrụ",
+        status1: "Mepe",
+        region1: "Ime obodo / Mpaghara",
+        role2: "Onye Enyemaka Ịnweta Telehealth",
+        track2: "Nkwado Telehealth + Ndabere Dijital",
+        status2: "Mepe",
+        region2: "Ụlọọgwụ / Ebe Obodo",
+        role3: "Onye Nhazi Netwọkụ Ndị Ọrụ Ugbo",
+        track3: "Ndabere Agritrade + Ịzụ Ahịa",
+        status3: "Na pipeline",
+        region3: "Distrikti / Nzukọ",
+        role4: "Onye Na-eme Ka Mmụta Dị Mfe",
+        track4: "Ndabere Dijital + Nka nkuzi",
+        status4: "Pilot",
+        region4: "Ebe ọzụzụ / Mobile",
+        healthTitle: "AFAYAI Health",
+        healthIntro: "AFAYAI Health na-agbasa ịnweta nlekọta, mmụta ahụike obodo, nkwado dijital, na ọrụ telehealth maka obodo ime obodo na ndị na-enweghị ọtụtụ ohere.",
+        healthCard1Title: "Ịnweta Site N’ebe Dị Anya",
+        healthCard1Text: "Ndị ọrụ nwere ike ịnweta nkwado telehealth site na usoro dabere na ekwentị na obodo.",
+        healthCard2Title: "Ahụike Obodo",
+        healthCard2Text: "Mmụta mgbochi ọrịa na-akwado ezinụlọ, ụmụ nwanyị, na obodo.",
+        healthCard3Title: "Ahụike na Ọrụ",
+        healthCard3Text: "Ịnweta ahụike na-eme ka ịga ọrụ, ịdịte aka, mmepụta, na isonye akụ na ụba ka mma.",
+        agritechTitle: "Agritech",
+        agritechIntro: "Modulu Agritech na-akwado ndị ọrụ ugbo site na nduzi dijital, atụmatụ mmepụta, njikere mkpụrụ osisi, na usoro dabara na onye ọrụ ugbo.",
+        agriCard1Title: "Ngwaọrụ Maka Ndị Ọrụ Ugbo",
+        agriList1: `
+          <li>Nkwado atụmatụ mkpụrụ osisi</li>
+          <li>Ịmata ihu igwe</li>
+          <li>Nlekọta ntinye ihe</li>
+          <li>Nduzi jikọtara na ọzụzụ</li>
+        `,
+        agriCard2Title: "Usoro Freemium",
+        agriCard2Text: "Ọrụ ndị bụ isi nwere ike ịnọgide n’efu maka ndị ọrụ ugbo ebe ndị na-azụ ahịa, NGOs, gọọmenti, na ndị mmekọ na-akwado mmepe.",
+        agriCard3Title: "Nsonaazụ Maka Onye Ọrụ Ugbo",
+        agriCard3Text: "Melite mmepụta, wuo ntụkwasị obi, ma kwadebe ndị ọrụ ugbo maka isonye ahịa ka ukwuu.",
+        agritradeTitle: "Agritrade",
+        agritradeIntro: "Agritrade gafere mmepụta. Ọ na-akwado nchịkọta, ịhụ ọnụahịa, njikere azụmahịa, njem, ịnweta ndị na-azụ ahịa, na ije site n’ubi ruo n’ahịa.",
+        tradeBadge1: "Ịnweta Ahịa",
+        tradeBadge2: "Ngagharị",
+        tradeBadge3: "Netwọkụ Ndị Ọrụ Ugbo",
+        tradeCard1Title: "Nchịkọta",
+        tradeCard1Text: "Hazie ngwaahịa sitere n’aka ndị ọrụ ugbo na ndị otu ka ọ bụrụ otu ọkọnọ a pụrụ ịhụ ma ree.",
+        tradeCard2Title: "Njikọ Ahịa",
+        tradeCard2Text: "Jikọọ obodo na ndị na-azụ ahịa, ndị na-ekesa, ụlọ ọrụ, na ụzọ mbupụ n’ọdịnihu.",
+        tradeCard3Title: "Ịhụ Azụmahịa",
+        tradeCard3Text: "Soro njikere, ntụziaka ọnụahịa, ọnọdụ iwu, na ohere n’ime netwọkụ obodo na mpaghara.",
+        tradeCard4Title: "Nkwado Ngagharị",
+        tradeList1: `
+          <li>Atụmatụ nchịkọta</li>
+          <li>Nhazi njem</li>
+          <li>Njikere nchekwa</li>
+          <li>Ịhụ nnyefe</li>
+        `,
+        tradeCard5Title: "Usoro Ndị Na-azụ Ahịa",
+        tradeCard5Text: "Ego mbata nwere ike isi n’aka ndị na-azụ ahịa, ndị mmekọ, ụgwọ azụmahịa, na mmemme ụlọ ọrụ bịa kama ịdabere naanị na ndị ọrụ ugbo.",
+        tradeCard6Title: "Mmetụta Mpaghara",
+        tradeCard6Text: "Agritrade na-enyere aka ịgbanwe ọrụ ugbo dị iche iche ka ọ bụrụ isonye akụ na ụba a haziri ahazi.",
+        profileTitle: "Profaịlụ Jikọtara Ọnụ",
+        profileIntro: "Otu profaịlụ na-ejikọta ọganihu mmụta, njikere ọrụ, ịnweta telehealth, nkwado agritech, na isonye Agritrade.",
+        profileCard1Title: "Aha",
+        profileCard1Text: "Onye ọrụ ngosi",
+        profileCard2Title: "Ọrụ",
+        profileCard2Text: "Onye mmụta / Onye ọrụ ugbo / Onye sonyere n’ọrụ",
+        profileCard3Title: "Mgbasa",
+        profileCard3Text: "Ụdị asụsụ ọtụtụ nke Pan-African",
+        profileCard4Title: "Ọnọdụ Mmụta",
+        profileCard4Text: "Ụzọ 4 na-aga n’ihu",
+        profileCard5Title: "Ọnọdụ Ndị Ọrụ",
+        profileCard5Text: "Tozuru etozu",
+        profileCard6Title: "Ịnweta Ahụike",
+        profileCard6Text: "Telehealth arụ ọrụ",
+        btnStartLearning: "Bido Mmụta",
+        btnViewJobs: "Lee Ohere",
+        footerText: "Ngosi AFAYAI Nexus • Ụdị GitHub Pages nwere ọtụtụ asụsụ"
+      }
+    };
+
+    let currentLanguage = "en";
+
+    function applyTranslation(lang){
+      const t = translations[lang] || translations.en;
+      currentLanguage = lang;
+
+      document.documentElement.lang = t.pageLang || "en";
+      document.documentElement.dir = t.pageDir || "ltr";
+
+      Object.keys(t).forEach(key => {
+        const el = document.getElementById(key);
+        if (!el) return;
+        const value = t[key];
+        if (typeof value === "string" && value.includes("<li>")) {
+          el.innerHTML = value;
+        } else {
+          el.textContent = value;
+        }
+      });
+
+      document.getElementById("languageSelect").value = lang;
+    }
+
+    function changeLanguage(lang){
+      applyTranslation(lang);
+    }
+
+    applyTranslation("en");
+  </script>
 </body>
 </html>
