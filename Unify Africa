@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AFAYAI Unified Platform Demo</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">A</div>
+        <div>
+          <h1>AFAYAI Nexus</h1>
+          <p>Unified platform demo</p>
+        </div>
+      </div>
+      <nav>
+        <button class="nav-link active" data-section="dashboard">Dashboard</button>
+        <button class="nav-link" data-section="health">AFAYAI Health</button>
+        <button class="nav-link" data-section="agritech">Agritech</button>
+        <button class="nav-link" data-section="learning">Learning</button>
+        <button class="nav-link" data-section="workforce">Workforce</button>
+        <button class="nav-link" data-section="profile">Profile</button>
+      </nav>
+      <div class="sidebar-footer">
+        <span class="status-dot"></span>
+        Demo Mode
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <h2 id="page-title">Dashboard</h2>
+          <p id="page-subtitle">Integrated telehealth, agritech, learning, and workforce development.</p>
+        </div>
+        <div class="topbar-actions">
+          <button class="secondary-btn">Export Demo Report</button>
+          <button class="primary-btn">Invite Partner</button>
+        </div>
+      </header>
+
+      <section id="dashboard" class="view active">
+        <div class="grid four">
+          <article class="card stat-card">
+            <span class="eyebrow">Active Learners</span>
+            <h3>1,248</h3>
+            <p>Across health, agritech, and workforce tracks.</p>
+          </article>
+          <article class="card stat-card">
+            <span class="eyebrow">Workforce Ready</span>
+            <h3>462</h3>
+            <p>Learners who completed pathway requirements.</p>
+          </article>
+          <article class="card stat-card">
+            <span class="eyebrow">Telehealth Visits</span>
+            <h3>318</h3>
+            <p>Remote consultations supported this month.</p>
+          </article>
+          <article class="card stat-card">
+            <span class="eyebrow">Agri Projects</span>
+            <h3>29</h3>
+            <p>Field operations and production pilots in progress.</p>
+          </article>
+        </div>
+
+        <div class="grid two">
+          <article class="card">
+            <div class="card-header">
+              <h3>Platform model</h3>
+              <span class="pill">Unified flow</span>
+            </div>
+            <div class="flow-row">
+              <div class="flow-step">Learn</div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-step">Certify</div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-step">Place</div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-step">Support</div>
+            </div>
+            <p class="muted">This demo shows how one user profile connects learning progress, telehealth access, agritech pathways, and job readiness.</p>
+          </article>
+
+          <article class="card">
+            <div class="card-header">
+              <h3>Priority tracks</h3>
+              <span class="pill">Pilot-ready</span>
+            </div>
+            <ul class="clean-list">
+              <li>Community Health Navigator</li>
+              <li>Agritech Field Assistant</li>
+              <li>Digital Operations Support</li>
+              <li>Supply Chain & Market Access Coordinator</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="grid two">
+          <article class="card">
+            <div class="card-header">
+              <h3>Featured learner</h3>
+              <span class="pill success">Workforce eligible</span>
+            </div>
+            <div class="profile-block">
+              <div class="avatar">NM</div>
+              <div>
+                <h4>Nia M.</h4>
+                <p>Completed Digital Literacy, Telehealth Support Basics, and Agritech Foundations.</p>
+              </div>
+            </div>
+            <div class="progress-group">
+              <label>Learning Pathway Completion</label>
+              <div class="progress"><span style="width: 84%"></span></div>
+            </div>
+            <div class="progress-group">
+              <label>Job Readiness Score</label>
+              <div class="progress"><span style="width: 76%"></span></div>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-header">
+              <h3>Upcoming actions</h3>
+              <span class="pill">This week</span>
+            </div>
+            <ul class="timeline">
+              <li><strong>Mon:</strong> Review telehealth partner dashboard</li>
+              <li><strong>Tue:</strong> Approve agritech lesson content</li>
+              <li><strong>Wed:</strong> Validate workforce placements</li>
+              <li><strong>Thu:</strong> Demo platform to funding stakeholders</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="health" class="view">
+        <div class="grid two">
+          <article class="card">
+            <div class="card-header">
+              <h3>AFAYAI Health</h3>
+              <span class="pill">Telehealth</span>
+            </div>
+            <p>Remote consultations, referral pathways, maternal health support, and AI-assisted triage can be managed here.</p>
+            <div class="grid two compact">
+              <div class="mini-card">
+                <span>Consultations</span>
+                <strong>318</strong>
+              </div>
+              <div class="mini-card">
+                <span>Community agents</span>
+                <strong>92</strong>
+              </div>
+            </div>
+          </article>
+          <article class="card">
+            <div class="card-header">
+              <h3>Care pathways</h3>
+              <span class="pill">Modules</span>
+            </div>
+            <ul class="clean-list">
+              <li>Virtual Consult Scheduling</li>
+              <li>Rural Health Screening</li>
+              <li>Maternal & Child Support</li>
+              <li>Health Education Campaigns</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="agritech" class="view">
+        <div class="grid two">
+          <article class="card">
+            <div class="card-header">
+              <h3>Agritech Operations</h3>
+              <span class="pill">Production</span>
+            </div>
+            <p>Track farming cohorts, market access, logistics readiness, and production milestones in one place.</p>
+            <table>
+              <thead>
+                <tr><th>Site</th><th>Status</th><th>Focus</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Cluster A</td><td>Active</td><td>Vegetable production</td></tr>
+                <tr><td>Cluster B</td><td>Pilot</td><td>Cold-chain readiness</td></tr>
+                <tr><td>Cluster C</td><td>Onboarding</td><td>Women-led cooperative</td></tr>
+              </tbody>
+            </table>
+          </article>
+          <article class="card">
+            <div class="card-header">
+              <h3>Ag learning tie-in</h3>
+              <span class="pill">Skills</span>
+            </div>
+            <ul class="clean-list">
+              <li>Agritech Foundations</li>
+              <li>Digital Farm Recordkeeping</li>
+              <li>Post-Harvest Handling</li>
+              <li>Market Linkage Basics</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="learning" class="view">
+        <div class="grid two">
+          <article class="card">
+            <div class="card-header">
+              <h3>Koachlearn Lite</h3>
+              <span class="pill">Embedded</span>
+            </div>
+            <p>This is the scaled-down built-in learning system for the unified platform.</p>
+            <div class="course-list" id="course-list"></div>
+          </article>
+          <article class="card">
+            <div class="card-header">
+              <h3>Certification logic</h3>
+              <span class="pill success">Linked to jobs</span>
+            </div>
+            <ul class="clean-list">
+              <li>Complete lessons</li>
+              <li>Pass quiz threshold</li>
+              <li>Unlock skill badge</li>
+              <li>Sync to workforce eligibility</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="workforce" class="view">
+        <div class="grid two">
+          <article class="card">
+            <div class="card-header">
+              <h3>Workforce pathways</h3>
+              <span class="pill">Placement</span>
+            </div>
+            <div class="job-list">
+              <div class="job-item">
+                <div>
+                  <h4>Community Health Navigator</h4>
+                  <p>Requires Telehealth Support Basics + Community Outreach</p>
+                </div>
+                <button class="secondary-btn small">View Path</button>
+              </div>
+              <div class="job-item">
+                <div>
+                  <h4>Agritech Field Assistant</h4>
+                  <p>Requires Agritech Foundations + Farm Data Entry</p>
+                </div>
+                <button class="secondary-btn small">View Path</button>
+              </div>
+              <div class="job-item">
+                <div>
+                  <h4>Digital Operations Support</h4>
+                  <p>Requires Digital Literacy + Admin Systems Basics</p>
+                </div>
+                <button class="secondary-btn small">View Path</button>
+              </div>
+            </div>
+          </article>
+          <article class="card">
+            <div class="card-header">
+              <h3>Eligibility summary</h3>
+              <span class="pill">Live demo</span>
+            </div>
+            <div class="progress-group">
+              <label>Health role match</label>
+              <div class="progress"><span style="width: 72%"></span></div>
+            </div>
+            <div class="progress-group">
+              <label>Agritech role match</label>
+              <div class="progress"><span style="width: 88%"></span></div>
+            </div>
+            <div class="progress-group">
+              <label>Digital ops role match</label>
+              <div class="progress"><span style="width: 64%"></span></div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="profile" class="view">
+        <article class="card">
+          <div class="card-header">
+            <h3>Unified learner-worker profile</h3>
+            <span class="pill">Single login</span>
+          </div>
+          <div class="grid two">
+            <div>
+              <h4>Core profile</h4>
+              <ul class="clean-list">
+                <li>Name: Nia M.</li>
+                <li>Region: Pilot Region 01</li>
+                <li>Role type: Learner / Workforce Candidate</li>
+                <li>Health access: Enabled</li>
+              </ul>
+            </div>
+            <div>
+              <h4>Earned skills</h4>
+              <div class="badge-wrap">
+                <span class="badge">Digital Literacy</span>
+                <span class="badge">Telehealth Basics</span>
+                <span class="badge">Agritech Foundations</span>
+                <span class="badge">Community Outreach</span>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
