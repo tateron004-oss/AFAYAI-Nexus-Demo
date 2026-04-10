@@ -1,1036 +1,986 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AFAYAI Nexus Prototype</title>
-  <style>
-    :root{
-      --bg:#07111f;
-      --bg2:#0b1830;
-      --panel:#0f223b;
-      --panel2:#132b49;
-      --line:rgba(255,255,255,.09);
-      --text:#edf4ff;
-      --muted:#afc3e7;
-      --blue:#4ea1ff;
-      --blue2:#2d7de0;
-      --green:#31c27c;
-      --gold:#f1b643;
-      --danger:#ff8d8d;
-      --shadow:0 16px 36px rgba(0,0,0,.28);
-      --radius:18px;
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%);color:var(--text)}
-    body{min-height:100vh}
-    button,select,input,textarea{font:inherit}
-    .topbar{
-      position:sticky;top:0;z-index:50;
-      backdrop-filter:blur(12px);
-      background:rgba(5,10,18,.82);
-      border-bottom:1px solid var(--line);
-    }
-    .topbar-inner{
-      max-width:1440px;margin:0 auto;padding:14px 18px;
-      display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
-    }
-    .brand{display:flex;align-items:center;gap:12px}
-    .brand-mark{
-      width:46px;height:46px;border-radius:14px;
-      background:linear-gradient(135deg,var(--blue),var(--green));
-      display:flex;align-items:center;justify-content:center;
-      font-weight:700;color:white;box-shadow:var(--shadow)
-    }
-    .brand h1{margin:0;font-size:1.1rem}
-    .brand p{margin:4px 0 0;color:var(--muted);font-size:.92rem}
-    .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    .pill,.langwrap{
-      background:rgba(255,255,255,.04);
-      border:1px solid var(--line);
-      border-radius:999px;padding:8px 12px;color:var(--text)
-    }
-    select{background:transparent;color:var(--text);border:none;outline:none}
-    select option{color:#111}
-    .layout{display:grid;grid-template-columns:280px 1fr;min-height:calc(100vh - 78px)}
-    .sidebar{
-      border-right:1px solid var(--line);
-      background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));
-      padding:18px 14px;
-    }
-    .nav-title{
-      margin:8px 10px 12px;
-      font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.9px
-    }
-    .nav-btn{
-      width:100%;display:flex;gap:10px;align-items:center;
-      background:transparent;border:1px solid transparent;color:var(--text);cursor:pointer;
-      padding:14px;border-radius:14px;text-align:left;margin-bottom:8px;transition:.2s ease
-    }
-    .nav-btn:hover{background:rgba(255,255,255,.05);border-color:var(--line)}
-    .nav-btn.active{
-      background:linear-gradient(135deg,rgba(78,161,255,.16),rgba(49,194,124,.1));
-      border-color:rgba(78,161,255,.28)
-    }
-    .nav-icon{
-      width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.06);
-      display:flex;align-items:center;justify-content:center;flex-shrink:0
-    }
-    .content{padding:22px}
-    .section{display:none}
-    .section.active{display:block}
-    .hero{
-      background:
-        radial-gradient(circle at top right, rgba(78,161,255,.16), transparent 30%),
-        radial-gradient(circle at left bottom, rgba(49,194,124,.12), transparent 24%),
-        linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      border:1px solid var(--line);border-radius:26px;padding:24px;box-shadow:var(--shadow);margin-bottom:20px
-    }
-    .hero h2{margin:0 0 10px;font-size:2rem}
-    .hero p{margin:0;color:var(--muted);max-width:980px;line-height:1.55}
-    .badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
-    .badge{padding:8px 12px;border-radius:999px;font-size:.84rem;border:1px solid var(--line);background:rgba(255,255,255,.05)}
-    .blue{background:rgba(78,161,255,.14);border-color:rgba(78,161,255,.28)}
-    .green{background:rgba(49,194,124,.14);border-color:rgba(49,194,124,.28)}
-    .gold{background:rgba(241,182,67,.14);border-color:rgba(241,182,67,.28)}
-    .grid{display:grid;gap:16px}
-    .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
-    .grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
-    .grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
-    .card{
-      background:linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.025));
-      border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)
-    }
-    .card h3{margin:0 0 8px}
-    .card p{margin:0;color:var(--muted);line-height:1.5}
-    .subhead{margin:28px 0 12px;font-size:1.12rem}
-    .stat{font-size:2rem;font-weight:700;color:var(--blue);margin-bottom:6px}
-    .label{display:inline-block;margin:8px 8px 0 0;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--line);font-size:.82rem}
-    .row{display:flex;gap:12px;flex-wrap:wrap}
-    .btn{
-      border:none;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer;transition:.2s ease
-    }
-    .btn:hover{transform:translateY(-1px)}
-    .btn-primary{background:linear-gradient(135deg,var(--blue),var(--blue2));color:white;box-shadow:0 10px 24px rgba(45,125,224,.35)}
-    .btn-secondary{background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--text)}
-    .btn-success{background:linear-gradient(135deg,var(--green),#23995f);color:white}
-    .btn-warn{background:linear-gradient(135deg,var(--gold),#ce9324);color:#1b1302}
-    .btn-danger{background:linear-gradient(135deg,#ff8f8f,#d26161);color:white}
-    .progress{height:10px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;margin-top:10px}
-    .progress > span{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--green))}
-    .small{font-size:.92rem;color:var(--muted)}
-    .muted{color:var(--muted)}
-    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.02)}
-    table{width:100%;border-collapse:collapse;min-width:700px}
-    th,td{padding:12px;border-bottom:1px solid var(--line);text-align:left}
-    th{background:rgba(255,255,255,.04)}
-    td{color:var(--muted)}
-    .status{font-weight:700}
-    .status.open{color:#8bd4ff}
-    .status.ready{color:#9ae7b6}
-    .status.locked{color:#ffc687}
-    .status.applied{color:#f3d27a}
-    .status.done{color:#8be0b0}
-    .stack{display:flex;flex-direction:column;gap:10px}
-    .input, .select, textarea{
-      width:100%;padding:12px 13px;border-radius:12px;background:rgba(255,255,255,.04);
-      border:1px solid var(--line);color:var(--text);outline:none
-    }
-    textarea{min-height:90px;resize:vertical}
-    .notice{padding:12px 14px;border-radius:12px;background:rgba(78,161,255,.1);border:1px solid rgba(78,161,255,.24);color:#dcecff}
-    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-    .subtab{padding:10px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);cursor:pointer}
-    .subtab.active{background:rgba(78,161,255,.16);border-color:rgba(78,161,255,.3)}
-    .subview{display:none}
-    .subview.active{display:block}
-    .footer{margin-top:24px;text-align:center;color:var(--muted);font-size:.9rem;padding:16px 0}
-    .kpi-line{display:flex;justify-content:space-between;gap:10px;align-items:center}
-    @media (max-width:1100px){
-      .layout{grid-template-columns:1fr}
-      .sidebar{border-right:none;border-bottom:1px solid var(--line)}
-      .grid-4,.grid-3{grid-template-columns:repeat(2,minmax(0,1fr))}
-    }
-    @media (max-width:720px){
-      .content{padding:16px}
-      .hero{padding:18px}
-      .hero h2{font-size:1.55rem}
-      .grid-4,.grid-3,.grid-2{grid-template-columns:1fr}
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AFAYAI Nexus Prototype</title>
+<style>
+:root{
+  --bg:#f4f8fc;
+  --bg2:#eef5fb;
+  --panel:#ffffff;
+  --panel2:#f7fbff;
+  --line:#d9e6f2;
+  --text:#15324b;
+  --muted:#5f7d95;
+  --blue:#2f80ed;
+  --blue2:#1f6dd6;
+  --green:#28a96b;
+  --gold:#e4a72e;
+  --danger:#d9534f;
+  --teal:#17a2b8;
+  --shadow:0 10px 24px rgba(43,84,120,.08);
+  --radius:18px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);font-family:Arial,Helvetica,sans-serif}
+body{min-height:100vh}
+button,select,input,textarea{font:inherit}
+.topbar{
+  position:sticky;top:0;z-index:50;background:rgba(255,255,255,.95);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--line)
+}
+.topbar-inner{
+  max-width:1500px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap
+}
+.brand{display:flex;gap:12px;align-items:center}
+.brand-mark{
+  width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,var(--blue),var(--green));
+  color:white;display:flex;align-items:center;justify-content:center;font-weight:700;box-shadow:var(--shadow)
+}
+.brand h1{margin:0;font-size:1.2rem}
+.brand p{margin:4px 0 0;color:var(--muted);font-size:.92rem}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.pill,.lang-wrap{
+  background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:8px 12px
+}
+.layout{display:grid;grid-template-columns:280px 1fr;min-height:calc(100vh - 78px)}
+.sidebar{padding:18px 14px;border-right:1px solid var(--line);background:#f6fbff}
+.nav-title{font-size:.82rem;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin:6px 10px 10px}
+.nav-btn{
+  width:100%;border:none;text-align:left;padding:12px 14px;border-radius:14px;background:transparent;display:flex;gap:10px;
+  align-items:center;color:var(--text);cursor:pointer;margin-bottom:8px;border:1px solid transparent
+}
+.nav-btn:hover{background:#edf6ff;border-color:#cfe1f2}
+.nav-btn.active{background:linear-gradient(135deg,#e8f3ff,#effaf4);border-color:#bdd7f1}
+.nav-icon{width:34px;height:34px;border-radius:10px;background:white;border:1px solid var(--line);display:flex;align-items:center;justify-content:center}
+.content{padding:22px}
+.section{display:none}
+.section.active{display:block}
+.hero{
+  background:linear-gradient(135deg,#ffffff,#f4fbff);border:1px solid var(--line);box-shadow:var(--shadow);
+  padding:24px;border-radius:26px;margin-bottom:18px
+}
+.hero h2{margin:0 0 10px;font-size:2rem}
+.hero p{margin:0;color:var(--muted);max-width:980px;line-height:1.5}
+.badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.badge{
+  padding:7px 11px;border-radius:999px;font-size:.85rem;border:1px solid var(--line);background:#fff
+}
+.blue{background:#edf5ff}.green{background:#eefaf4}.gold{background:#fff8e9}.teal{background:#eefbfe}
+.grid{display:grid;gap:16px}
+.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.card{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)
+}
+.card h3{margin:0 0 10px;font-size:1.05rem}
+.card p{margin:0;color:var(--muted);line-height:1.5}
+.card ul{margin:10px 0 0 18px;color:var(--muted)}
+.section-title{margin:22px 0 10px;font-size:1.12rem}
+.stat-number{font-size:2rem;font-weight:700;color:var(--blue)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.btn{
+  border:none;border-radius:12px;padding:11px 15px;cursor:pointer;font-weight:700
+}
+.btn-primary{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff}
+.btn-secondary{background:#eef6ff;color:var(--blue);border:1px solid #cfe1f2}
+.btn-success{background:#effaf4;color:var(--green);border:1px solid #cfeedd}
+.btn-warn{background:#fff8e9;color:#9b6b00;border:1px solid #f0deb2}
+.btn-danger{background:#fff0f0;color:var(--danger);border:1px solid #f0cccc}
+.label{display:inline-block;padding:6px 10px;border-radius:999px;background:#f2f8fd;border:1px solid var(--line);font-size:.84rem;margin:6px 6px 0 0}
+.progress{height:10px;background:#eaf1f8;border-radius:999px;overflow:hidden;margin-top:8px}
+.progress > span{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--green))}
+.subnav{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 14px}
+.sub-btn{
+  border:none;background:#fff;border:1px solid var(--line);padding:10px 12px;border-radius:999px;cursor:pointer;color:var(--text)
+}
+.sub-btn.active{background:#eaf4ff;border-color:#bdd7f1;color:var(--blue2)}
+.subsection{display:none}
+.subsection.active{display:block}
+input,textarea,select{
+  width:100%;padding:10px 12px;border-radius:12px;border:1px solid #cfe1f2;background:#fff;color:var(--text)
+}
+.field{margin-top:10px}
+.small{font-size:.9rem;color:var(--muted)}
+.log{
+  background:#f8fbfe;border:1px dashed #c8dceb;border-radius:12px;padding:10px;min-height:52px;color:var(--muted)
+}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px;background:white}
+table{width:100%;border-collapse:collapse;min-width:850px}
+th,td{padding:12px;border-bottom:1px solid var(--line);text-align:left;font-size:.95rem}
+th{background:#f6fbff}
+.kpi-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}
+.kpi h4{margin:0 0 6px}
+.kpi p{margin:0;color:var(--muted)}
+.map-demo{
+  position:relative;min-height:320px;border-radius:18px;border:1px solid var(--line);overflow:hidden;
+  background:linear-gradient(180deg,#dff1ff,#f7fbff)
+}
+.map-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(circle at 24% 48%, rgba(46,128,237,.18) 0 12%, transparent 13%),
+    radial-gradient(circle at 43% 62%, rgba(40,169,107,.18) 0 10%, transparent 11%),
+    radial-gradient(circle at 56% 43%, rgba(228,167,46,.16) 0 11%, transparent 12%),
+    radial-gradient(circle at 70% 60%, rgba(23,162,184,.16) 0 10%, transparent 11%),
+    radial-gradient(circle at 48% 52%, rgba(46,128,237,.22) 0 30%, transparent 31%),
+    radial-gradient(circle at 48% 52%, rgba(46,128,237,.08) 0 42%, transparent 43%);
+}
+.map-pin{
+  position:absolute;width:14px;height:14px;border-radius:999px;background:var(--danger);border:2px solid white;box-shadow:var(--shadow)
+}
+.map-pin span{
+  position:absolute;top:16px;left:-10px;background:white;border:1px solid var(--line);border-radius:999px;padding:3px 8px;font-size:.72rem;white-space:nowrap
+}
+.ledger{
+  max-height:220px;overflow:auto;border:1px solid var(--line);border-radius:12px;background:#fcfeff
+}
+.ledger-row{display:flex;justify-content:space-between;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line);font-size:.92rem}
+.chat-box{
+  height:220px;overflow:auto;background:#fbfdff;border:1px solid var(--line);border-radius:12px;padding:10px
+}
+.chat-msg{padding:8px 10px;border-radius:12px;margin-bottom:8px;max-width:85%}
+.chat-user{background:#eaf4ff;margin-left:auto}
+.chat-ai{background:#eefaf4}
+.footer{margin-top:26px;text-align:center;color:var(--muted);font-size:.9rem;padding-bottom:20px}
+.note{background:#fff7e9;border:1px solid #f0deb2;padding:10px 12px;border-radius:12px;color:#8a6613}
+textarea{min-height:90px}
+@media (max-width:1100px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{border-right:none;border-bottom:1px solid var(--line)}
+  .grid-4,.grid-3,.grid-2,.kpi-list{grid-template-columns:1fr 1fr}
+}
+@media (max-width:700px){
+  .content{padding:14px}
+  .hero h2{font-size:1.55rem}
+  .grid-4,.grid-3,.grid-2,.kpi-list{grid-template-columns:1fr}
+}
+</style>
 </head>
 <body>
-  <div class="topbar">
-    <div class="topbar-inner">
-      <div class="brand">
-        <div class="brand-mark">AN</div>
-        <div>
-          <h1 id="brandName">AFAYAI Nexus</h1>
-          <p id="brandTagline">Connecting people to skills, health, agriculture, and opportunity.</p>
-        </div>
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-mark">AN</div>
+      <div>
+        <h1 id="brandName">AFAYAI Nexus</h1>
+        <p id="brandTagline">A lighter, working prototype for health, agritech, trade, learning, and workforce simulation.</p>
       </div>
-      <div class="toolbar">
-        <div class="pill" id="modeText">Functional Prototype</div>
-        <div class="langwrap">
-          <label for="languageSelect" id="languageLabel">Language</label>
-          <select id="languageSelect">
-            <option value="en">English</option>
-            <option value="fr">French</option>
-            <option value="ar">Arabic</option>
-            <option value="sw">Swahili</option>
-            <option value="ha">Hausa</option>
-            <option value="yo">Yoruba</option>
-            <option value="ig">Igbo</option>
-          </select>
-        </div>
+    </div>
+    <div class="toolbar">
+      <div class="pill" id="modeLabel">Functional GitHub Prototype</div>
+      <div class="lang-wrap">
+        <label for="languageSelect" id="languageLabel">Language</label>
+        <select id="languageSelect">
+          <option value="en">English</option>
+          <option value="fr">Français</option>
+          <option value="ar">العربية</option>
+          <option value="sw">Swahili</option>
+          <option value="ha">Hausa</option>
+          <option value="yo">Yorùbá</option>
+          <option value="ig">Igbo</option>
+        </select>
       </div>
     </div>
   </div>
+</div>
 
-  <div class="layout">
-    <aside class="sidebar">
-      <div class="nav-title" id="navTitle">Main Navigation</div>
-      <button class="nav-btn active" data-section="dashboard"><span class="nav-icon">⌂</span><span id="navDashboard">Dashboard</span></button>
-      <button class="nav-btn" data-section="learning"><span class="nav-icon">🎓</span><span id="navLearning">Learning & Development</span></button>
-      <button class="nav-btn" data-section="workforce"><span class="nav-icon">👥</span><span id="navWorkforce">Workforce</span></button>
-      <button class="nav-btn" data-section="health"><span class="nav-icon">✚</span><span id="navHealth">AFAYAI Health</span></button>
-      <button class="nav-btn" data-section="agritech"><span class="nav-icon">🌱</span><span id="navAgritech">Agritech</span></button>
-      <button class="nav-btn" data-section="agritrade"><span class="nav-icon">🚚</span><span id="navAgritrade">Agritrade</span></button>
-      <button class="nav-btn" data-section="profile"><span class="nav-icon">☻</span><span id="navProfile">Profile</span></button>
-    </aside>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="nav-title" id="navTitle">Main Navigation</div>
+    <button class="nav-btn active" data-section="dashboard"><span class="nav-icon">⌂</span><span data-t="navDashboard">Dashboard</span></button>
+    <button class="nav-btn" data-section="learning"><span class="nav-icon">🎓</span><span data-t="navLearning">Learning & Development</span></button>
+    <button class="nav-btn" data-section="workforce"><span class="nav-icon">👥</span><span data-t="navWorkforce">Workforce</span></button>
+    <button class="nav-btn" data-section="health"><span class="nav-icon">✚</span><span data-t="navHealth">AFAYAI Health</span></button>
+    <button class="nav-btn" data-section="agritech"><span class="nav-icon">🌱</span><span data-t="navAgritech">Agritech</span></button>
+    <button class="nav-btn" data-section="profile"><span class="nav-icon">☻</span><span data-t="navProfile">Profile</span></button>
+  </aside>
 
-    <main class="content">
-      <section id="dashboard" class="section active">
-        <div class="hero">
-          <h2 id="dashboardTitle">AFAYAI Nexus Overview</h2>
-          <p id="dashboardIntro">This prototype connects telehealth, agriculture, trade, workforce development, and a Koachlearn-style learning experience in one working front-end demo.</p>
-          <div class="badges">
-            <span class="badge blue" id="badgeHealth">Telehealth</span>
-            <span class="badge green" id="badgeLearning">Learning</span>
-            <span class="badge gold" id="badgeTrade">Agritrade</span>
-            <span class="badge blue" id="badgeWorkforce">Workforce</span>
-          </div>
+  <main class="content">
+    <section id="dashboard" class="section active">
+      <div class="hero">
+        <h2 data-t="dashTitle">AFAYAI Nexus Working Prototype</h2>
+        <p data-t="dashIntro">This version is designed for GitHub Pages and now includes working simulation flows across learning, workforce, telehealth, and agritech/Agritrade.</p>
+        <div class="badges">
+          <span class="badge blue">AFAYAI</span>
+          <span class="badge green">Koachlearn Lite</span>
+          <span class="badge gold">Agritrade</span>
+          <span class="badge teal">AI Tools</span>
         </div>
-
-        <div class="grid grid-4">
-          <div class="card"><div class="stat" id="dashCoursesCompleted">0</div><h3 id="dashCoursesCompletedTitle">Courses Completed</h3><p id="dashCoursesCompletedText">Learning progress updates here.</p></div>
-          <div class="card"><div class="stat" id="dashReadiness">0%</div><h3 id="dashReadinessTitle">Workforce Readiness</h3><p id="dashReadinessText">Training and applications affect this score.</p></div>
-          <div class="card"><div class="stat" id="dashCrops">0</div><h3 id="dashCropsTitle">Crop Listings</h3><p id="dashCropsText">Agritrade activity updates here.</p></div>
-          <div class="card"><div class="stat" id="dashHealthVisits">0</div><h3 id="dashHealthVisitsTitle">Health Check-ins</h3><p id="dashHealthVisitsText">Telehealth actions are tracked here.</p></div>
+        <div class="actions">
+          <button class="btn btn-primary" id="dashGoLearning" data-action="go-learning">Open Learning</button>
+          <button class="btn btn-secondary" id="dashGoWorkforce" data-action="go-workforce">Open Workforce</button>
+          <button class="btn btn-secondary" id="dashGoHealth" data-action="go-health">Open Health</button>
+          <button class="btn btn-secondary" id="dashGoAgritech" data-action="go-agritech">Open Agritech</button>
         </div>
+      </div>
 
-        <h3 class="subhead" id="dashboardValueTitle">Platform Value</h3>
-        <div class="grid grid-3">
-          <div class="card"><h3 id="value1Title">Learn to Earn</h3><p id="value1Text">Complete training, earn certificates, and unlock jobs.</p></div>
-          <div class="card"><h3 id="value2Title">Farmer-Centered Growth</h3><p id="value2Text">Add crops, track logistics, and simulate buyer readiness.</p></div>
-          <div class="card"><h3 id="value3Title">Health + Productivity</h3><p id="value3Text">Telehealth interactions support healthier communities and stronger workforce participation.</p></div>
+      <div class="kpi-list">
+        <div class="kpi"><h4 data-t="kpiCourses">Courses Completed</h4><p id="kpiCourses">0</p></div>
+        <div class="kpi"><h4 data-t="kpiReadiness">Workforce Readiness</h4><p id="kpiReadiness">15%</p></div>
+        <div class="kpi"><h4 data-t="kpiOrders">Active Orders</h4><p id="kpiOrders">0</p></div>
+        <div class="kpi"><h4 data-t="kpiPatients">Patients Enrolled</h4><p id="kpiPatients">120</p></div>
+      </div>
+
+      <h3 class="section-title" data-t="dashActionsTitle">Quick Actions</h3>
+      <div class="grid grid-3">
+        <div class="card">
+          <h3 data-t="dashCard1">Learning Progress</h3>
+          <p data-t="dashCard1Text">Use the dashboard buttons to enter courses, complete quizzes, and issue certificates.</p>
+          <div class="progress"><span id="dashLearningBar" style="width:10%"></span></div>
         </div>
-      </section>
-
-      <section id="learning" class="section">
-        <div class="hero">
-          <h2 id="learningTitle">Learning & Development</h2>
-          <p id="learningIntro">This Koachlearn-style simulation includes enroll, progress, quizzes, certificates, and links to workforce eligibility.</p>
+        <div class="card">
+          <h3 data-t="dashCard2">Workforce Pipeline</h3>
+          <p data-t="dashCard2Text">Once two courses are completed, workforce applications unlock automatically.</p>
+          <div class="progress"><span id="dashWorkBar" style="width:15%"></span></div>
         </div>
-
-        <div class="tabs">
-          <button class="subtab active" data-tabgroup="learningTabs" data-subview="learningCourses" id="learningTabCourses">Courses</button>
-          <button class="subtab" data-tabgroup="learningTabs" data-subview="learningCertificates" id="learningTabCertificates">Certificates</button>
+        <div class="card">
+          <h3 data-t="dashCard3">Agritrade Operations</h3>
+          <p data-t="dashCard3Text">Create orders, move logistics stages, use wallet tools, and test AI automation.</p>
+          <div class="progress"><span id="dashTradeBar" style="width:8%"></span></div>
         </div>
+      </div>
+      <div class="note" id="dashboardLog">Prototype ready. Start with Learning, Health, or Agritech.</div>
+    </section>
 
-        <div id="learningCourses" class="subview active">
-          <div class="grid grid-2" id="coursesContainer"></div>
-        </div>
+    <section id="learning" class="section">
+      <div class="hero">
+        <h2 data-t="learnTitle">Learning & Development</h2>
+        <p data-t="learnIntro">Koachlearn Lite simulates practical training tied to certifications and workforce readiness.</p>
+      </div>
 
-        <div id="learningCertificates" class="subview">
-          <div class="card">
-            <h3 id="certTitle">Earned Certificates</h3>
-            <div id="certificatesList" class="stack"></div>
-          </div>
-        </div>
-      </section>
+      <div class="subnav">
+        <button class="sub-btn active" data-parent="learning" data-sub="learn-courses">Courses</button>
+        <button class="sub-btn" data-parent="learning" data-sub="learn-quiz">Quiz & Certificate</button>
+        <button class="sub-btn" data-parent="learning" data-sub="learn-results">Results</button>
+      </div>
 
-      <section id="workforce" class="section">
-        <div class="hero">
-          <h2 id="workforceTitle">Workforce Development</h2>
-          <p id="workforceIntro">Learning completion unlocks readiness. Eligible users can apply to roles and track application status.</p>
-        </div>
+      <div id="learn-courses" class="subsection active">
+        <div class="grid grid-3" id="courseCards"></div>
+      </div>
 
-        <div class="grid grid-3">
-          <div class="card">
-            <h3 id="wfProfileTitle">Readiness Profile</h3>
-            <div class="kpi-line"><span id="wfCoursesLabel">Completed Courses</span><strong id="wfCompletedCourses">0</strong></div>
-            <div class="kpi-line"><span id="wfCertificatesLabel">Certificates</span><strong id="wfCertificates">0</strong></div>
-            <div class="kpi-line"><span id="wfEligibleLabel">Eligibility</span><strong id="wfEligibility" class="status locked">Not Ready</strong></div>
-            <div class="progress"><span id="wfReadinessBar" style="width:0%"></span></div>
-            <p class="small" id="wfReadinessNote">Complete 2 courses to unlock workforce applications.</p>
-          </div>
-
-          <div class="card">
-            <h3 id="wfChannelsTitle">Placement Channels</h3>
-            <div id="placementChannels" class="stack"></div>
-          </div>
-
-          <div class="card">
-            <h3 id="wfStatusTitle">Application Status</h3>
-            <div id="applicationsList" class="stack"></div>
-          </div>
-        </div>
-
-        <h3 class="subhead" id="wfRolesTitle">Available Roles</h3>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th id="wfThRole">Role</th>
-                <th id="wfThTrack">Required Training</th>
-                <th id="wfThStatus">Status</th>
-                <th id="wfThAction">Action</th>
-              </tr>
-            </thead>
-            <tbody id="jobsTableBody"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <section id="health" class="section">
-        <div class="hero">
-          <h2 id="healthTitle">AFAYAI Health</h2>
-          <p id="healthIntro">Simulate triage requests, telehealth check-ins, and care support activity.</p>
-        </div>
-
+      <div id="learn-quiz" class="subsection">
         <div class="grid grid-2">
           <div class="card">
-            <h3 id="healthFormTitle">Quick Triage</h3>
-            <div class="stack">
-              <select id="healthCategory" class="select">
-                <option value="general">General Consultation</option>
-                <option value="maternal">Maternal Health</option>
-                <option value="nutrition">Nutrition</option>
-                <option value="followup">Follow-up Care</option>
-              </select>
-              <textarea id="healthNotes" placeholder="Describe the request"></textarea>
-              <div class="row">
-                <button class="btn btn-primary" id="healthSubmitBtn">Submit Triage</button>
-                <button class="btn btn-secondary" id="healthClearBtn">Clear</button>
+            <h3 data-t="quizTitle">Readiness Quiz</h3>
+            <p data-t="quizText">Enter a score from 0 to 100 to simulate quiz completion.</p>
+            <div class="field"><input type="number" id="quizScore" min="0" max="100" value="85" /></div>
+            <div class="actions">
+              <button class="btn btn-primary" id="submitQuiz">Submit Quiz</button>
+              <button class="btn btn-success" id="issueCertificate">Issue Certificate</button>
+            </div>
+            <div class="log" id="quizLog">No quiz submitted yet.</div>
+          </div>
+          <div class="card">
+            <h3 data-t="lessonTitle">Lesson Controls</h3>
+            <p data-t="lessonText">Select a course and move lesson progress forward.</p>
+            <div class="field"><select id="lessonCourseSelect"></select></div>
+            <div class="actions">
+              <button class="btn btn-secondary" id="startCourseBtn">Start Course</button>
+              <button class="btn btn-secondary" id="nextLessonBtn">Next Lesson</button>
+              <button class="btn btn-success" id="completeCourseBtn">Complete Course</button>
+            </div>
+            <div class="log" id="lessonLog">Choose a course to begin.</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="learn-results" class="subsection">
+        <div class="grid grid-2">
+          <div class="card">
+            <h3 data-t="certTitle">Certificates</h3>
+            <div id="certificateList" class="ledger"></div>
+          </div>
+          <div class="card">
+            <h3 data-t="learnSummaryTitle">Learning Summary</h3>
+            <div id="learningSummary" class="log"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="workforce" class="section">
+      <div class="hero">
+        <h2 data-t="workTitle">Workforce</h2>
+        <p data-t="workIntro">The workforce layer responds to learning progress and lets users simulate job-readiness, matching, and applications.</p>
+      </div>
+
+      <div class="grid grid-3">
+        <div class="card">
+          <h3 data-t="workStatusTitle">Readiness Status</h3>
+          <p id="readinessText">Current readiness: 15%</p>
+          <div class="progress"><span id="workReadinessBar" style="width:15%"></span></div>
+          <div class="actions">
+            <button class="btn btn-primary" id="refreshMatches">Refresh Matches</button>
+            <button class="btn btn-secondary" id="scheduleOrientation">Schedule Orientation</button>
+          </div>
+          <div class="log" id="workStatusLog">Complete more learning to unlock roles.</div>
+        </div>
+        <div class="card">
+          <h3 data-t="workRolesTitle">Available Roles</h3>
+          <div id="jobList"></div>
+        </div>
+        <div class="card">
+          <h3 data-t="workAppTitle">Applications</h3>
+          <div id="applicationList" class="ledger"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="health" class="section">
+      <div class="hero">
+        <h2 data-t="healthTitle">AFAYAI Health</h2>
+        <p data-t="healthIntro">This module now includes working simulations for safety and quality, telehealth intake, AI decision support, maps, indicators, and plan narration.</p>
+      </div>
+
+      <div class="subnav">
+        <button class="sub-btn active" data-parent="health" data-sub="health-overview">Overview</button>
+        <button class="sub-btn" data-parent="health" data-sub="health-intake">Telehealth Intake</button>
+        <button class="sub-btn" data-parent="health" data-sub="health-ai">AI Decision Support</button>
+        <button class="sub-btn" data-parent="health" data-sub="health-program">Program Map & Table</button>
+      </div>
+
+      <div id="health-overview" class="subsection active">
+        <div class="grid grid-3">
+          <div class="card">
+            <h3>Safety & Quality</h3>
+            <p>Run a safety review to simulate the quality check layer before escalation decisions.</p>
+            <div class="actions">
+              <button class="btn btn-primary" id="runSafetyReview">Run Safety Review</button>
+              <button class="btn btn-secondary" id="monitorIndicators">Indicator Monitoring</button>
+            </div>
+            <div class="log" id="safetyLog">No safety run yet.</div>
+          </div>
+          <div class="card">
+            <h3>Indicator Monitoring</h3>
+            <p id="indicatorSummary">Vitals status: Stable. Flagged indicators: 0. AI override rate: 2.1%.</p>
+            <div class="actions">
+              <button class="btn btn-secondary" id="refreshIndicators">Refresh Indicators</button>
+            </div>
+          </div>
+          <div class="card">
+            <h3>AI Read Plan Aloud</h3>
+            <p>Simulate narrated care instructions for patients and field workers.</p>
+            <div class="field"><textarea id="carePlanText">Hydrate, monitor fever, return for follow-up in 48 hours, and escalate if breathing worsens.</textarea></div>
+            <div class="actions"><button class="btn btn-primary" id="readPlanBtn">Read Plan Aloud</button></div>
+            <div class="log" id="readPlanLog">Plan narration not started.</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="health-intake" class="subsection">
+        <div class="grid grid-2">
+          <div class="card">
+            <h3>Telehealth Video Intake</h3>
+            <div class="field"><input id="patientName" placeholder="Patient name" /></div>
+            <div class="field"><input id="patientCountry" placeholder="Country" value="Kenya" /></div>
+            <div class="field"><textarea id="patientSymptoms" placeholder="Symptoms">Fever, cough, mild dehydration</textarea></div>
+            <div class="actions">
+              <button class="btn btn-primary" id="startIntake">Start Intake</button>
+              <button class="btn btn-success" id="openVideoRoom">Open Video Room</button>
+            </div>
+            <div class="log" id="intakeLog">No intake submitted yet.</div>
+          </div>
+          <div class="card">
+            <h3>Telehealth Video Room (Simulated)</h3>
+            <div class="map-demo" style="min-height:240px;background:linear-gradient(180deg,#1f2e45,#243e63);color:white;display:flex;align-items:center;justify-content:center">
+              <div style="text-align:center">
+                <div style="font-size:3rem">🎥</div>
+                <div id="videoRoomStatus">Room idle</div>
+                <div class="small" style="color:#d5e2f6;margin-top:8px">Simulated connection only</div>
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div id="health-ai" class="subsection">
+        <div class="grid grid-2">
           <div class="card">
-            <h3 id="healthHistoryTitle">Health Activity</h3>
-            <div id="healthHistory" class="stack"></div>
+            <h3>AI Recommendations Tool</h3>
+            <p>Generate a care recommendation from intake symptoms.</p>
+            <div class="actions"><button class="btn btn-primary" id="generateRecommendation">Generate Recommendation</button></div>
+            <div class="log" id="recommendationLog">No AI recommendation yet.</div>
+          </div>
+          <div class="card">
+            <h3>Heat Index + Map Inspector</h3>
+            <p>Inspect a regional program risk level and heat pattern.</p>
+            <div class="field"><select id="heatRegion">
+              <option>East Africa</option><option>West Africa</option><option>North Africa</option><option>Central Africa</option><option>Southern Africa</option>
+            </select></div>
+            <div class="actions"><button class="btn btn-secondary" id="inspectMapBtn">Inspect Map</button></div>
+            <div class="log" id="heatInspectorLog">No inspection yet.</div>
           </div>
         </div>
-      </section>
+      </div>
 
-      <section id="agritech" class="section">
-        <div class="hero">
-          <h2 id="agritechTitle">Agritech</h2>
-          <p id="agritechIntro">Track farmer onboarding and field support status as part of the larger AFAYAI Nexus experience.</p>
-        </div>
-
-        <div class="grid grid-3">
+      <div id="health-program" class="subsection">
+        <div class="grid grid-2">
           <div class="card">
-            <h3 id="agriSupportTitle">Farmer Support</h3>
-            <div class="row">
-              <button class="btn btn-success" id="farmerOnboardBtn">Onboard Farmer</button>
-              <button class="btn btn-secondary" id="fieldVisitBtn">Log Field Visit</button>
+            <h3>Africa Program Map (Demo)</h3>
+            <div class="map-demo" id="healthMap">
+              <div class="map-bg"></div>
+              <div class="map-pin" style="left:30%;top:55%"><span>Kenya</span></div>
+              <div class="map-pin" style="left:16%;top:50%"><span>Nigeria</span></div>
+              <div class="map-pin" style="left:54%;top:38%"><span>Egypt</span></div>
+              <div class="map-pin" style="left:44%;top:60%"><span>DRC</span></div>
             </div>
-            <p class="small" id="agriSupportNote">These actions update the profile and dashboard.</p>
           </div>
           <div class="card">
-            <h3 id="agriStatsTitle">Field Metrics</h3>
-            <div class="kpi-line"><span id="agriFarmersLabel">Farmers Onboarded</span><strong id="agriFarmers">0</strong></div>
-            <div class="kpi-line"><span id="agriVisitsLabel">Field Visits</span><strong id="agriVisits">0</strong></div>
-          </div>
-          <div class="card">
-            <h3 id="agriActivityTitle">Recent Activity</h3>
-            <div id="agriActivity" class="stack"></div>
-          </div>
-        </div>
-      </section>
-
-      <section id="agritrade" class="section">
-        <div class="hero">
-          <h2 id="agritradeTitle">Agritrade</h2>
-          <p id="agritradeIntro">This simulation supports crop listings, buyer interest, and logistics tracking inside the unified platform.</p>
-        </div>
-
-        <div class="tabs">
-          <button class="subtab active" data-tabgroup="tradeTabs" data-subview="tradeListings" id="tradeTabListings">Listings</button>
-          <button class="subtab" data-tabgroup="tradeTabs" data-subview="tradeLogistics" id="tradeTabLogistics">Logistics</button>
-        </div>
-
-        <div id="tradeListings" class="subview active">
-          <div class="grid grid-2">
-            <div class="card">
-              <h3 id="tradeFormTitle">Add Crop Listing</h3>
-              <div class="stack">
-                <input id="cropName" class="input" placeholder="Crop name" />
-                <input id="cropQty" class="input" placeholder="Quantity (e.g. 200 kg)" />
-                <select id="cropMarket" class="select">
-                  <option value="Local Market">Local Market</option>
-                  <option value="Regional Buyers">Regional Buyers</option>
-                  <option value="Export Readiness">Export Readiness</option>
-                </select>
-                <div class="row">
-                  <button class="btn btn-primary" id="addCropBtn">Add Listing</button>
-                  <button class="btn btn-secondary" id="simulateBuyerBtn">Simulate Buyer Interest</button>
-                </div>
-              </div>
-            </div>
-            <div class="card">
-              <h3 id="tradeListingsTitle">Crop Listings</h3>
-              <div id="cropListings" class="stack"></div>
+            <h3>Country Comparison Table</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Country</th><th>Status</th><th>Facilities</th><th>Patients Enrolled</th><th>Clinical Outcome Index (% improvement)</th><th>Clinician Adoption (% active use)</th><th>Safety Signal Rate (% overrides/AI)</th><th>Data Quality Score (%)</th>
+                  </tr>
+                </thead>
+                <tbody id="countryTableBody"></tbody>
+              </table>
             </div>
           </div>
         </div>
+      </div>
+    </section>
 
-        <div id="tradeLogistics" class="subview">
+    <section id="agritech" class="section">
+      <div class="hero">
+        <h2 data-t="agriTitle">Agritech + Agritrade</h2>
+        <p data-t="agriIntro">This version includes working simulations for market listings, AgriChat, wallet and QuickPay, ledger entries, order tracking, logistics checkpoints, and AI automation tools.</p>
+      </div>
+
+      <div class="subnav">
+        <button class="sub-btn active" data-parent="agritech" data-sub="agri-market">Market</button>
+        <button class="sub-btn" data-parent="agritech" data-sub="agri-wallet">Wallet</button>
+        <button class="sub-btn" data-parent="agritech" data-sub="agri-orders">Orders & Logistics</button>
+        <button class="sub-btn" data-parent="agritech" data-sub="agri-ai">AI Automation</button>
+      </div>
+
+      <div id="agri-market" class="subsection active">
+        <div class="grid grid-2">
           <div class="card">
-            <h3 id="logisticsTitle">Logistics Pipeline</h3>
-            <p class="small" id="logisticsNote">Move listed crops through collection, transport, and delivery simulation.</p>
-            <div id="logisticsList" class="stack"></div>
+            <h3>Product Listings</h3>
+            <div id="productList"></div>
+            <div class="actions">
+              <button class="btn btn-primary" id="simulateOrderBtn">Simulate Order</button>
+              <button class="btn btn-secondary" id="showBuyerInterestBtn">Show Buyer Interest</button>
+            </div>
+            <div class="log" id="marketLog">Choose an item to simulate the market flow.</div>
+          </div>
+          <div class="card">
+            <h3>AgriChat</h3>
+            <div class="chat-box" id="agriChatBox"></div>
+            <div class="field"><input id="agriChatInput" placeholder="Ask about price, disease, soil, weather, or logistics" /></div>
+            <div class="actions"><button class="btn btn-primary" id="sendAgriChat">Send to AgriChat</button></div>
           </div>
         </div>
-      </section>
+      </div>
 
-      <section id="profile" class="section">
-        <div class="hero">
-          <h2 id="profileTitle">Unified Profile</h2>
-          <p id="profileIntro">One profile connects learning, workforce readiness, telehealth activity, farmer support, and Agritrade participation.</p>
+      <div id="agri-wallet" class="subsection">
+        <div class="grid grid-2">
+          <div class="card">
+            <h3>Wallet + QuickPay</h3>
+            <p>Balance: <strong id="walletBalance">$250.00</strong></p>
+            <div class="field"><select id="payMethod">
+              <option>M-Pesa</option><option>MTN</option><option>Airtel</option>
+            </select></div>
+            <div class="field"><input id="payAmount" type="number" value="25" min="1" /></div>
+            <div class="actions">
+              <button class="btn btn-primary" id="quickPayBtn">QuickPay</button>
+              <button class="btn btn-secondary" id="addFundsBtn">Add Demo Funds</button>
+            </div>
+            <div class="log" id="walletLog">No wallet action yet.</div>
+          </div>
+          <div class="card">
+            <h3>Wallet Ledger</h3>
+            <div id="walletLedger" class="ledger"></div>
+          </div>
         </div>
+      </div>
 
-        <div class="grid grid-3">
-          <div class="card"><h3 id="profileNameTitle">Name</h3><p id="profileName">Demo User</p></div>
-          <div class="card"><h3 id="profileRoleTitle">Role</h3><p id="profileRole">Learner / Farmer / Workforce Participant</p></div>
-          <div class="card"><h3 id="profileLangTitle">Language</h3><p id="profileLanguageText">English</p></div>
-          <div class="card"><h3 id="profileCoursesTitle">Courses Completed</h3><p id="profileCourses">0</p></div>
-          <div class="card"><h3 id="profileJobsTitle">Job Applications</h3><p id="profileJobs">0</p></div>
-          <div class="card"><h3 id="profileTradeTitle">Trade Listings</h3><p id="profileTrade">0</p></div>
+      <div id="agri-orders" class="subsection">
+        <div class="grid grid-2">
+          <div class="card">
+            <h3>Order Status</h3>
+            <p id="orderStatusText">No active order.</p>
+            <div class="actions">
+              <button class="btn btn-primary" id="advanceOrderBtn">Advance Order Status</button>
+              <button class="btn btn-secondary" id="addCheckpointBtn">Add Checkpoint</button>
+            </div>
+            <div class="log" id="orderLog">No order yet.</div>
+          </div>
+          <div class="card">
+            <h3>Logistics Map</h3>
+            <div class="map-demo" id="logisticsMap">
+              <div class="map-bg"></div>
+              <div id="checkpointPins"></div>
+            </div>
+            <p class="small">Responsive demo map. Add checkpoints to simulate route progress.</p>
+          </div>
         </div>
+      </div>
 
-        <div class="row" style="margin-top:16px">
-          <button class="btn btn-primary" id="resetDemoBtn">Reset Demo</button>
+      <div id="agri-ai" class="subsection">
+        <div class="grid grid-2">
+          <div class="card">
+            <h3>AI Automation</h3>
+            <div class="actions">
+              <button class="btn btn-primary" id="priceAiBtn">Price AI</button>
+              <button class="btn btn-secondary" id="soilAiBtn">Soil Analysis</button>
+              <button class="btn btn-secondary" id="diseaseAiBtn">Disease Scanner</button>
+              <button class="btn btn-success" id="commandCenterBtn">AI Command Center</button>
+            </div>
+            <div class="log" id="aiAutomationLog">No AI tool run yet.</div>
+          </div>
+          <div class="card">
+            <h3>Farmer Operations</h3>
+            <div class="actions">
+              <button class="btn btn-primary" id="registerFarmerBtn">Register Farmer</button>
+              <button class="btn btn-secondary" id="fieldVisitBtn">Add Field Visit</button>
+            </div>
+            <div class="log" id="farmerOpsLog">No farmer operation yet.</div>
+          </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <div class="footer" id="footerText">AFAYAI Nexus Prototype • GitHub-ready single file • Saves demo state locally</div>
-    </main>
-  </div>
+    <section id="profile" class="section">
+      <div class="hero">
+        <h2 data-t="profileTitle">Unified Profile</h2>
+        <p data-t="profileIntro">The profile updates based on the activity you simulate across the platform.</p>
+      </div>
+      <div class="grid grid-3">
+        <div class="card"><h3 data-t="profLearn">Learning</h3><p id="profileLearning">0 courses complete</p></div>
+        <div class="card"><h3 data-t="profWork">Workforce</h3><p id="profileWorkforce">Not yet eligible</p></div>
+        <div class="card"><h3 data-t="profHealth">Health</h3><p id="profileHealth">Last action: none</p></div>
+        <div class="card"><h3 data-t="profWallet">Wallet</h3><p id="profileWallet">$250.00 balance</p></div>
+        <div class="card"><h3 data-t="profOrders">Orders</h3><p id="profileOrders">0 orders placed</p></div>
+        <div class="card"><h3 data-t="profAi">AI Activity</h3><p id="profileAi">No tools run</p></div>
+      </div>
+    </section>
 
-  <script>
-    const STORAGE_KEY = 'afayai_nexus_v2_state';
+    <div class="footer">AFAYAI Nexus Prototype • Lighter interactive GitHub version</div>
+  </main>
+</div>
 
-    const translations = {
-      en: {
-        languageName: "English",
-        brandTagline:"Connecting people to skills, health, agriculture, and opportunity.",
-        modeText:"Functional Prototype",
-        navTitle:"Main Navigation",
-        navDashboard:"Dashboard", navLearning:"Learning & Development", navWorkforce:"Workforce", navHealth:"AFAYAI Health", navAgritech:"Agritech", navAgritrade:"Agritrade", navProfile:"Profile",
-        dashboardTitle:"AFAYAI Nexus Overview",
-        dashboardIntro:"This prototype connects telehealth, agriculture, trade, workforce development, and a Koachlearn-style learning experience in one working front-end demo.",
-        badgeHealth:"Telehealth", badgeLearning:"Learning", badgeTrade:"Agritrade", badgeWorkforce:"Workforce",
-        dashCoursesCompletedTitle:"Courses Completed", dashCoursesCompletedText:"Learning progress updates here.",
-        dashReadinessTitle:"Workforce Readiness", dashReadinessText:"Training and applications affect this score.",
-        dashCropsTitle:"Crop Listings", dashCropsText:"Agritrade activity updates here.",
-        dashHealthVisitsTitle:"Health Check-ins", dashHealthVisitsText:"Telehealth actions are tracked here.",
-        dashboardValueTitle:"Platform Value", value1Title:"Learn to Earn", value1Text:"Complete training, earn certificates, and unlock jobs.",
-        value2Title:"Farmer-Centered Growth", value2Text:"Add crops, track logistics, and simulate buyer readiness.",
-        value3Title:"Health + Productivity", value3Text:"Telehealth interactions support healthier communities and stronger workforce participation.",
-        learningTitle:"Learning & Development", learningIntro:"This Koachlearn-style simulation includes enroll, progress, quizzes, certificates, and links to workforce eligibility.",
-        learningTabCourses:"Courses", learningTabCertificates:"Certificates", certTitle:"Earned Certificates",
-        workforceTitle:"Workforce Development", workforceIntro:"Learning completion unlocks readiness. Eligible users can apply to roles and track application status.",
-        wfProfileTitle:"Readiness Profile", wfCoursesLabel:"Completed Courses", wfCertificatesLabel:"Certificates", wfEligibleLabel:"Eligibility",
-        wfReadinessNote:"Complete 2 courses to unlock workforce applications.", wfChannelsTitle:"Placement Channels", wfStatusTitle:"Application Status",
-        wfRolesTitle:"Available Roles", wfThRole:"Role", wfThTrack:"Required Training", wfThStatus:"Status", wfThAction:"Action",
-        healthTitle:"AFAYAI Health", healthIntro:"Simulate triage requests, telehealth check-ins, and care support activity.",
-        healthFormTitle:"Quick Triage", healthHistoryTitle:"Health Activity", healthSubmitBtn:"Submit Triage", healthClearBtn:"Clear",
-        agritechTitle:"Agritech", agritechIntro:"Track farmer onboarding and field support status as part of the larger AFAYAI Nexus experience.",
-        agriSupportTitle:"Farmer Support", farmerOnboardBtn:"Onboard Farmer", fieldVisitBtn:"Log Field Visit", agriSupportNote:"These actions update the profile and dashboard.",
-        agriStatsTitle:"Field Metrics", agriFarmersLabel:"Farmers Onboarded", agriVisitsLabel:"Field Visits", agriActivityTitle:"Recent Activity",
-        agritradeTitle:"Agritrade", agritradeIntro:"This simulation supports crop listings, buyer interest, and logistics tracking inside the unified platform.",
-        tradeTabListings:"Listings", tradeTabLogistics:"Logistics", tradeFormTitle:"Add Crop Listing", addCropBtn:"Add Listing", simulateBuyerBtn:"Simulate Buyer Interest",
-        tradeListingsTitle:"Crop Listings", logisticsTitle:"Logistics Pipeline", logisticsNote:"Move listed crops through collection, transport, and delivery simulation.",
-        profileTitle:"Unified Profile", profileIntro:"One profile connects learning, workforce readiness, telehealth activity, farmer support, and Agritrade participation.",
-        profileNameTitle:"Name", profileRoleTitle:"Role", profileLangTitle:"Language", profileCoursesTitle:"Courses Completed", profileJobsTitle:"Job Applications", profileTradeTitle:"Trade Listings", resetDemoBtn:"Reset Demo",
-        footerText:"AFAYAI Nexus Prototype • GitHub-ready single file • Saves demo state locally",
-        healthPlaceholder:"Describe the request",
-        cropNamePlaceholder:"Crop name", cropQtyPlaceholder:"Quantity (e.g. 200 kg)",
-        channels:["Community agriculture support","Telehealth access assistant","Learning facilitator","Farmer network coordinator"],
-        jobStatusOpen:"Open", jobStatusLocked:"Locked", jobStatusApplied:"Applied", eligibleYes:"Eligible", eligibleNo:"Not Ready",
-        noCertificates:"No certificates yet. Complete courses to generate them.",
-        noApplications:"No applications yet.",
-        noHealth:"No health activity yet.",
-        noAgri:"No agritech activity yet.",
-        noListings:"No crop listings yet.",
-        noLogistics:"No logistics activity yet.",
-        courseButtonEnroll:"Enroll", courseButtonContinue:"Continue", courseButtonQuiz:"Take Quiz", courseButtonClaim:"Claim Certificate",
-        applyBtn:"Apply", advanceBtn:"Advance Stage",
-        stages:["Listed","Collected","In Transit","Delivered"],
-        alerts:{
-          enrolled:"You enrolled in the course.",
-          progress:"Lesson completed.",
-          quiz:"Quiz passed. Certificate unlocked.",
-          certificate:"Certificate added to profile.",
-          locked:"Complete more training to unlock this role.",
-          applied:"Application submitted.",
-          triage:"Triage submitted.",
-          farmer:"Farmer onboarded.",
-          visit:"Field visit logged.",
-          crop:"Crop listing added.",
-          buyer:"Buyer interest added.",
-          stage:"Logistics stage updated.",
-          reset:"Prototype reset."
-        },
-        courseNames:{
-          digital:"Digital Foundations",
-          agritech:"Agritech Skills",
-          telehealth:"Telehealth Support",
-          work:"Work Readiness"
-        },
-        courseDescs:{
-          digital:"Smartphone use, internet basics, messaging, online safety, and digital communication.",
-          agritech:"Crop planning, climate awareness, post-harvest handling, digital farm records, and input planning.",
-          telehealth:"Patient navigation, care access support, digital intake basics, and community health education.",
-          work:"Professional communication, reliability, problem solving, attendance, and basic task management."
-        },
-        lessonsLabel:"Lessons",
-        certificatePrefix:"Certificate:",
-        healthCategories:{general:"General Consultation",maternal:"Maternal Health",nutrition:"Nutrition",followup:"Follow-up Care"},
-        markets:["Local Market","Regional Buyers","Export Readiness"]
-      },
-      fr: {
-        languageName: "Français",
-        brandTagline:"Relier les personnes aux compétences, à la santé, à l’agriculture et aux opportunités.",
-        modeText:"Prototype fonctionnel",
-        navTitle:"Navigation principale",
-        navDashboard:"Tableau de bord", navLearning:"Apprentissage et développement", navWorkforce:"Main-d’œuvre", navHealth:"Santé AFAYAI", navAgritech:"Agritech", navAgritrade:"Agritrade", navProfile:"Profil",
-        dashboardTitle:"Vue d’ensemble d’AFAYAI Nexus",
-        dashboardIntro:"Ce prototype relie télésanté, agriculture, commerce, développement de la main-d’œuvre et expérience d’apprentissage de type Koachlearn dans une démo fonctionnelle.",
-        badgeHealth:"Télésanté", badgeLearning:"Apprentissage", badgeTrade:"Agritrade", badgeWorkforce:"Main-d’œuvre",
-        dashCoursesCompletedTitle:"Cours terminés", dashCoursesCompletedText:"La progression s’affiche ici.",
-        dashReadinessTitle:"Préparation à l’emploi", dashReadinessText:"La formation et les candidatures influencent ce score.",
-        dashCropsTitle:"Produits listés", dashCropsText:"L’activité Agritrade s’affiche ici.",
-        dashHealthVisitsTitle:"Suivis santé", dashHealthVisitsText:"Les actions de télésanté sont suivies ici.",
-        dashboardValueTitle:"Valeur de la plateforme", value1Title:"Apprendre pour gagner", value1Text:"Terminez des formations, obtenez des certificats et débloquez des emplois.",
-        value2Title:"Croissance centrée sur l’agriculteur", value2Text:"Ajoutez des cultures, suivez la logistique et simulez l’intérêt des acheteurs.",
-        value3Title:"Santé + Productivité", value3Text:"Les interactions santé soutiennent des communautés plus fortes.",
-        learningTitle:"Apprentissage et développement", learningIntro:"Cette simulation de type Koachlearn comprend inscription, progression, quiz, certificats et lien vers l’employabilité.",
-        learningTabCourses:"Cours", learningTabCertificates:"Certificats", certTitle:"Certificats obtenus",
-        workforceTitle:"Développement de la main-d’œuvre", workforceIntro:"La formation débloque l’éligibilité. Les utilisateurs peuvent postuler et suivre leur statut.",
-        wfProfileTitle:"Profil de préparation", wfCoursesLabel:"Cours terminés", wfCertificatesLabel:"Certificats", wfEligibleLabel:"Éligibilité",
-        wfReadinessNote:"Terminez 2 cours pour débloquer les candidatures.", wfChannelsTitle:"Canaux de placement", wfStatusTitle:"Statut des candidatures",
-        wfRolesTitle:"Rôles disponibles", wfThRole:"Rôle", wfThTrack:"Formation requise", wfThStatus:"Statut", wfThAction:"Action",
-        healthTitle:"Santé AFAYAI", healthIntro:"Simulez des demandes de triage, suivis et soutien aux soins.",
-        healthFormTitle:"Triage rapide", healthHistoryTitle:"Activité santé", healthSubmitBtn:"Soumettre", healthClearBtn:"Effacer",
-        agritechTitle:"Agritech", agritechIntro:"Suivez l’intégration des agriculteurs et les visites terrain.",
-        agriSupportTitle:"Soutien agriculteur", farmerOnboardBtn:"Intégrer un agriculteur", fieldVisitBtn:"Ajouter une visite", agriSupportNote:"Ces actions mettent à jour le profil et le tableau de bord.",
-        agriStatsTitle:"Indicateurs terrain", agriFarmersLabel:"Agriculteurs intégrés", agriVisitsLabel:"Visites terrain", agriActivityTitle:"Activité récente",
-        agritradeTitle:"Agritrade", agritradeIntro:"Cette simulation prend en charge les annonces de récoltes, l’intérêt des acheteurs et la logistique.",
-        tradeTabListings:"Annonces", tradeTabLogistics:"Logistique", tradeFormTitle:"Ajouter une récolte", addCropBtn:"Ajouter", simulateBuyerBtn:"Simuler un acheteur",
-        tradeListingsTitle:"Annonces", logisticsTitle:"Pipeline logistique", logisticsNote:"Faites avancer les produits dans les étapes logistiques.",
-        profileTitle:"Profil unifié", profileIntro:"Un profil relie apprentissage, emploi, santé, agritech et Agritrade.",
-        profileNameTitle:"Nom", profileRoleTitle:"Rôle", profileLangTitle:"Langue", profileCoursesTitle:"Cours terminés", profileJobsTitle:"Candidatures", profileTradeTitle:"Annonces", resetDemoBtn:"Réinitialiser",
-        footerText:"Prototype AFAYAI Nexus • Fichier unique prêt pour GitHub • Sauvegarde locale",
-        healthPlaceholder:"Décrivez la demande",
-        cropNamePlaceholder:"Nom de la culture", cropQtyPlaceholder:"Quantité (ex. 200 kg)",
-        channels:["Soutien agricole communautaire","Assistant d’accès à la télésanté","Facilitateur d’apprentissage","Coordinateur réseau agriculteurs"],
-        jobStatusOpen:"Ouvert", jobStatusLocked:"Verrouillé", jobStatusApplied:"Candidature envoyée", eligibleYes:"Éligible", eligibleNo:"Pas prêt",
-        noCertificates:"Aucun certificat pour le moment.", noApplications:"Aucune candidature.", noHealth:"Aucune activité santé.", noAgri:"Aucune activité agritech.", noListings:"Aucune annonce.", noLogistics:"Aucune activité logistique.",
-        courseButtonEnroll:"S’inscrire", courseButtonContinue:"Continuer", courseButtonQuiz:"Passer le quiz", courseButtonClaim:"Obtenir le certificat",
-        applyBtn:"Postuler", advanceBtn:"Étape suivante",
-        stages:["Listé","Collecté","En transit","Livré"],
-        alerts:{enrolled:"Vous êtes inscrit.",progress:"Leçon terminée.",quiz:"Quiz réussi. Certificat débloqué.",certificate:"Certificat ajouté.",locked:"Terminez plus de formation pour débloquer ce rôle.",applied:"Candidature envoyée.",triage:"Triage soumis.",farmer:"Agriculteur intégré.",visit:"Visite terrain ajoutée.",crop:"Annonce ajoutée.",buyer:"Intérêt acheteur ajouté.",stage:"Étape logistique mise à jour.",reset:"Prototype réinitialisé."},
-        courseNames:{digital:"Bases numériques",agritech:"Compétences Agritech",telehealth:"Soutien télésanté",work:"Préparation au travail"},
-        courseDescs:{digital:"Smartphone, internet, messagerie, sécurité et communication numérique.",agritech:"Planification des cultures, climat, post-récolte et registres numériques.",telehealth:"Orientation des patients, accès aux soins et éducation sanitaire.",work:"Communication professionnelle, fiabilité et gestion des tâches."},
-        lessonsLabel:"Leçons",
-        certificatePrefix:"Certificat :",
-        healthCategories:{general:"Consultation générale",maternal:"Santé maternelle",nutrition:"Nutrition",followup:"Suivi médical"},
-        markets:["Marché local","Acheteurs régionaux","Préparation à l’export"]
-      },
-      ar: {
-        languageName: "العربية",
-        brandTagline:"ربط الناس بالمهارات والصحة والزراعة والفرص.",
-        modeText:"نموذج عملي",
-        navTitle:"التنقل الرئيسي",
-        navDashboard:"لوحة التحكم", navLearning:"التعلم والتطوير", navWorkforce:"القوى العاملة", navHealth:"صحة AFAYAI", navAgritech:"التقنيات الزراعية", navAgritrade:"أغريتريد", navProfile:"الملف الشخصي",
-        dashboardTitle:"نظرة عامة على AFAYAI Nexus",
-        dashboardIntro:"يربط هذا النموذج العملي بين الصحة عن بُعد والزراعة والتجارة وتنمية القوى العاملة وتجربة تعلم شبيهة بـ Koachlearn في واجهة واحدة تعمل محليًا.",
-        badgeHealth:"الصحة عن بُعد", badgeLearning:"التعلم", badgeTrade:"أغريتريد", badgeWorkforce:"القوى العاملة",
-        dashCoursesCompletedTitle:"الدورات المكتملة", dashCoursesCompletedText:"يتم تحديث التقدم هنا.",
-        dashReadinessTitle:"الجاهزية للعمل", dashReadinessText:"التدريب والطلبات يؤثران على هذه النتيجة.",
-        dashCropsTitle:"قوائم المحاصيل", dashCropsText:"يتم تحديث نشاط أغريتريد هنا.",
-        dashHealthVisitsTitle:"متابعات صحية", dashHealthVisitsText:"تُسجل أنشطة الصحة هنا.",
-        dashboardValueTitle:"قيمة المنصة", value1Title:"تعلّم لتكسب", value1Text:"أكمل التدريب واحصل على شهادات وافتح الوظائف.",
-        value2Title:"نمو يركز على المزارع", value2Text:"أضف المحاصيل وتتبع الخدمات اللوجستية وحاكي اهتمام المشترين.",
-        value3Title:"الصحة والإنتاجية", value3Text:"تدعم التفاعلات الصحية مجتمعات أقوى ومشاركة أكبر في العمل.",
-        learningTitle:"التعلم والتطوير", learningIntro:"تشمل هذه المحاكاة تسجيلًا وتقدمًا واختبارات وشهادات وربطًا بالجاهزية للعمل.",
-        learningTabCourses:"الدورات", learningTabCertificates:"الشهادات", certTitle:"الشهادات المكتسبة",
-        workforceTitle:"تنمية القوى العاملة", workforceIntro:"إكمال التعلم يفتح الجاهزية. يمكن للمستخدمين التقديم ومتابعة الحالة.",
-        wfProfileTitle:"ملف الجاهزية", wfCoursesLabel:"الدورات المكتملة", wfCertificatesLabel:"الشهادات", wfEligibleLabel:"الأهلية",
-        wfReadinessNote:"أكمل دورتين لفتح التقديم على الوظائف.", wfChannelsTitle:"قنوات التوظيف", wfStatusTitle:"حالة الطلبات",
-        wfRolesTitle:"الأدوار المتاحة", wfThRole:"الدور", wfThTrack:"التدريب المطلوب", wfThStatus:"الحالة", wfThAction:"الإجراء",
-        healthTitle:"صحة AFAYAI", healthIntro:"حاكِ طلبات الفرز والمتابعات والدعم الصحي.",
-        healthFormTitle:"فرز سريع", healthHistoryTitle:"النشاط الصحي", healthSubmitBtn:"إرسال", healthClearBtn:"مسح",
-        agritechTitle:"التقنيات الزراعية", agritechIntro:"تتبع ضمّ المزارعين وزيارات الحقول ضمن تجربة AFAYAI Nexus.",
-        agriSupportTitle:"دعم المزارعين", farmerOnboardBtn:"ضم مزارع", fieldVisitBtn:"تسجيل زيارة", agriSupportNote:"تقوم هذه الإجراءات بتحديث الملف ولوحة التحكم.",
-        agriStatsTitle:"مؤشرات الحقول", agriFarmersLabel:"المزارعون المنضمون", agriVisitsLabel:"زيارات الحقول", agriActivityTitle:"النشاط الأخير",
-        agritradeTitle:"أغريتريد", agritradeIntro:"تدعم هذه المحاكاة إدراج المحاصيل واهتمام المشترين وتتبع الخدمات اللوجستية.",
-        tradeTabListings:"القوائم", tradeTabLogistics:"اللوجستيات", tradeFormTitle:"إضافة قائمة محصول", addCropBtn:"إضافة", simulateBuyerBtn:"محاكاة مشتري",
-        tradeListingsTitle:"قوائم المحاصيل", logisticsTitle:"مسار اللوجستيات", logisticsNote:"حرّك المحاصيل المدرجة عبر مراحل الجمع والنقل والتسليم.",
-        profileTitle:"الملف الموحد", profileIntro:"يربط ملف واحد بين التعلم والعمل والصحة والزراعة وAgritrade.",
-        profileNameTitle:"الاسم", profileRoleTitle:"الدور", profileLangTitle:"اللغة", profileCoursesTitle:"الدورات المكتملة", profileJobsTitle:"طلبات الوظائف", profileTradeTitle:"قوائم التجارة", resetDemoBtn:"إعادة الضبط",
-        footerText:"نموذج AFAYAI Nexus • ملف واحد جاهز لـ GitHub • يحفظ الحالة محليًا",
-        healthPlaceholder:"اكتب وصف الطلب",
-        cropNamePlaceholder:"اسم المحصول", cropQtyPlaceholder:"الكمية (مثال 200 كجم)",
-        channels:["دعم زراعي مجتمعي","مساعد وصول للصحة عن بُعد","ميسر تعلم","منسق شبكة المزارعين"],
-        jobStatusOpen:"متاح", jobStatusLocked:"مغلق", jobStatusApplied:"تم التقديم", eligibleYes:"مؤهل", eligibleNo:"غير جاهز",
-        noCertificates:"لا توجد شهادات بعد.", noApplications:"لا توجد طلبات بعد.", noHealth:"لا يوجد نشاط صحي بعد.", noAgri:"لا يوجد نشاط زراعي بعد.", noListings:"لا توجد قوائم محاصيل.", noLogistics:"لا يوجد نشاط لوجستي.",
-        courseButtonEnroll:"سجل", courseButtonContinue:"تابع", courseButtonQuiz:"أدِّ الاختبار", courseButtonClaim:"استلم الشهادة",
-        applyBtn:"قدّم", advanceBtn:"تقدّم في المرحلة",
-        stages:["مُدرج","تم الجمع","قيد النقل","تم التسليم"],
-        alerts:{enrolled:"تم التسجيل في الدورة.",progress:"تم إكمال الدرس.",quiz:"تم اجتياز الاختبار. فُتحت الشهادة.",certificate:"تمت إضافة الشهادة.",locked:"أكمل مزيدًا من التدريب لفتح هذا الدور.",applied:"تم إرسال الطلب.",triage:"تم إرسال الطلب الصحي.",farmer:"تم ضم المزارع.",visit:"تم تسجيل زيارة حقل.",crop:"تمت إضافة القائمة.",buyer:"تمت إضافة رغبة مشتري.",stage:"تم تحديث المرحلة اللوجستية.",reset:"تمت إعادة ضبط النموذج."},
-        courseNames:{digital:"الأساسيات الرقمية",agritech:"مهارات التقنية الزراعية",telehealth:"دعم الصحة عن بُعد",work:"الجاهزية للعمل"},
-        courseDescs:{digital:"استخدام الهاتف الذكي والإنترنت والرسائل والأمان الرقمي.",agritech:"تخطيط المحاصيل والوعي المناخي والسجلات الزراعية.",telehealth:"دعم وصول المرضى للرعاية والتعليم الصحي.",work:"التواصل المهني والاعتمادية وإدارة المهام."},
-        lessonsLabel:"الدروس",
-        certificatePrefix:"شهادة:",
-        healthCategories:{general:"استشارة عامة",maternal:"صحة الأم",nutrition:"التغذية",followup:"متابعة"},
-        markets:["السوق المحلي","مشترون إقليميون","جاهزية التصدير"]
-      }
-    };
+<script>
+const baseTranslations = {
+  en:{
+    navDashboard:"Dashboard",navLearning:"Learning & Development",navWorkforce:"Workforce",navHealth:"AFAYAI Health",navAgritech:"Agritech",navProfile:"Profile",
+    dashTitle:"AFAYAI Nexus Working Prototype",dashIntro:"This version is designed for GitHub Pages and now includes working simulation flows across learning, workforce, telehealth, and agritech/Agritrade.",
+    learnTitle:"Learning & Development",learnIntro:"Koachlearn Lite simulates practical training tied to certifications and workforce readiness.",
+    workTitle:"Workforce",workIntro:"The workforce layer responds to learning progress and lets users simulate job-readiness, matching, and applications.",
+    agriTitle:"Agritech + Agritrade",agriIntro:"This version includes working simulations for market listings, AgriChat, wallet and QuickPay, ledger entries, order tracking, logistics checkpoints, and AI automation tools.",
+    profileTitle:"Unified Profile",profileIntro:"The profile updates based on the activity you simulate across the platform.",
+    kpiCourses:"Courses Completed",kpiReadiness:"Workforce Readiness",kpiOrders:"Active Orders",kpiPatients:"Patients Enrolled",
+    dashActionsTitle:"Quick Actions",dashCard1:"Learning Progress",dashCard1Text:"Use the dashboard buttons to enter courses, complete quizzes, and issue certificates.",
+    dashCard2:"Workforce Pipeline",dashCard2Text:"Once two courses are completed, workforce applications unlock automatically.",
+    dashCard3:"Agritrade Operations",dashCard3Text:"Create orders, move logistics stages, use wallet tools, and test AI automation.",
+    quizTitle:"Readiness Quiz",quizText:"Enter a score from 0 to 100 to simulate quiz completion.",lessonTitle:"Lesson Controls",lessonText:"Select a course and move lesson progress forward.",
+    certTitle:"Certificates",learnSummaryTitle:"Learning Summary",workStatusTitle:"Readiness Status",workRolesTitle:"Available Roles",workAppTitle:"Applications",
+    profLearn:"Learning",profWork:"Workforce",profHealth:"Health",profWallet:"Wallet",profOrders:"Orders",profAi:"AI Activity"
+  },
+  fr:{
+    navDashboard:"Tableau de bord",navLearning:"Apprentissage et développement",navWorkforce:"Main-d’œuvre",navHealth:"Santé AFAYAI",navAgritech:"Agritech",navProfile:"Profil",
+    dashTitle:"Prototype fonctionnel AFAYAI Nexus",dashIntro:"Cette version est conçue pour GitHub Pages et inclut des simulations actives pour l’apprentissage, la main-d’œuvre, la télésanté et l’Agritrade.",
+    learnTitle:"Apprentissage et développement",learnIntro:"Koachlearn Lite simule une formation pratique liée aux certifications et à la préparation au travail.",
+    workTitle:"Main-d’œuvre",workIntro:"La couche main-d’œuvre réagit à la progression d’apprentissage et permet de simuler la préparation à l’emploi et les candidatures.",
+    agriTitle:"Agritech + Agritrade",agriIntro:"Cette version inclut des simulations de marché, AgriChat, portefeuille, QuickPay, commandes, logistique et automatisation IA.",
+    profileTitle:"Profil unifié",profileIntro:"Le profil se met à jour selon l’activité simulée sur la plateforme.",
+    kpiCourses:"Cours terminés",kpiReadiness:"Préparation à l’emploi",kpiOrders:"Commandes actives",kpiPatients:"Patients inscrits",
+    dashActionsTitle:"Actions rapides",dashCard1:"Progression d’apprentissage",dashCard1Text:"Utilisez les boutons du tableau de bord pour suivre les cours, les quiz et les certificats.",
+    dashCard2:"Pipeline main-d’œuvre",dashCard2Text:"Après deux cours terminés, les candidatures s’ouvrent automatiquement.",
+    dashCard3:"Opérations Agritrade",dashCard3Text:"Créez des commandes, avancez la logistique, utilisez le portefeuille et testez l’IA.",
+    quizTitle:"Quiz de préparation",quizText:"Entrez un score de 0 à 100 pour simuler le quiz.",lessonTitle:"Contrôles de leçon",lessonText:"Sélectionnez un cours et faites progresser les leçons.",
+    certTitle:"Certificats",learnSummaryTitle:"Résumé d’apprentissage",workStatusTitle:"État de préparation",workRolesTitle:"Rôles disponibles",workAppTitle:"Candidatures",
+    profLearn:"Apprentissage",profWork:"Main-d’œuvre",profHealth:"Santé",profWallet:"Portefeuille",profOrders:"Commandes",profAi:"Activité IA"
+  },
+  ar:{
+    navDashboard:"لوحة التحكم",navLearning:"التعلم والتطوير",navWorkforce:"القوى العاملة",navHealth:"صحة AFAYAI",navAgritech:"التقنيات الزراعية",navProfile:"الملف الشخصي",
+    dashTitle:"نموذج AFAYAI Nexus العملي",dashIntro:"هذه النسخة مخصصة لـ GitHub Pages وتتضمن مسارات محاكاة فعالة للتعلم والقوى العاملة والصحة عن بُعد والتقنيات الزراعية.",
+    learnTitle:"التعلم والتطوير",learnIntro:"يحاكي Koachlearn Lite تدريبًا عمليًا مرتبطًا بالشهادات والجاهزية للعمل.",
+    workTitle:"القوى العاملة",workIntro:"يتفاعل قسم القوى العاملة مع تقدم التعلم ويتيح محاكاة الجاهزية والتقديم على الأدوار.",
+    agriTitle:"التقنيات الزراعية + أغريتريد",agriIntro:"تتضمن هذه النسخة محاكاة للسوق وAgriChat والمحفظة وQuickPay والطلبات واللوجستيات وأدوات الذكاء الاصطناعي.",
+    profileTitle:"الملف الموحد",profileIntro:"يتم تحديث الملف بناءً على النشاط الذي تحاكيه عبر المنصة.",
+    kpiCourses:"الدورات المكتملة",kpiReadiness:"الجاهزية للعمل",kpiOrders:"الطلبات النشطة",kpiPatients:"المرضى المسجلون",
+    dashActionsTitle:"إجراءات سريعة",dashCard1:"تقدم التعلم",dashCard1Text:"استخدم أزرار لوحة التحكم للدورات والاختبارات والشهادات.",
+    dashCard2:"مسار القوى العاملة",dashCard2Text:"بعد إكمال دورتين يتم فتح التقديمات تلقائيًا.",
+    dashCard3:"عمليات أغريتريد",dashCard3Text:"أنشئ طلبات وحرك مراحل اللوجستيات واستخدم المحفظة واختبر أدوات الذكاء الاصطناعي.",
+    quizTitle:"اختبار الجاهزية",quizText:"أدخل درجة من 0 إلى 100 لمحاكاة الاختبار.",lessonTitle:"عناصر الدرس",lessonText:"اختر دورة وادفع تقدم الدروس.",
+    certTitle:"الشهادات",learnSummaryTitle:"ملخص التعلم",workStatusTitle:"حالة الجاهزية",workRolesTitle:"الأدوار المتاحة",workAppTitle:"الطلبات",
+    profLearn:"التعلم",profWork:"القوى العاملة",profHealth:"الصحة",profWallet:"المحفظة",profOrders:"الطلبات",profAi:"نشاط الذكاء الاصطناعي"
+  }
+};
+["sw","ha","yo","ig"].forEach(k=>baseTranslations[k]=baseTranslations.en);
 
-    const fallbackFrom = {sw:'en',ha:'en',yo:'en',ig:'en'};
-    function tr(lang, key){
-      const base = translations[lang] && translations[lang][key];
-      if(base !== undefined) return base;
-      const fallback = fallbackFrom[lang];
-      if(fallback && translations[fallback] && translations[fallback][key] !== undefined) return translations[fallback][key];
-      return translations.en[key] !== undefined ? translations.en[key] : key;
+const defaultState = {
+  language:"en",
+  courses:{
+    digital:{title:"Digital Foundations", lessons:5, progress:0, completed:false},
+    agritech:{title:"Agritech Skills", lessons:5, progress:0, completed:false},
+    telehealth:{title:"Telehealth Support", lessons:5, progress:0, completed:false},
+    workforce:{title:"Work Readiness", lessons:4, progress:0, completed:false}
+  },
+  certificates:[],
+  quizPassed:false,
+  readiness:15,
+  applications:[],
+  walletBalance:250,
+  walletLedger:[{label:"Opening balance", amount:"+250.00"}],
+  selectedProduct:"Cassava Flour",
+  orders:[],
+  checkpoints:[],
+  patientCount:120,
+  healthLastAction:"none",
+  aiLastAction:"No tools run",
+  intake:null,
+  countryData:[
+    ["Kenya","Pilot",28,120,17,71,2.1,93],
+    ["Nigeria","Scale-up",42,210,15,64,3.3,88],
+    ["Egypt","Live",31,168,19,76,1.8,95],
+    ["DRC","Pilot",17,92,13,58,4.1,82]
+  ]
+};
+let state = loadState();
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem("afayaiNexusV2");
+    if(raw){
+      const parsed = JSON.parse(raw);
+      return {...defaultState, ...parsed, courses:{...defaultState.courses, ...(parsed.courses||{})}};
     }
+  }catch(e){}
+  return JSON.parse(JSON.stringify(defaultState));
+}
+function saveState(){ localStorage.setItem("afayaiNexusV2", JSON.stringify(state)); }
+function qs(id){ return document.getElementById(id); }
+function showSection(id){
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+  qs(id).classList.add("active");
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active", b.dataset.section===id));
+}
+function showSub(parent, sub){
+  document.querySelectorAll(`.sub-btn[data-parent="${parent}"]`).forEach(b=>b.classList.toggle("active", b.dataset.sub===sub));
+  const container = qs(parent);
+  container.querySelectorAll(".subsection").forEach(s=>s.classList.remove("active"));
+  qs(sub).classList.add("active");
+}
+function setLog(id,msg){ qs(id).textContent = msg; }
+function updateTranslations(){
+  const t = baseTranslations[state.language] || baseTranslations.en;
+  document.documentElement.lang = state.language;
+  document.documentElement.dir = state.language==="ar" ? "rtl" : "ltr";
+  document.querySelectorAll("[data-t]").forEach(el=>{
+    const key = el.dataset.t;
+    if(t[key]) el.textContent = t[key];
+  });
+  qs("languageSelect").value = state.language;
+}
+function renderDashboard(){
+  const completed = Object.values(state.courses).filter(c=>c.completed).length;
+  qs("kpiCourses").textContent = completed;
+  qs("kpiReadiness").textContent = `${state.readiness}%`;
+  qs("kpiOrders").textContent = state.orders.filter(o=>o.status!=="Delivered").length;
+  qs("kpiPatients").textContent = state.patientCount;
+  qs("dashLearningBar").style.width = `${Math.max(10, completed*25)}%`;
+  qs("dashWorkBar").style.width = `${state.readiness}%`;
+  const tradePct = Math.min(100, state.orders.length*20 + state.checkpoints.length*5 + (state.walletLedger.length-1)*5);
+  qs("dashTradeBar").style.width = `${Math.max(8, tradePct)}%`;
+}
+function recalcReadiness(){
+  const completed = Object.values(state.courses).filter(c=>c.completed).length;
+  state.readiness = Math.min(100, 15 + completed*25 + (state.quizPassed?10:0));
+}
+function renderCourses(){
+  const wrap = qs("courseCards");
+  wrap.innerHTML = "";
+  const select = qs("lessonCourseSelect");
+  select.innerHTML = "";
+  Object.entries(state.courses).forEach(([key,course])=>{
+    const pct = Math.round((course.progress/course.lessons)*100);
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = `
+      <h3>${course.title}</h3>
+      <p>${course.completed ? "Completed and certificate eligible." : "Track lessons and progress into workforce readiness."}</p>
+      <div class="label">${course.progress}/${course.lessons} lessons</div>
+      <div class="label">${course.completed ? "Completed" : "In progress"}</div>
+      <div class="progress"><span style="width:${pct}%"></span></div>
+      <div class="actions">
+        <button class="btn btn-primary" data-course="${key}" data-course-action="start">Start</button>
+        <button class="btn btn-secondary" data-course="${key}" data-course-action="next">Next Lesson</button>
+        <button class="btn btn-success" data-course="${key}" data-course-action="complete">Complete</button>
+      </div>`;
+    wrap.appendChild(div);
+    const opt = document.createElement("option");
+    opt.value = key;
+    opt.textContent = course.title;
+    select.appendChild(opt);
+  });
+}
+function renderCertificates(){
+  const wrap = qs("certificateList");
+  if(!state.certificates.length){
+    wrap.innerHTML = '<div class="ledger-row"><span>No certificates yet</span><span>—</span></div>';
+  } else {
+    wrap.innerHTML = state.certificates.map(c=>`<div class="ledger-row"><span>${c}</span><span>Issued</span></div>`).join("");
+  }
+  const completed = Object.values(state.courses).filter(c=>c.completed).length;
+  qs("learningSummary").textContent = `Completed courses: ${completed}. Quiz passed: ${state.quizPassed ? "Yes" : "No"}. Certificates: ${state.certificates.length}.`;
+}
+function renderWorkforce(){
+  recalcReadiness();
+  qs("readinessText").textContent = `Current readiness: ${state.readiness}%`;
+  qs("workReadinessBar").style.width = `${state.readiness}%`;
+  const jobs = [
+    {title:"Community Agriculture Support Worker", need:40},
+    {title:"Telehealth Access Assistant", need:50},
+    {title:"Farmer Network Coordinator", need:60},
+    {title:"Learning Facilitator", need:70}
+  ];
+  qs("jobList").innerHTML = jobs.map((job,i)=>{
+    const eligible = state.readiness >= job.need;
+    const already = state.applications.find(a=>a.job===job.title);
+    return `<div style="border-bottom:1px solid var(--line);padding:10px 0">
+      <strong>${job.title}</strong><div class="small">Threshold: ${job.need}%</div>
+      <div class="actions">
+        <button class="btn ${eligible ? 'btn-primary':'btn-secondary'}" data-job="${job.title}" ${eligible?'':'disabled'}>${already?'Applied':'Apply'}</button>
+      </div>
+    </div>`;
+  }).join("");
+  qs("applicationList").innerHTML = state.applications.length ? state.applications.map(a=>`<div class="ledger-row"><span>${a.job}</span><span>${a.status}</span></div>`).join("") : '<div class="ledger-row"><span>No applications yet</span><span>—</span></div>';
+  qs("workStatusLog").textContent = state.readiness >= 40 ? "Eligible roles are now opening. You can apply directly from this panel." : "Complete more learning to unlock roles.";
+}
+function renderHealth(){
+  qs("profileHealth").textContent = `Last action: ${state.healthLastAction}`;
+  qs("countryTableBody").innerHTML = state.countryData.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("");
+}
+function renderProducts(){
+  const products = [
+    ["Cassava Flour","$32 / bag","In stock"],
+    ["Maize","$18 / bag","High demand"],
+    ["Tomatoes","$14 / crate","Market ready"],
+    ["Beans","$27 / bag","Buyer request"]
+  ];
+  qs("productList").innerHTML = products.map((p,idx)=>`
+    <div style="border-bottom:1px solid var(--line);padding:10px 0">
+      <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer">
+        <input type="radio" name="productPick" value="${p[0]}" ${state.selectedProduct===p[0]?'checked':''}/>
+        <span><strong>${p[0]}</strong><br><span class="small">${p[1]} • ${p[2]}</span></span>
+      </label>
+    </div>
+  `).join("");
+}
+function renderWallet(){
+  qs("walletBalance").textContent = `$${state.walletBalance.toFixed(2)}`;
+  qs("profileWallet").textContent = `$${state.walletBalance.toFixed(2)} balance`;
+  qs("walletLedger").innerHTML = state.walletLedger.map(r=>`<div class="ledger-row"><span>${r.label}</span><span>${r.amount}</span></div>`).join("");
+}
+function renderOrders(){
+  qs("profileOrders").textContent = `${state.orders.length} orders placed`;
+  if(!state.orders.length){
+    qs("orderStatusText").textContent = "No active order.";
+    qs("orderLog").textContent = "No order yet.";
+  }else{
+    const current = state.orders[state.orders.length-1];
+    qs("orderStatusText").textContent = `Order: ${current.product} • Status: ${current.status}`;
+    qs("orderLog").textContent = `Route checkpoints: ${state.checkpoints.length}. Last update: ${current.status}.`;
+  }
+  qs("checkpointPins").innerHTML = state.checkpoints.map((c,i)=>`<div class="map-pin" style="left:${20 + i*12}%;top:${50 + (i%2? -8:6)}%"><span>${c}</span></div>`).join("");
+}
+function renderProfile(){
+  const completed = Object.values(state.courses).filter(c=>c.completed).length;
+  qs("profileLearning").textContent = `${completed} courses complete`;
+  qs("profileWorkforce").textContent = state.readiness >= 40 ? `Eligible • ${state.readiness}% readiness` : `Not yet eligible • ${state.readiness}% readiness`;
+  qs("profileAi").textContent = state.aiLastAction;
+}
+function renderChat(){
+  const box = qs("agriChatBox");
+  if(!box.dataset.seeded){
+    box.innerHTML = `<div class="chat-msg chat-ai">AgriChat ready. Ask about price, disease, soil, weather, or logistics.</div>`;
+    box.dataset.seeded = "1";
+  }
+}
+function syncAll(){
+  recalcReadiness();
+  renderDashboard(); renderCourses(); renderCertificates(); renderWorkforce(); renderHealth(); renderProducts(); renderWallet(); renderOrders(); renderProfile(); renderChat(); updateTranslations(); saveState();
+}
+function issueCertificateFor(title){
+  if(!state.certificates.includes(title)) state.certificates.push(title);
+}
+document.querySelectorAll(".nav-btn").forEach(btn=>btn.addEventListener("click",()=>showSection(btn.dataset.section)));
+document.querySelectorAll(".sub-btn").forEach(btn=>btn.addEventListener("click",()=>showSub(btn.dataset.parent, btn.dataset.sub)));
+qs("languageSelect").addEventListener("change",e=>{state.language=e.target.value; syncAll();});
 
-    const initialState = {
-      language:'en',
-      activeSection:'dashboard',
-      courses:{
-        digital:{enrolled:false, progress:0, quizPassed:false, certificate:false, lessons:4},
-        agritech:{enrolled:false, progress:0, quizPassed:false, certificate:false, lessons:4},
-        telehealth:{enrolled:false, progress:0, quizPassed:false, certificate:false, lessons:4},
-        work:{enrolled:false, progress:0, quizPassed:false, certificate:false, lessons:4}
-      },
-      applications:[],
-      healthHistory:[],
-      agritech:{farmersOnboarded:0, fieldVisits:0, activity:[]},
-      agritrade:{listings:[], nextId:1}
-    };
+document.addEventListener("click", e=>{
+  const actionBtn = e.target.closest("[data-action]");
+  if(actionBtn){
+    const map = {"go-learning":"learning","go-workforce":"workforce","go-health":"health","go-agritech":"agritech"};
+    showSection(map[actionBtn.dataset.action]); return;
+  }
+  const courseBtn = e.target.closest("[data-course-action]");
+  if(courseBtn){
+    const key = courseBtn.dataset.course;
+    const action = courseBtn.dataset.courseAction;
+    const course = state.courses[key];
+    if(action==="start"){course.progress = Math.max(course.progress,1); setLog("lessonLog", `${course.title} started. Lesson 1 is now active.`);}
+    if(action==="next"){course.progress = Math.min(course.lessons, course.progress+1); setLog("lessonLog", `${course.title} progressed to lesson ${course.progress} of ${course.lessons}.`);}
+    if(action==="complete"){course.progress = course.lessons; course.completed = true; issueCertificateFor(course.title); setLog("lessonLog", `${course.title} completed successfully.`);}
+    syncAll(); return;
+  }
+  const jobBtn = e.target.closest("[data-job]");
+  if(jobBtn){
+    const job = jobBtn.dataset.job;
+    if(!state.applications.find(a=>a.job===job)) state.applications.push({job, status:"Applied"});
+    syncAll(); return;
+  }
+});
 
-    const jobs = [
-      {id:'job1', roleKey:'Community Agriculture Support Worker', track:['agritech','work']},
-      {id:'job2', roleKey:'Telehealth Access Assistant', track:['telehealth','digital']},
-      {id:'job3', roleKey:'Farmer Network Coordinator', track:['agritech','digital']},
-      {id:'job4', roleKey:'Learning Facilitator', track:['digital','work']}
-    ];
+qs("startCourseBtn").onclick = ()=>{
+  const key = qs("lessonCourseSelect").value;
+  state.courses[key].progress = Math.max(state.courses[key].progress,1);
+  setLog("lessonLog", `${state.courses[key].title} started from lesson controls.`);
+  syncAll();
+};
+qs("nextLessonBtn").onclick = ()=>{
+  const key = qs("lessonCourseSelect").value;
+  state.courses[key].progress = Math.min(state.courses[key].lessons, state.courses[key].progress+1);
+  setLog("lessonLog", `${state.courses[key].title} progressed to ${state.courses[key].progress}/${state.courses[key].lessons}.`);
+  syncAll();
+};
+qs("completeCourseBtn").onclick = ()=>{
+  const key = qs("lessonCourseSelect").value;
+  state.courses[key].progress = state.courses[key].lessons;
+  state.courses[key].completed = true;
+  issueCertificateFor(state.courses[key].title);
+  setLog("lessonLog", `${state.courses[key].title} is complete and certificate eligible.`);
+  syncAll();
+};
+qs("submitQuiz").onclick = ()=>{
+  const score = Number(qs("quizScore").value || 0);
+  state.quizPassed = score >= 70;
+  setLog("quizLog", state.quizPassed ? `Quiz passed with ${score}%. Workforce readiness increased.` : `Quiz score ${score}%. Retry for certification eligibility.`);
+  syncAll();
+};
+qs("issueCertificate").onclick = ()=>{
+  const completed = Object.values(state.courses).filter(c=>c.completed);
+  if(!completed.length){ setLog("quizLog","Complete at least one course first."); return; }
+  completed.forEach(c=>issueCertificateFor(c.title));
+  setLog("quizLog", "Certificates issued for all completed courses.");
+  syncAll();
+};
+qs("refreshMatches").onclick = ()=>{ syncAll(); qs("workStatusLog").textContent = state.readiness >= 40 ? "Matches refreshed. Roles are aligned to your completed training." : "Matches refreshed. More training is needed for additional roles."; };
+qs("scheduleOrientation").onclick = ()=>{ qs("workStatusLog").textContent = state.readiness >= 40 ? "Orientation scheduled for next available workforce cohort." : "Orientation tentatively saved. Complete more training to confirm."; };
 
-    let state = loadState();
+qs("runSafetyReview").onclick = ()=>{ state.healthLastAction = "Safety review completed"; setLog("safetyLog","Safety review complete. Low-risk case profile. AI override threshold within acceptable band."); syncAll(); };
+qs("monitorIndicators").onclick = ()=>{ state.healthLastAction = "Indicator monitoring run"; qs("indicatorSummary").textContent = "Vitals status: Watchlist. Flagged indicators: 1. AI override rate: 2.4%."; syncAll(); };
+qs("refreshIndicators").onclick = ()=>{ state.healthLastAction = "Indicators refreshed"; qs("indicatorSummary").textContent = "Vitals status: Stable. Flagged indicators: 0. AI override rate: 1.9%."; syncAll(); };
+qs("readPlanBtn").onclick = ()=>{ state.healthLastAction = "Plan narration simulated"; qs("readPlanLog").textContent = `Narration started: "${qs("carePlanText").value.slice(0,110)}..."`; syncAll(); };
+qs("startIntake").onclick = ()=>{
+  state.intake = {name:qs("patientName").value||"Unnamed patient", country:qs("patientCountry").value||"Unknown", symptoms:qs("patientSymptoms").value||"No symptoms entered"};
+  state.healthLastAction = "Telehealth intake started";
+  qs("intakeLog").textContent = `Intake created for ${state.intake.name} in ${state.intake.country}. Symptoms logged and ready for AI review.`;
+  syncAll();
+};
+qs("openVideoRoom").onclick = ()=>{ state.healthLastAction = "Video room opened"; qs("videoRoomStatus").textContent = `Connected${state.intake ? " • " + state.intake.name : ""}`; syncAll(); };
+qs("generateRecommendation").onclick = ()=>{
+  const symptoms = (state.intake?.symptoms || qs("patientSymptoms").value || "").toLowerCase();
+  let rec = "Recommend hydration, symptom monitoring, and routine clinician follow-up.";
+  if(symptoms.includes("fever")) rec = "Recommend hydration, temperature monitoring, malaria test consideration, and clinician review within 24 hours.";
+  if(symptoms.includes("cough")) rec += " Consider respiratory screening if symptoms worsen.";
+  state.healthLastAction = "AI recommendation generated";
+  qs("recommendationLog").textContent = rec;
+  syncAll();
+};
+qs("inspectMapBtn").onclick = ()=>{
+  const region = qs("heatRegion").value;
+  const msg = {
+    "East Africa":"Heat index moderate. Kenya and Tanzania program demand rising.",
+    "West Africa":"Heat index elevated. Nigeria and Ghana support load trending upward.",
+    "North Africa":"Heat index stable. Egypt data quality remains strong.",
+    "Central Africa":"Heat index variable. Rural connectivity is the key constraint.",
+    "Southern Africa":"Heat index moderate-low. Program expansion window favorable."
+  }[region];
+  state.healthLastAction = `Map inspected: ${region}`;
+  qs("heatInspectorLog").textContent = msg;
+  syncAll();
+};
 
-    function deepClone(obj){ return JSON.parse(JSON.stringify(obj)); }
-    function loadState(){
-      try{
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if(raw){
-          return Object.assign(deepClone(initialState), JSON.parse(raw));
-        }
-      }catch(e){}
-      return deepClone(initialState);
-    }
-    function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+qs("simulateOrderBtn").onclick = ()=>{
+  const chosen = document.querySelector('input[name="productPick"]:checked');
+  state.selectedProduct = chosen ? chosen.value : state.selectedProduct;
+  state.orders.push({product:state.selectedProduct,status:"Ordered"});
+  state.checkpoints = ["Order placed"];
+  qs("marketLog").textContent = `${state.selectedProduct} order created. Status is now Ordered.`;
+  syncAll();
+};
+qs("showBuyerInterestBtn").onclick = ()=>{
+  const chosen = document.querySelector('input[name="productPick"]:checked');
+  state.selectedProduct = chosen ? chosen.value : state.selectedProduct;
+  qs("marketLog").textContent = `Buyer interest confirmed for ${state.selectedProduct}. Estimated demand is strong this week.`;
+};
+qs("sendAgriChat").onclick = ()=>{
+  const msg = qs("agriChatInput").value.trim();
+  if(!msg) return;
+  const box = qs("agriChatBox");
+  const user = document.createElement("div"); user.className="chat-msg chat-user"; user.textContent = msg;
+  const ai = document.createElement("div"); ai.className="chat-msg chat-ai";
+  const lower = msg.toLowerCase();
+  if(lower.includes("price")) ai.textContent = "Price AI suggests holding for 3 to 5 days in district markets and listing at a moderate premium.";
+  else if(lower.includes("disease")) ai.textContent = "Disease scan simulation suggests fungal risk. Inspect leaves and isolate affected rows.";
+  else if(lower.includes("soil")) ai.textContent = "Soil analysis simulation shows low nitrogen and moderate moisture variability.";
+  else if(lower.includes("logistics")) ai.textContent = "Route simulation suggests checkpoint batching to reduce transport delays.";
+  else ai.textContent = "AgriChat recommends combining market timing, field observations, and logistics readiness for better margins.";
+  box.append(user, ai); box.scrollTop = box.scrollHeight;
+  qs("agriChatInput").value = "";
+};
+qs("quickPayBtn").onclick = ()=>{
+  const method = qs("payMethod").value;
+  const amt = Number(qs("payAmount").value || 0);
+  if(amt <= 0){ qs("walletLog").textContent = "Enter a valid payment amount."; return; }
+  state.walletBalance -= amt;
+  state.walletLedger.unshift({label:`QuickPay via ${method}`, amount:`-${amt.toFixed(2)}`});
+  qs("walletLog").textContent = `${method} payment simulated for $${amt.toFixed(2)}.`;
+  syncAll();
+};
+qs("addFundsBtn").onclick = ()=>{
+  state.walletBalance += 100;
+  state.walletLedger.unshift({label:"Demo top-up", amount:"+100.00"});
+  qs("walletLog").textContent = "Demo funds added to wallet.";
+  syncAll();
+};
+qs("advanceOrderBtn").onclick = ()=>{
+  if(!state.orders.length){ qs("orderLog").textContent = "Create an order first."; return; }
+  const statuses = ["Ordered","Packed","In Transit","At Hub","Delivered"];
+  const current = state.orders[state.orders.length-1];
+  const idx = statuses.indexOf(current.status);
+  current.status = statuses[Math.min(statuses.length-1, idx+1)];
+  qs("orderLog").textContent = `Order moved to ${current.status}.`;
+  syncAll();
+};
+qs("addCheckpointBtn").onclick = ()=>{
+  const names = ["Farm Gate","Local Aggregator","District Hub","Border Point","Buyer Warehouse","Final Delivery"];
+  const next = names[Math.min(state.checkpoints.length, names.length-1)];
+  state.checkpoints.push(next);
+  qs("orderLog").textContent = `Checkpoint added: ${next}.`;
+  syncAll();
+};
+qs("priceAiBtn").onclick = ()=>{ state.aiLastAction="Price AI estimate generated"; qs("aiAutomationLog").textContent="Price AI: maize +8%, cassava +4%, tomatoes -3% against recent local averages."; syncAll(); };
+qs("soilAiBtn").onclick = ()=>{ state.aiLastAction="Soil Analysis completed"; qs("aiAutomationLog").textContent="Soil Analysis: pH 6.2, nitrogen low, potassium moderate, irrigation scheduling recommended."; syncAll(); };
+qs("diseaseAiBtn").onclick = ()=>{ state.aiLastAction="Disease Scanner completed"; qs("aiAutomationLog").textContent="Disease Scanner: leaf spot probability moderate. Recommend visual confirmation and targeted treatment."; syncAll(); };
+qs("commandCenterBtn").onclick = ()=>{ state.aiLastAction="AI Command Center run"; qs("aiAutomationLog").textContent="AI Command Center: combined pricing, disease, logistics, and supply signals now summarized for field teams."; syncAll(); };
+qs("registerFarmerBtn").onclick = ()=>{ qs("farmerOpsLog").textContent="Farmer registered successfully. Digital profile and market-readiness record created."; };
+qs("fieldVisitBtn").onclick = ()=>{ qs("farmerOpsLog").textContent="Field visit logged. Notes linked to farmer profile and AI recommendations layer."; };
 
-    function setText(id, value){ const el=document.getElementById(id); if(el) el.textContent=value; }
-    function getCompletedCourses(){ return Object.values(state.courses).filter(c=>c.quizPassed).length; }
-    function getCertificates(){ return Object.values(state.courses).filter(c=>c.certificate).length; }
-    function getReadinessScore(){
-      let score = getCompletedCourses()*35 + getCertificates()*10 + state.applications.length*5 + state.agritech.farmersOnboarded*3 + state.healthHistory.length*2;
-      return Math.min(100, score);
-    }
-    function isEligible(){ return getCompletedCourses() >= 2; }
-    function currentLang(){ return state.language || 'en'; }
-    function t(key){ return tr(currentLang(), key); }
-    function jobRequirementText(track){ return track.map(k=>t('courseNames')[k]).join(' + '); }
-    function jobEligible(job){ return job.track.every(k => state.courses[k] && state.courses[k].quizPassed); }
-
-    function applyLanguage(){
-      const lang = currentLang();
-      document.documentElement.lang = lang;
-      document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
-      document.getElementById('languageSelect').value = lang;
-      setText('brandTagline', t('brandTagline'));
-      setText('modeText', t('modeText'));
-      setText('navTitle', t('navTitle'));
-      ['navDashboard','navLearning','navWorkforce','navHealth','navAgritech','navAgritrade','navProfile',
-       'dashboardTitle','dashboardIntro','badgeHealth','badgeLearning','badgeTrade','badgeWorkforce',
-       'dashCoursesCompletedTitle','dashCoursesCompletedText','dashReadinessTitle','dashReadinessText',
-       'dashCropsTitle','dashCropsText','dashHealthVisitsTitle','dashHealthVisitsText','dashboardValueTitle',
-       'value1Title','value1Text','value2Title','value2Text','value3Title','value3Text',
-       'learningTitle','learningIntro','learningTabCourses','learningTabCertificates','certTitle',
-       'workforceTitle','workforceIntro','wfProfileTitle','wfCoursesLabel','wfCertificatesLabel','wfEligibleLabel','wfReadinessNote','wfChannelsTitle','wfStatusTitle','wfRolesTitle','wfThRole','wfThTrack','wfThStatus','wfThAction',
-       'healthTitle','healthIntro','healthFormTitle','healthHistoryTitle','healthSubmitBtn','healthClearBtn',
-       'agritechTitle','agritechIntro','agriSupportTitle','farmerOnboardBtn','fieldVisitBtn','agriSupportNote','agriStatsTitle','agriFarmersLabel','agriVisitsLabel','agriActivityTitle',
-       'agritradeTitle','agritradeIntro','tradeTabListings','tradeTabLogistics','tradeFormTitle','addCropBtn','simulateBuyerBtn','tradeListingsTitle','logisticsTitle','logisticsNote',
-       'profileTitle','profileIntro','profileNameTitle','profileRoleTitle','profileLangTitle','profileCoursesTitle','profileJobsTitle','profileTradeTitle','resetDemoBtn','footerText'
-      ].forEach(id=>setText(id,t(id)));
-
-      document.getElementById('healthNotes').placeholder = t('healthPlaceholder');
-      document.getElementById('cropName').placeholder = t('cropNamePlaceholder');
-      document.getElementById('cropQty').placeholder = t('cropQtyPlaceholder');
-
-      const hc = document.getElementById('healthCategory');
-      hc.innerHTML = '';
-      const categories = t('healthCategories');
-      Object.keys(categories).forEach(k=>{
-        const opt=document.createElement('option'); opt.value=k; opt.textContent=categories[k]; hc.appendChild(opt);
-      });
-
-      const cm = document.getElementById('cropMarket');
-      const current = state.agritrade.selectedMarket || 0;
-      cm.innerHTML = '';
-      t('markets').forEach((m, idx)=>{
-        const opt=document.createElement('option'); opt.value=m; opt.textContent=m; if(idx===current) opt.selected=true; cm.appendChild(opt);
-      });
-
-      setText('profileLanguageText', t('languageName'));
-      renderAll();
-    }
-
-    function showSection(sectionId){
-      document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-      document.getElementById(sectionId).classList.add('active');
-      document.querySelector(`.nav-btn[data-section="${sectionId}"]`).classList.add('active');
-      state.activeSection = sectionId;
-      saveState();
-    }
-
-    function showSubview(group, subview){
-      document.querySelectorAll(`.subtab[data-tabgroup="${group}"]`).forEach(b=>b.classList.remove('active'));
-      document.querySelectorAll(`#${subview}`).forEach(()=>{});
-      const btn = document.querySelector(`.subtab[data-tabgroup="${group}"][data-subview="${subview}"]`);
-      if(btn) btn.classList.add('active');
-      if(group === 'learningTabs'){
-        ['learningCourses','learningCertificates'].forEach(id=>document.getElementById(id).classList.remove('active'));
-      }
-      if(group === 'tradeTabs'){
-        ['tradeListings','tradeLogistics'].forEach(id=>document.getElementById(id).classList.remove('active'));
-      }
-      document.getElementById(subview).classList.add('active');
-    }
-
-    function alertMsg(key){ alert(t('alerts')[key]); }
-
-    function renderCourses(){
-      const container = document.getElementById('coursesContainer');
-      container.innerHTML = '';
-      Object.keys(state.courses).forEach(id=>{
-        const c = state.courses[id];
-        const card = document.createElement('div');
-        card.className = 'card';
-        const completedLessons = Math.min(c.progress, c.lessons);
-        const pct = Math.round((completedLessons / c.lessons) * 100);
-        let btnHtml = '';
-        if(!c.enrolled){
-          btnHtml = `<button class="btn btn-primary" onclick="enrollCourse('${id}')">${t('courseButtonEnroll')}</button>`;
-        } else if(c.progress < c.lessons){
-          btnHtml = `<button class="btn btn-primary" onclick="progressCourse('${id}')">${t('courseButtonContinue')}</button>`;
-        } else if(!c.quizPassed){
-          btnHtml = `<button class="btn btn-warn" onclick="takeQuiz('${id}')">${t('courseButtonQuiz')}</button>`;
-        } else if(!c.certificate){
-          btnHtml = `<button class="btn btn-success" onclick="claimCertificate('${id}')">${t('courseButtonClaim')}</button>`;
-        } else {
-          btnHtml = `<span class="label">${t('alerts').certificate}</span>`;
-        }
-        card.innerHTML = `
-          <h3>${t('courseNames')[id]}</h3>
-          <p>${t('courseDescs')[id]}</p>
-          <div class="small" style="margin-top:10px">${t('lessonsLabel')}: ${completedLessons}/${c.lessons}</div>
-          <div class="progress"><span style="width:${pct}%"></span></div>
-          <div class="row" style="margin-top:14px">${btnHtml}</div>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    function renderCertificates(){
-      const list = document.getElementById('certificatesList');
-      list.innerHTML = '';
-      const earned = Object.keys(state.courses).filter(id => state.courses[id].certificate);
-      if(!earned.length){
-        list.innerHTML = `<div class="notice">${t('noCertificates')}</div>`;
-        return;
-      }
-      earned.forEach(id=>{
-        const item = document.createElement('div');
-        item.className = 'notice';
-        item.textContent = `${t('certificatePrefix')} ${t('courseNames')[id]}`;
-        list.appendChild(item);
-      });
-    }
-
-    function renderWorkforce(){
-      setText('wfCompletedCourses', String(getCompletedCourses()));
-      setText('wfCertificates', String(getCertificates()));
-      const eligible = isEligible();
-      const el = document.getElementById('wfEligibility');
-      el.textContent = eligible ? t('eligibleYes') : t('eligibleNo');
-      el.className = 'status ' + (eligible ? 'ready' : 'locked');
-      const score = getReadinessScore();
-      document.getElementById('wfReadinessBar').style.width = score + '%';
-
-      const ch = document.getElementById('placementChannels');
-      ch.innerHTML = '';
-      t('channels').forEach(x=>{
-        const div = document.createElement('div');
-        div.className = 'label';
-        div.textContent = x;
-        ch.appendChild(div);
-      });
-
-      const apps = document.getElementById('applicationsList');
-      apps.innerHTML = '';
-      if(!state.applications.length){
-        apps.innerHTML = `<div class="notice">${t('noApplications')}</div>`;
-      } else {
-        state.applications.forEach(app=>{
-          const row = document.createElement('div');
-          row.className = 'notice';
-          row.textContent = `${app.role} — ${t('jobStatusApplied')}`;
-          apps.appendChild(row);
-        });
-      }
-
-      const tbody = document.getElementById('jobsTableBody');
-      tbody.innerHTML = '';
-      jobs.forEach(job=>{
-        const applied = state.applications.some(a=>a.jobId===job.id);
-        const eligibleForJob = jobEligible(job);
-        const trr = document.createElement('tr');
-        trr.innerHTML = `
-          <td>${job.roleKey}</td>
-          <td>${jobRequirementText(job.track)}</td>
-          <td class="status ${applied ? 'applied' : eligibleForJob ? 'open' : 'locked'}">${applied ? t('jobStatusApplied') : eligibleForJob ? t('jobStatusOpen') : t('jobStatusLocked')}</td>
-          <td>${applied ? '<span class="label">'+t('jobStatusApplied')+'</span>' : `<button class="btn btn-secondary" onclick="applyJob('${job.id}')">${t('applyBtn')}</button>`}</td>
-        `;
-        tbody.appendChild(trr);
-      });
-    }
-
-    function renderHealth(){
-      const hist = document.getElementById('healthHistory');
-      hist.innerHTML = '';
-      if(!state.healthHistory.length){
-        hist.innerHTML = `<div class="notice">${t('noHealth')}</div>`;
-      } else {
-        [...state.healthHistory].reverse().forEach(item=>{
-          const div = document.createElement('div');
-          div.className = 'notice';
-          div.textContent = `${item.category} — ${item.note}`;
-          hist.appendChild(div);
-        });
-      }
-    }
-
-    function renderAgritech(){
-      setText('agriFarmers', String(state.agritech.farmersOnboarded));
-      setText('agriVisits', String(state.agritech.fieldVisits));
-      const act = document.getElementById('agriActivity');
-      act.innerHTML = '';
-      if(!state.agritech.activity.length){
-        act.innerHTML = `<div class="notice">${t('noAgri')}</div>`;
-      } else {
-        [...state.agritech.activity].reverse().forEach(item=>{
-          const div = document.createElement('div');
-          div.className = 'notice';
-          div.textContent = item;
-          act.appendChild(div);
-        });
-      }
-    }
-
-    function renderAgritrade(){
-      const listings = document.getElementById('cropListings');
-      listings.innerHTML = '';
-      if(!state.agritrade.listings.length){
-        listings.innerHTML = `<div class="notice">${t('noListings')}</div>`;
-      } else {
-        state.agritrade.listings.forEach(item=>{
-          const div = document.createElement('div');
-          div.className = 'card';
-          div.innerHTML = `
-            <h3>${item.crop}</h3>
-            <p>${item.qty} • ${item.market}</p>
-            <div class="small" style="margin-top:8px">Buyer interest: ${item.buyerInterest ? 'Yes' : 'No'}</div>
-            <div class="small">Stage: ${item.stage}</div>
-          `;
-          listings.appendChild(div);
-        });
-      }
-
-      const log = document.getElementById('logisticsList');
-      log.innerHTML = '';
-      if(!state.agritrade.listings.length){
-        log.innerHTML = `<div class="notice">${t('noLogistics')}</div>`;
-      } else {
-        state.agritrade.listings.forEach(item=>{
-          const stageIndex = t('stages').indexOf(item.stage);
-          const canAdvance = stageIndex < t('stages').length - 1;
-          const row = document.createElement('div');
-          row.className = 'card';
-          row.innerHTML = `
-            <div class="kpi-line"><strong>${item.crop}</strong><span class="label">${item.stage}</span></div>
-            <p>${item.qty} • ${item.market}</p>
-            <div class="row" style="margin-top:12px">${canAdvance ? `<button class="btn btn-secondary" onclick="advanceLogistics(${item.id})">${t('advanceBtn')}</button>` : `<span class="label">${t('stages')[t('stages').length-1]}</span>`}</div>
-          `;
-          log.appendChild(row);
-        });
-      }
-    }
-
-    function renderDashboard(){
-      setText('dashCoursesCompleted', String(getCompletedCourses()));
-      setText('dashReadiness', getReadinessScore() + '%');
-      setText('dashCrops', String(state.agritrade.listings.length));
-      setText('dashHealthVisits', String(state.healthHistory.length));
-    }
-
-    function renderProfile(){
-      setText('profileLanguageText', t('languageName'));
-      setText('profileCourses', String(getCompletedCourses()));
-      setText('profileJobs', String(state.applications.length));
-      setText('profileTrade', String(state.agritrade.listings.length));
-    }
-
-    function renderAll(){
-      renderDashboard();
-      renderCourses();
-      renderCertificates();
-      renderWorkforce();
-      renderHealth();
-      renderAgritech();
-      renderAgritrade();
-      renderProfile();
-    }
-
-    function enrollCourse(id){
-      state.courses[id].enrolled = true;
-      saveState(); renderAll(); alertMsg('enrolled');
-    }
-    function progressCourse(id){
-      const c = state.courses[id];
-      if(!c.enrolled) return;
-      c.progress = Math.min(c.lessons, c.progress + 1);
-      saveState(); renderAll(); alertMsg('progress');
-    }
-    function takeQuiz(id){
-      const c = state.courses[id];
-      if(c.progress >= c.lessons){
-        c.quizPassed = true;
-        saveState(); renderAll(); alertMsg('quiz');
-      }
-    }
-    function claimCertificate(id){
-      const c = state.courses[id];
-      if(c.quizPassed && !c.certificate){
-        c.certificate = true;
-        saveState(); renderAll(); alertMsg('certificate');
-      }
-    }
-    function applyJob(jobId){
-      const job = jobs.find(j=>j.id===jobId);
-      if(!jobEligible(job)){ alertMsg('locked'); return; }
-      if(state.applications.some(a=>a.jobId===jobId)) return;
-      state.applications.push({jobId, role:job.roleKey});
-      saveState(); renderAll(); alertMsg('applied');
-    }
-    function submitHealth(){
-      const categoryKey = document.getElementById('healthCategory').value;
-      const note = document.getElementById('healthNotes').value.trim() || 'No additional notes';
-      const categories = t('healthCategories');
-      state.healthHistory.push({category: categories[categoryKey], note});
-      document.getElementById('healthNotes').value = '';
-      saveState(); renderAll(); alertMsg('triage');
-    }
-    function clearHealth(){ document.getElementById('healthNotes').value = ''; }
-    function onboardFarmer(){
-      state.agritech.farmersOnboarded += 1;
-      state.agritech.activity.push('Farmer onboarded');
-      saveState(); renderAll(); alertMsg('farmer');
-    }
-    function logFieldVisit(){
-      state.agritech.fieldVisits += 1;
-      state.agritech.activity.push('Field visit logged');
-      saveState(); renderAll(); alertMsg('visit');
-    }
-    function addCrop(){
-      const crop = document.getElementById('cropName').value.trim();
-      const qty = document.getElementById('cropQty').value.trim();
-      const market = document.getElementById('cropMarket').value;
-      if(!crop || !qty) return;
-      state.agritrade.listings.push({id:state.agritrade.nextId++, crop, qty, market, buyerInterest:false, stage:t('stages')[0]});
-      document.getElementById('cropName').value = '';
-      document.getElementById('cropQty').value = '';
-      saveState(); renderAll(); alertMsg('crop');
-    }
-    function simulateBuyer(){
-      const pending = state.agritrade.listings.find(x=>!x.buyerInterest);
-      if(pending){
-        pending.buyerInterest = true;
-        saveState(); renderAll(); alertMsg('buyer');
-      }
-    }
-    function advanceLogistics(id){
-      const item = state.agritrade.listings.find(x=>x.id===id);
-      const stages = t('stages');
-      const idx = stages.indexOf(item.stage);
-      if(idx < stages.length-1){
-        item.stage = stages[idx+1];
-        saveState(); renderAll(); alertMsg('stage');
-      }
-    }
-    function resetDemo(){
-      state = deepClone(initialState);
-      saveState();
-      applyLanguage();
-      showSection('dashboard');
-      alertMsg('reset');
-    }
-
-    window.enrollCourse = enrollCourse;
-    window.progressCourse = progressCourse;
-    window.takeQuiz = takeQuiz;
-    window.claimCertificate = claimCertificate;
-    window.applyJob = applyJob;
-    window.advanceLogistics = advanceLogistics;
-
-    document.querySelectorAll('.nav-btn').forEach(btn=>{
-      btn.addEventListener('click', ()=>showSection(btn.dataset.section));
-    });
-    document.querySelectorAll('.subtab').forEach(btn=>{
-      btn.addEventListener('click', ()=>showSubview(btn.dataset.tabgroup, btn.dataset.subview));
-    });
-    document.getElementById('languageSelect').addEventListener('change', e=>{
-      state.language = e.target.value;
-      saveState();
-      applyLanguage();
-    });
-    document.getElementById('healthSubmitBtn').addEventListener('click', submitHealth);
-    document.getElementById('healthClearBtn').addEventListener('click', clearHealth);
-    document.getElementById('farmerOnboardBtn').addEventListener('click', onboardFarmer);
-    document.getElementById('fieldVisitBtn').addEventListener('click', logFieldVisit);
-    document.getElementById('addCropBtn').addEventListener('click', addCrop);
-    document.getElementById('simulateBuyerBtn').addEventListener('click', simulateBuyer);
-    document.getElementById('resetDemoBtn').addEventListener('click', resetDemo);
-
-    applyLanguage();
-    renderAll();
-    showSection(state.activeSection || 'dashboard');
-  </script>
+function init(){
+  updateTranslations();
+  syncAll();
+}
+init();
+</script>
 </body>
 </html>
