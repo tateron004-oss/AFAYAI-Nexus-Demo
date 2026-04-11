@@ -3,89 +3,627 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AgriNexus v12</title>
+  <title>AgriNexus</title>
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
   <style>
-    :root{--bg:#eef7f5;--bg2:#f8fbfd;--panel:#ffffff;--ink:#163247;--muted:#5f7890;--blue:#1f74c9;--blue2:#0d5aa6;--green:#1e9c6b;--green2:#147a55;--line:#d9e6ef;--gold:#d89b22;--shadow:0 14px 32px rgba(22,50,71,.10);--radius:18px}
-    *{box-sizing:border-box}html,body{margin:0;padding:0;font-family:Inter,Arial,Helvetica,sans-serif;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--ink)}a{text-decoration:none;color:inherit}button,input,select{font:inherit}
-    .landing{min-height:100vh;display:none;flex-direction:column;background:linear-gradient(120deg,rgba(31,116,201,.08),rgba(30,156,107,.10))}.landing-overlay{background:linear-gradient(180deg,rgba(244,251,253,.90),rgba(244,251,253,.94));min-height:100vh}
-    .topbar{max-width:1280px;margin:0 auto;width:100%;display:flex;justify-content:space-between;align-items:center;padding:22px 22px 0;gap:18px;flex-wrap:wrap}.brand{display:flex;align-items:center;gap:14px}.brand img{width:62px;height:62px;object-fit:contain;background:white;border-radius:16px;padding:6px;box-shadow:var(--shadow)}.brand h1{margin:0;font-size:1.5rem}.brand p{margin:4px 0 0;color:var(--muted)}.pill{padding:10px 14px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.78);backdrop-filter:blur(10px)}
-    .hero{max-width:1280px;margin:0 auto;padding:48px 22px 30px;display:grid;grid-template-columns:1.15fr .85fr;gap:24px;align-items:center;flex:1}.hero-copy,.hero-card,.shell,.card,.kpi,.sidebar,.modal-card{background:rgba(255,255,255,.88);backdrop-filter:blur(12px)}.hero-copy{padding:34px;border-radius:28px;border:1px solid rgba(255,255,255,.7);box-shadow:var(--shadow)}.hero-copy h2{font-size:3rem;line-height:1.03;margin:0 0 16px}.hero-copy p{font-size:1.08rem;line-height:1.6;color:var(--muted);max-width:720px}.gradient{background:linear-gradient(135deg,var(--blue),var(--green));-webkit-background-clip:text;background-clip:text;color:transparent}.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}.btn{border:none;border-radius:14px;padding:13px 18px;font-weight:700;cursor:pointer;transition:.18s ease;box-shadow:var(--shadow)}.btn:hover{transform:translateY(-1px)}.btn-primary{color:white;background:linear-gradient(135deg,var(--blue),var(--green))}.btn-secondary{background:white;border:1px solid var(--line);color:var(--ink)}
-    .hero-card{padding:24px;border-radius:24px;border:1px solid rgba(255,255,255,.7);box-shadow:var(--shadow)}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:12px}.stat{padding:16px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,#fff,#f7fbff)}.stat b{display:block;font-size:1.65rem;margin-bottom:4px;color:var(--blue2)}.strip{max-width:1280px;margin:0 auto 24px;padding:0 22px 30px}.logos{display:flex;gap:12px;flex-wrap:wrap}.logo-pill{padding:11px 14px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.82);font-weight:700;color:#496479}
-    .app{display:block;min-height:100vh}.app.show{display:block}.app-top{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}.app-top-inner{max-width:1440px;margin:0 auto;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.app-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.shell-wrap{max-width:1440px;margin:0 auto;padding:20px 18px;display:grid;grid-template-columns:270px 1fr;gap:18px}.sidebar{padding:18px;border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);height:fit-content}.nav-title{font-size:.82rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:4px 0 10px}.nav-btn{width:100%;text-align:left;border:none;background:transparent;padding:12px 12px;border-radius:14px;cursor:pointer;margin-bottom:8px;color:var(--ink);font-weight:700;border:1px solid transparent}.nav-btn:hover,.nav-btn.active{background:linear-gradient(135deg,rgba(31,116,201,.08),rgba(30,156,107,.10));border-color:#cde0ea}.shell{padding:20px;border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow)}.section{display:none}.section.active{display:block}.banner{padding:22px;border-radius:20px;background:linear-gradient(135deg,rgba(31,116,201,.10),rgba(30,156,107,.14));border:1px solid #d6e7ef;margin-bottom:18px}.banner h2{margin:0 0 8px;font-size:2rem}.banner p{margin:0;color:var(--muted);line-height:1.55}.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:18px 0}.kpi{padding:16px;border:1px solid var(--line);border-radius:18px;cursor:pointer}.kpi h4{margin:0 0 6px;font-size:.92rem;color:var(--muted)}.kpi b{font-size:1.85rem;color:var(--blue2)}.kpi small{display:block;color:var(--muted);margin-top:4px}
-    .grid{display:grid;gap:16px}.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}.card{padding:18px;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}.card h3{margin:0 0 10px}.card p,.card li{color:var(--muted);line-height:1.55}.label-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.label{padding:7px 10px;border-radius:999px;background:#f3faf8;border:1px solid #d7ebe5;color:var(--green2);font-size:.86rem;font-weight:700}.map-controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}#globalMap{height:520px;border-radius:18px;border:1px solid var(--line);overflow:hidden}.panel-stack{display:grid;gap:14px}.list{display:grid;gap:10px}.list-item{padding:12px;border:1px solid var(--line);border-radius:14px;background:#f8fbfd}.country-btns{display:flex;gap:10px;flex-wrap:wrap}.country-btn{padding:10px 12px;border-radius:999px;border:1px solid var(--line);background:white;cursor:pointer;font-weight:700}.country-btn.active{background:linear-gradient(135deg,rgba(31,116,201,.12),rgba(30,156,107,.12))}.log{min-height:90px;padding:12px;border-radius:14px;background:#f8fbfd;border:1px dashed #c8d8e5;color:var(--muted);white-space:pre-wrap}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:18px;background:white}table{width:100%;border-collapse:collapse;min-width:840px}th,td{padding:12px;border-bottom:1px solid var(--line);text-align:left}th{background:#f5fbff}tr.active-row{background:linear-gradient(135deg,rgba(31,116,201,.07),rgba(30,156,107,.07))}.route-badge{padding:6px 9px;border-radius:999px;background:#eef6ff;border:1px solid #d5e4f3;color:var(--blue2);font-size:.82rem;font-weight:700}.footer-note{margin-top:14px;color:var(--muted);font-size:.9rem}.modal{position:fixed;inset:0;background:rgba(11,26,40,.45);display:none;align-items:center;justify-content:center;padding:18px;z-index:120}.modal.show{display:flex}.modal-card{max-width:560px;width:100%;padding:26px;border-radius:24px;border:1px solid var(--line);box-shadow:var(--shadow)}.field{margin-top:12px}.field label{display:block;font-weight:700;margin-bottom:6px}input,select{width:100%;padding:12px 13px;border-radius:14px;border:1px solid #cfe0ea;background:white}.modal-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
-    @media (max-width:1080px){.hero{grid-template-columns:1fr}.shell-wrap{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-3{grid-template-columns:1fr}.grid-2{grid-template-columns:1fr}}
-    @media (max-width:700px){.hero-copy h2{font-size:2.25rem}.kpis{grid-template-columns:1fr}#globalMap{height:420px}}
+    :root{
+      --bg:#eef5f8; --panel:#ffffff; --line:#d9e6ec; --text:#16313e; --muted:#5c7482;
+      --blue:#1677d8; --green:#1b9b6b; --blue2:#0d5ab7; --green2:#0e7c54; --soft:#f4faf8;
+      --shadow:0 10px 30px rgba(13,49,62,.08); --radius:18px;
+    }
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,Arial,sans-serif;background:linear-gradient(180deg,#eef5f8,#e8f2ef);color:var(--text)}
+    button,select,input{font:inherit}
+    .hidden{display:none!important}
+    .landing,.login,.app-shell{min-height:100vh}
+    .landing{display:flex;align-items:center;justify-content:center;padding:28px}
+    .landing-card,.login-card{max-width:1120px;width:100%;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:28px;overflow:hidden}
+    .landing-grid{display:grid;grid-template-columns:1.2fr .9fr}
+    .hero-side{padding:42px;background:linear-gradient(135deg,#0f7b6d,#157bd8 70%,#6ac892);color:#fff;position:relative;overflow:hidden}
+    .hero-side:before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(255,255,255,.18),transparent 24%),radial-gradient(circle at 20% 80%,rgba(255,255,255,.14),transparent 30%)}
+    .hero-side>*{position:relative;z-index:1}
+    .hero-side img{width:74px;height:74px;background:#fff;border-radius:20px;padding:10px;box-shadow:0 12px 28px rgba(0,0,0,.18)}
+    .hero-side h1{font-size:3rem;margin:18px 0 10px} .hero-side p{font-size:1.08rem;line-height:1.6;max-width:620px}
+    .hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:28px}
+    .hero-stat{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:18px;padding:16px}.hero-stat .big{font-size:1.5rem;font-weight:800}
+    .entry-side{padding:34px;background:#fff}
+    .entry-top{display:flex;justify-content:space-between;align-items:center;gap:12px}.lang-wrap{display:flex;align-items:center;gap:8px;background:#f2f8fb;border:1px solid var(--line);padding:10px 12px;border-radius:999px}
+    .entry-title{font-size:1.7rem;margin:20px 0 8px}
+    .entry-copy{color:var(--muted);margin-bottom:20px}
+    .role-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:20px 0 22px}
+    .role-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;cursor:pointer;transition:.18s;box-shadow:0 8px 20px rgba(0,0,0,.03)}
+    .role-card:hover,.role-card.active{transform:translateY(-2px);border-color:#8dc0b0;box-shadow:0 12px 24px rgba(27,155,107,.12)}
+    .role-card h3{margin:0 0 8px}.role-card p{margin:0;color:var(--muted);font-size:.95rem}
+    .cta-row{display:flex;gap:12px;flex-wrap:wrap}.btn{border:none;border-radius:14px;padding:13px 18px;font-weight:700;cursor:pointer}.btn-primary{background:linear-gradient(135deg,var(--green),var(--blue));color:#fff}.btn-secondary{background:#eff6fa;border:1px solid var(--line);color:var(--text)}
+    .login{display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(180deg,#eef6f8,#e8f0f5)}
+    .login-card{max-width:540px;padding:34px}.field{margin-bottom:14px}.field label{display:block;margin-bottom:6px;font-weight:700}.field input,.field select{width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:#fbfeff}
+    .demo-box{background:#f1f8f6;border:1px solid #cbe7dc;padding:14px;border-radius:16px;color:#355e50;margin-bottom:16px}
+    .topbar{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+    .topbar-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 18px;max-width:1500px;margin:0 auto}
+    .brand{display:flex;align-items:center;gap:12px}.brand img{width:42px;height:42px}.brand h2{margin:0;font-size:1.15rem}.brand small{display:block;color:var(--muted)}
+    .top-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.chip{background:#f4faf9;border:1px solid #cfe4db;padding:9px 12px;border-radius:999px;color:#1f5a49;font-weight:700;cursor:pointer}
+    .layout{display:grid;grid-template-columns:270px 1fr;min-height:calc(100vh - 68px)}
+    .sidebar{background:#fbfeff;border-right:1px solid var(--line);padding:18px}.nav-btn{display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:1px solid transparent;padding:13px 12px;border-radius:14px;text-align:left;cursor:pointer;color:var(--text);margin-bottom:8px;font-weight:700}.nav-btn:hover,.nav-btn.active{background:#eff8f5;border-color:#cfe4db;color:#0f5e41}
+    .nav-icon{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#eaf6f3,#eef5fb);display:flex;align-items:center;justify-content:center}
+    .sidebar-card{margin-top:16px;background:#f7fbfd;border:1px solid var(--line);padding:14px;border-radius:16px}.sidebar-card p{margin:6px 0;color:var(--muted);font-size:.93rem}
+    .content{padding:20px;max-width:1500px}.section{display:none}.section.active{display:block}.hero{background:linear-gradient(135deg,#fff,#f3faf8 58%,#f1f7fd);border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:var(--shadow);margin-bottom:18px}
+    .hero h3{margin:0 0 8px;font-size:1.85rem}.hero p{margin:0;color:var(--muted);max-width:950px;line-height:1.6}
+    .hero-toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.stat-grid,.card-grid{display:grid;gap:14px}.stat-grid{grid-template-columns:repeat(4,1fr);margin-bottom:18px}.card-grid{grid-template-columns:repeat(3,1fr)}
+    .stat-card,.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--shadow)} .stat-num{font-size:2rem;font-weight:800;background:linear-gradient(135deg,var(--green),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .card h4,.stat-card h4{margin:0 0 8px}.card p,.stat-card p,.list li{color:var(--muted)}
+    .card button{margin-top:12px}.map-grid{display:grid;grid-template-columns:1.3fr .8fr;gap:14px}.map-wrap{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}.map-toolbar{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 14px;border-bottom:1px solid var(--line);background:#f8fbfc}.leaflet-map{height:520px;width:100%}
+    .panel{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:var(--shadow)} .panel h4{margin:0 0 10px}.panel p{color:var(--muted)} .row{display:flex;justify-content:space-between;gap:8px;margin:8px 0;padding-bottom:8px;border-bottom:1px dashed #d7e6eb}.row strong{color:var(--text)}
+    .subgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.list{padding-left:18px}.pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#eff8f5;color:#0c6c47;border:1px solid #d0e8de;font-size:.85rem;font-weight:700;margin:4px 6px 0 0}
+    .course,.job,.product{border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px;background:#fbfeff}.course h5,.job h5,.product h5{margin:0 0 6px}.muted{color:var(--muted)}
+    .footer-note{margin-top:14px;color:var(--muted);font-size:.92rem}.activity{max-height:220px;overflow:auto;background:#f8fbfc;border:1px solid var(--line);border-radius:16px;padding:12px}.activity div{padding:8px 0;border-bottom:1px dashed #dbe9ee;color:#43606d}.activity div:last-child{border-bottom:none}
+    .skill-meter{margin:10px 0 14px}.skill-meter .meter-label{display:flex;justify-content:space-between;font-size:.92rem;color:#3b5563;margin-bottom:6px}.skill-meter .meter-track{height:10px;background:#e7f2f1;border-radius:999px;overflow:hidden}.skill-meter .meter-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:999px}.mini-stat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.mini-stat{background:#f7fbfb;border:1px solid var(--line);border-radius:16px;padding:14px;text-align:center}.mini-stat strong{display:block;font-size:1.35rem;color:var(--text)}.timeline{display:grid;gap:10px;margin-top:8px}.timeline-step{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:#f8fbfc;border:1px solid var(--line);border-radius:14px}.timeline-badge{width:28px;height:28px;border-radius:999px;background:linear-gradient(135deg,var(--blue),var(--green));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex:0 0 auto}.timeline-step h5{margin:0 0 4px;color:var(--text)}.timeline-step p{margin:0;color:var(--muted);font-size:.92rem}.job-meta{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.chip{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:#eef7f7;border:1px solid var(--line);color:#2d5560;font-size:.82rem;font-weight:600}.job{padding:12px;border:1px solid var(--line);border-radius:16px;background:#fbfefe;margin-bottom:10px}.job h5{margin:0 0 6px}.job p{margin:0 0 8px;color:var(--muted);font-size:.92rem}
+    .section-actions{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+
+    .toast{position:fixed;right:18px;bottom:18px;z-index:9999;background:linear-gradient(135deg,var(--green),var(--blue));color:#fff;padding:12px 16px;border-radius:14px;box-shadow:0 12px 28px rgba(0,0,0,.18);font-weight:700;opacity:0;transform:translateY(10px);pointer-events:none;transition:.2s}
+    .toast.show{opacity:1;transform:translateY(0)}
+    .pulse{animation:pulseBtn .45s ease}
+    @keyframes pulseBtn{0%{transform:scale(1)}50%{transform:scale(1.04)}100%{transform:scale(1)}}
+
+    @media (max-width:1200px){.stat-grid,.card-grid{grid-template-columns:repeat(2,1fr)}.map-grid,.landing-grid,.subgrid{grid-template-columns:1fr}.layout{grid-template-columns:1fr}.sidebar{border-right:none;border-bottom:1px solid var(--line)}}
+    @media (max-width:760px){.hero-stats,.role-grid,.stat-grid,.card-grid{grid-template-columns:1fr}.topbar-inner{padding:12px}.content{padding:14px}.hero h3{font-size:1.45rem}}
   </style>
 </head>
 <body>
-  <div class="landing" id="landing"><div class="landing-overlay"><div class="topbar"><div class="brand"><img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22720%22%20height%3D%22220%22%20viewBox%3D%220%200%20720%20220%22%20fill%3D%22none%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%2220%22%20y1%3D%2220%22%20x2%3D%22180%22%20y2%3D%22180%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%0A%20%20%20%20%20%20%3Cstop%20stop-color%3D%22%2334C67A%22/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%221%22%20stop-color%3D%22%230F6B45%22/%3E%0A%20%20%20%20%3C/linearGradient%3E%0A%20%20%20%20%3Cfilter%20id%3D%22s%22%20x%3D%22-10%25%22%20y%3D%22-10%25%22%20width%3D%22120%25%22%20height%3D%22120%25%22%3E%0A%20%20%20%20%20%20%3CfeDropShadow%20dx%3D%220%22%20dy%3D%228%22%20stdDeviation%3D%228%22%20flood-color%3D%22%230B3D2A%22%20flood-opacity%3D%22.12%22/%3E%0A%20%20%20%20%3C/filter%3E%0A%20%20%3C/defs%3E%0A%20%20%3Cg%20filter%3D%22url%28%23s%29%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M110%2020C67%2043%2040%2086%2040%20130c0%2033%2027%2060%2060%2060%2072%200%20130-58%20130-130%200-13-2-26-6-38-43%204-83%2017-114%2048z%22%20fill%3D%22url%28%23g%29%22/%3E%0A%20%20%20%20%3Cpath%20d%3D%22M73%20130c22-22%2053-42%2098-56M104%20167c18-35%2039-67%2074-101M57%20103c33%204%2071%2018%20111%2047%22%20stroke%3D%22%23EAF8F0%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22/%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2273%22%20cy%3D%22130%22%20r%3D%2210%22%20fill%3D%22%23EAF8F0%22/%3E%0A%20%20%20%20%3Ccircle%20cx%3D%22171%22%20cy%3D%2273%22%20r%3D%2210%22%20fill%3D%22%23EAF8F0%22/%3E%0A%20%20%20%20%3Ccircle%20cx%3D%22104%22%20cy%3D%22167%22%20r%3D%2210%22%20fill%3D%22%23EAF8F0%22/%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2257%22%20cy%3D%22103%22%20r%3D%2210%22%20fill%3D%22%23EAF8F0%22/%3E%0A%20%20%3C/g%3E%0A%20%20%3Ctext%20x%3D%22270%22%20y%3D%22110%22%20font-family%3D%22Inter%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2272%22%20font-weight%3D%22800%22%20fill%3D%22%230F5132%22%3EAgriNexus%3C/text%3E%0A%20%20%3Ctext%20x%3D%22272%22%20y%3D%22156%22%20font-family%3D%22Inter%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2228%22%20font-weight%3D%22600%22%20fill%3D%22%231B8A5A%22%3EConnecting%20Agriculture%2C%20Workforce%2C%20and%20Opportunity%3C/text%3E%0A%3C/svg%3E" alt="AgriNexus logo" /><div><h1>AgriNexus</h1><p>Blue-green platform for agriculture, health, workforce, and AI-enabled delivery.</p></div></div><div class="pill">Real map version • v12</div></div><div class="hero"><div class="hero-copy"><div class="pill" style="display:inline-flex">Global agriculture + health operations platform</div><h2><span class="gradient">AgriNexus</span> connects countries, programs, and logistics in one live operating view.</h2><p>Explore a real global map with country zoom, panning, route lines, live program panels, and linked dashboard metrics for rollout countries including Nigeria, Kenya, Egypt, and the DRC.</p><div class="cta"><button class="btn btn-primary" onclick="openLogin()">Enter Platform</button><button class="btn btn-secondary" onclick="openLogin('Coordinator')">Request Demo</button></div></div><div class="hero-card"><h3 style="margin-top:0">Launch countries</h3><div class="stats"><div class="stat"><b>4</b><span>active rollout countries</span></div><div class="stat"><b>156</b><span>facilities in live program view</span></div><div class="stat"><b>12</b><span>trade route segments</span></div><div class="stat"><b>3.2k</b><span>patients + producer simulations</span></div></div><div class="footer-note">This version uses a real slippy web map with pan and zoom.</div></div></div><div class="strip"><div class="logos"><div class="logo-pill">USAID</div><div class="logo-pill">African Union</div><div class="logo-pill">CTA</div><div class="logo-pill">Rural Health Hubs</div><div class="logo-pill">Farmer Cooperatives</div></div></div></div></div>
+  <section class="landing" id="landingView">
+    <div class="landing-card">
+      <div class="landing-grid">
+        <div class="hero-side">
+          <img src="assets/agrinexus-logo.svg" alt="AgriNexus logo">
+          <h1 data-i18n="brandName">AgriNexus</h1>
+          <p data-i18n="landingHero">A unified platform connecting AFAYAI Health, Koachlearn Lite, Agritrade, workforce development, and AI decision support.</p>
+          <div class="hero-stats">
+            <div class="hero-stat"><div class="big">4</div><div data-i18n="statCountries">priority countries</div></div>
+            <div class="hero-stat"><div class="big">7</div><div data-i18n="statLanguages">platform languages</div></div>
+            <div class="hero-stat"><div class="big">1</div><div data-i18n="statMap">global map view</div></div>
+            <div class="hero-stat"><div class="big">3</div><div data-i18n="statRoutes">live routes</div></div>
+          </div>
+        </div>
+        <div class="entry-side">
+          <div class="entry-top">
+            <div>
+              <div class="pill" data-i18n="landingPill">Blue + green investor demo</div>
+              <div class="entry-title" data-i18n="landingTitle">Enter the platform</div>
+              <div class="entry-copy" data-i18n="landingCopy">Choose a role, pick a language, and open the app directly for testing.</div>
+            </div>
+            <div class="lang-wrap"><label for="landingLang" data-i18n="languageLabel">Language</label><select id="landingLang"></select></div>
+          </div>
+          <div class="role-grid">
+            <div class="role-card active" data-role="learner"><h3 data-i18n="roleLearner">Learner</h3><p data-i18n="roleLearnerCopy">Explore courses, quizzes, certificates, and workforce readiness.</p></div>
+            <div class="role-card" data-role="farmer"><h3 data-i18n="roleFarmer">Farmer</h3><p data-i18n="roleFarmerCopy">Use market, wallet, logistics, and agrichat tools.</p></div>
+            <div class="role-card" data-role="clinician"><h3 data-i18n="roleClinician">Clinician</h3><p data-i18n="roleClinicianCopy">Open AFAYAI Health, intake tools, and safety dashboards.</p></div>
+            <div class="role-card" data-role="coordinator"><h3 data-i18n="roleCoordinator">Coordinator</h3><p data-i18n="roleCoordinatorCopy">Manage countries, routes, facilities, and program performance.</p></div>
+          </div>
+          <div class="cta-row">
+            <button class="btn btn-primary" id="openLoginBtn" data-i18n="enterPlatform">Enter Platform</button>
+          </div>
+          <p class="footer-note" data-i18n="landingFooter">This test build uses a real web map with global view, country zoom, panning, route lines, and checkpoint markers.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <div class="app" id="app"><div class="app-top"><div class="app-top-inner"><div class="brand"><img src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22720%22%20height%3D%22220%22%20viewBox%3D%220%200%20720%20220%22%20fill%3D%22none%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%2220%22%20y1%3D%2220%22%20x2%3D%22180%22%20y2%3D%22180%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%0A%20%20%20%20%20%20%3Cstop%20stop-color%3D%22%2334C67A%22/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%221%22%20stop-color%3D%22%230F6B45%22/%3E%0A%20%20%20%20%3C/linearGradient%3E%0A%20%20%20%20%3Cfilter%20id%3D%22s%22%20x%3D%22-10%25%22%20y%3D%22-10%25%22%20width%3D%22120%25%22%20height%3D%22120%25%22%3E%0A%20%20%20%20%20%20%3CfeDropShadow%20dx%3D%220%22%20dy%3D%228%22%20stdDeviation%3D%228%22%20flood-color%3D%22%230B3D2A%22%20flood-opacity%3D%22.12%22/%3E%0A%20%20%20%20%3C/filter%3E%0A%20%20%3C/defs%3E%0A%20%20%3Cg%20filter%3D%22url%28%23s%29%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M110%2020C67%2043%2040%2086%2040%20130c0%2033%2027%2060%2060%2060%2072%200%20130-58%20130-130%200-13-2-26-6-38-43%204-83%2017-114%2048z%22%20fill%3D%22url%28%23g%29%22/%3E%0A%20%20%20%20%3Cpath%20d%3D%22M73%20130c22-22%2053-42%2098-56M104%20167c18-35%2039-67%2074-101M57%20103c33%204%2071%2018%20111%2047%22%20stroke%3D%22%23EAF8F0%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22/%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2273%22%20cy%3D%22130%22%20r%3D%2210%22%20fill%3D%22%23EAF8F0%22/%3E%0A%20%20%20%20%3Ccircle%20cx%3D%22171%22%20cy%3D%2273%22%20r%3D%2210%22%20fill%3D%22%23EAF8F0%22/%3E%0A%20%20%20%20%3Ccircle%20cx%3D%22104%22%20cy%3D%22167%22%20r%3D%2210%22%20fill%3D%22%23EAF8F0%22/%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2257%22%20cy%3D%22103%22%20r%3D%2210%22%20fill%3D%22%23EAF8F0%22/%3E%0A%20%20%3C/g%3E%0A%20%20%3Ctext%20x%3D%22270%22%20y%3D%22110%22%20font-family%3D%22Inter%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2272%22%20font-weight%3D%22800%22%20fill%3D%22%230F5132%22%3EAgriNexus%3C/text%3E%0A%20%20%3Ctext%20x%3D%22272%22%20y%3D%22156%22%20font-family%3D%22Inter%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2228%22%20font-weight%3D%22600%22%20fill%3D%22%231B8A5A%22%3EConnecting%20Agriculture%2C%20Workforce%2C%20and%20Opportunity%3C/text%3E%0A%3C/svg%3E" alt="AgriNexus logo" style="width:52px;height:52px" /><div><h1 style="font-size:1.25rem">AgriNexus</h1><p id="sessionLine">Global command view</p></div></div><div class="app-actions"><div class="pill" id="countryFilterPill">Country: Global</div><div class="pill" id="routeFilterPill">Route: Global network</div><select id="roleSwitcher" onchange="switchRole(this.value)"><option>Learner</option><option>Farmer</option><option>Clinician</option><option selected>Coordinator</option></select><button class="btn btn-secondary" onclick="logout()">Exit</button></div></div></div><div class="shell-wrap"><aside class="sidebar"><div class="nav-title">Platform</div><button class="nav-btn active" data-section="dashboard" onclick="showSection('dashboard',this)">Dashboard</button><button class="nav-btn" data-section="maphub" onclick="showSection('maphub',this)">Global Map Hub</button><button class="nav-btn" data-section="health" onclick="showSection('health',this)">AFAYAI Health</button><button class="nav-btn" data-section="learning" onclick="showSection('learning',this)">Koachlearn Lite</button><button class="nav-btn" data-section="agritrade" onclick="showSection('agritrade',this)">Agritrade</button><button class="nav-btn" data-section="aitools" onclick="showSection('aitools',this)">AI Tools</button><button class="nav-btn" data-section="profile" onclick="showSection('profile',this)">Profile</button></aside><main class="shell">
-<section id="dashboard" class="section active"><div class="banner"><h2>Executive dashboard</h2><p>KPIs below filter live when you select a country marker, route line, or route checkpoint from the map. Click any card to jump into the right context.</p></div><div class="kpis"><div class="kpi" onclick="jumpTo('health')"><h4>Patients enrolled</h4><b id="kpiPatients">3,240</b><small id="kpiPatientsSub">Global program</small></div><div class="kpi" onclick="jumpTo('agritrade')"><h4>Active orders</h4><b id="kpiOrders">18</b><small id="kpiOrdersSub">Global network</small></div><div class="kpi" onclick="jumpTo('learning')"><h4>Courses completed</h4><b id="kpiCourses">612</b><small id="kpiCoursesSub">Cross-country learners</small></div><div class="kpi" onclick="jumpTo('maphub')"><h4>Facilities</h4><b id="kpiFacilities">156</b><small id="kpiFacilitiesSub">Mapped facilities</small></div></div><div class="grid grid-2"><div class="card"><h3>Current country focus</h3><p id="currentCountrySummary">Global view active. Select a country on the map to update the command summary, live metrics, and route priorities.</p><div class="label-row"><span class="label" id="countryTag">Global</span><span class="label" id="roleTag">Coordinator</span><span class="label" id="routeTag">Global network</span></div></div><div class="card"><h3>Operations log</h3><div class="log" id="opsLog">Platform ready. Entered global command view.</div></div></div></section>
-<section id="maphub" class="section"><div class="banner"><h2>Global map hub</h2><p>A real global map with country zoom, panning, markers, route lines, and linked live panels.</p></div><div class="map-controls"><button class="btn btn-secondary" onclick="setGlobalView()">World</button><button class="country-btn" onclick="focusCountry('Nigeria')">Nigeria</button><button class="country-btn" onclick="focusCountry('Kenya')">Kenya</button><button class="country-btn" onclick="focusCountry('Egypt')">Egypt</button><button class="country-btn" onclick="focusCountry('DRC')">DRC</button></div><div class="grid grid-2"><div><div id="globalMap"></div><div class="footer-note">Map tiles © OpenStreetMap contributors.</div></div><div class="panel-stack"><div class="card"><h3>Selected country</h3><div id="countryPanel">Global view active.</div></div><div class="card"><h3>Selected route</h3><div id="routePanel">No active route selected.</div></div><div class="card"><h3>Checkpoint / marker</h3><div id="markerPanel">Click any facility, country marker, or route checkpoint.</div></div></div></div></section>
-<section id="health" class="section"><div class="banner"><h2>AFAYAI Health</h2><p>Country and facility panels mirror the global map selection so health planning updates live.</p></div><div class="table-wrap"><table><thead><tr><th>Country</th><th>Status</th><th>Facilities</th><th>Patients enrolled</th><th>Outcome index</th><th>Adoption</th><th>Safety</th><th>Data quality</th></tr></thead><tbody id="healthTableBody"></tbody></table></div></section>
-<section id="learning" class="section"><div class="banner"><h2>Koachlearn Lite</h2><p>Learning metrics also respond to the country currently selected from the map.</p></div><div class="grid grid-3" id="learningCards"></div></section>
-<section id="agritrade" class="section"><div class="banner"><h2>Agritrade</h2><p>Trade routes and logistics stages are drawn on the map. Click a route line or checkpoint to filter the live order view.</p></div><div class="grid grid-2"><div class="card"><h3>Live orders</h3><div class="list" id="ordersList"></div></div><div class="card"><h3>Route context</h3><div id="routeContextBox">Select a route from the map to view logistics status, ETA, and buyer context.</div></div></div></section>
-<section id="aitools" class="section"><div class="banner"><h2>AI Tools</h2><p>AI recommendations are generated from the selected country and route context.</p></div><div class="grid grid-3"><div class="card"><h3>Price AI</h3><p id="priceAiText">Waiting for route selection.</p></div><div class="card"><h3>Health planning AI</h3><p id="healthAiText">Waiting for country selection.</p></div><div class="card"><h3>Command center AI</h3><p id="commandAiText">Global command posture is stable.</p></div></div></section>
-<section id="profile" class="section"><div class="banner"><h2>Profile</h2><p>Session data updates from login, selected role, and map interactions.</p></div><div class="grid grid-2"><div class="card"><h3>Operator profile</h3><div id="profileBox"></div></div><div class="card"><h3>Recent context</h3><div class="log" id="profileLog"></div></div></div></section>
-</main></div></div>
+  <section class="login hidden" id="loginView">
+    <div class="login-card">
+      <img src="assets/agrinexus-logo.svg" alt="AgriNexus logo" style="width:56px;height:56px;display:block;margin-bottom:14px;">
+      <h2 data-i18n="loginTitle">Sign in to AgriNexus</h2>
+      <p class="muted" data-i18n="loginCopy">Use the demo credentials below to enter the prototype.</p>
+      <div class="demo-box"><strong data-i18n="demoCreds">Demo credentials</strong><br>Email: demo@agrinexus.org<br>Password: Prototype2026!</div>
+      <div class="field"><label for="emailInput" data-i18n="emailLabel">Email</label><input id="emailInput" value="demo@agrinexus.org"></div>
+      <div class="field"><label for="passwordInput" data-i18n="passwordLabel">Password</label><input id="passwordInput" type="password" value="Prototype2026!"></div>
+      <div class="field"><label for="countrySelect" data-i18n="countryLabel">Country</label><select id="countrySelect"></select></div>
+      <div class="field"><label for="languageSelect" data-i18n="languageLabel">Language</label><select id="languageSelect"></select></div>
+      <div class="cta-row">
+        <button class="btn btn-primary" id="loginBtn" data-i18n="signIn">Sign in</button>
+        <button class="btn btn-secondary" id="backBtn" data-i18n="back">Back</button>
+      </div>
+    </div>
+  </section>
 
-  <div class="modal" id="loginModal"><div class="modal-card"><h2 style="margin-top:0">Sign in to AgriNexus</h2><p style="color:var(--muted)">Use the demo credentials to enter the live map prototype.</p><div class="field"><label>Email</label><input id="loginEmail" value="demo@agrinexus.org"></div><div class="field"><label>Password</label><input id="loginPassword" type="password" value="Prototype2026!"></div><div class="field"><label>Role</label><select id="loginRole"><option>Learner</option><option>Farmer</option><option>Clinician</option><option selected>Coordinator</option></select></div><div class="modal-actions"><button class="btn btn-primary" onclick="login()">Enter platform</button><button class="btn btn-secondary" onclick="closeLogin()">Cancel</button></div></div></div>
+  <div class="app-shell hidden" id="appView">
+    <div class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <img src="assets/agrinexus-logo.svg" alt="AgriNexus logo">
+          <div><h2 data-i18n="brandName">AgriNexus</h2><small data-i18n="brandTag">Connecting agriculture, workforce, health, and opportunity.</small></div>
+        </div>
+        <div class="top-actions">
+          <button class="chip" data-shortcut="health" data-i18n="shortcutHealth">AFAYAI Health</button>
+          <button class="chip" data-shortcut="learning" data-i18n="shortcutLearning">Koachlearn Lite</button>
+          <button class="chip" data-shortcut="agritech" data-i18n="shortcutAgritrade">Agritrade</button>
+          <button class="chip" data-shortcut="map" data-i18n="shortcutAI">AI Tools</button>
+          <div class="lang-wrap"><label for="appLang" data-i18n="languageLabel">Language</label><select id="appLang"></select></div>
+          <button class="btn btn-secondary" id="logoutBtn" data-i18n="logout">Log out</button>
+        </div>
+      </div>
+    </div>
+    <div class="layout">
+      <aside class="sidebar">
+        <button class="nav-btn active" data-section="dashboard"><span class="nav-icon">⌂</span><span data-i18n="navDashboard">Dashboard</span></button>
+        <button class="nav-btn" data-section="learning"><span class="nav-icon">🎓</span><span data-i18n="navLearning">Learning & Development</span></button>
+        <button class="nav-btn" data-section="workforce"><span class="nav-icon">👥</span><span data-i18n="navWorkforce">Workforce</span></button>
+        <button class="nav-btn" data-section="health"><span class="nav-icon">✚</span><span data-i18n="navHealth">AFAYAI Health</span></button>
+        <button class="nav-btn" data-section="agritech"><span class="nav-icon">🌱</span><span data-i18n="navAgritech">Agritech + Agritrade</span></button>
+        <button class="nav-btn" data-section="map"><span class="nav-icon">🗺️</span><span data-i18n="navMap">Global Map & AI</span></button>
+        <button class="nav-btn" data-section="profile"><span class="nav-icon">☻</span><span data-i18n="navProfile">Profile</span></button>
+        <div class="sidebar-card">
+          <strong data-i18n="currentContext">Current context</strong>
+          <p><span data-i18n="ctxRole">Role</span>: <strong id="ctxRole"></strong></p>
+          <p><span data-i18n="ctxCountry">Country</span>: <strong id="ctxCountry"></strong></p>
+          <p><span data-i18n="ctxRoute">Route</span>: <strong id="ctxRoute"></strong></p>
+        </div>
+      </aside>
+      <main class="content">
+        <section class="section active" id="dashboardSection">
+          <div class="hero">
+            <h3 data-i18n="dashTitle">AgriNexus Working Prototype</h3>
+            <p data-i18n="dashIntro">This version uses a real web map with global view, country zoom, real panning and zooming, markers, route lines, and live platform updates.</p>
+            <div class="hero-toolbar">
+              <button class="btn btn-primary" data-jump="map" data-i18n="openMap">Open map</button>
+              <button class="btn btn-secondary" data-jump="learning" data-i18n="openLearning">Open learning</button>
+              <button class="btn btn-secondary" data-jump="health" data-i18n="openHealth">Open health</button>
+            </div>
+          </div>
+          <div class="stat-grid">
+            <div class="stat-card"><div class="stat-num" id="kpiCountries">4</div><h4 data-i18n="kpiCountries">Countries Served</h4><p id="kpiCountryText"></p></div>
+            <div class="stat-card"><div class="stat-num" id="kpiOrders">3</div><h4 data-i18n="kpiOrdersLabel">Active Orders</h4><p id="kpiOrdersText"></p></div>
+            <div class="stat-card"><div class="stat-num" id="kpiPatients">18400</div><h4 data-i18n="kpiPatientsLabel">Patients Enrolled</h4><p id="kpiPatientsText"></p></div>
+            <div class="stat-card"><div class="stat-num" id="kpiFacilities">86</div><h4 data-i18n="kpiFacilitiesLabel">Facilities</h4><p id="kpiFacilitiesText"></p></div>
+          </div>
+          <div class="card-grid">
+            <div class="card"><h4 data-i18n="dashCard1">Learning Progress</h4><p data-i18n="dashCard1Text">Launch course flows, quizzes, and certificate simulation.</p><button class="btn btn-secondary" data-jump="learning" data-i18n="goLearning">Go to learning</button></div>
+            <div class="card"><h4 data-i18n="dashCard2">Workforce Pipeline</h4><p data-i18n="dashCard2Text">Track readiness and apply to roles based on completed learning.</p><button class="btn btn-secondary" data-jump="workforce" data-i18n="goWorkforce">Go to workforce</button></div>
+            <div class="card"><h4 data-i18n="dashCard3">Agritrade Operations</h4><p data-i18n="dashCard3Text">Simulate orders, buyer interest, quick pay, checkpoints, and AI pricing.</p><button class="btn btn-secondary" data-jump="agritech" data-i18n="goAgritrade">Go to Agritrade</button></div>
+          </div>
+        </section>
+
+        <section class="section" id="learningSection">
+          <div class="hero"><h3 data-i18n="learnTitle">Learning & Development</h3><p data-i18n="learnIntro">Koachlearn Lite simulates practical training tied to certifications and workforce readiness.</p></div>
+          <div class="subgrid">
+            <div class="panel">
+              <h4 data-i18n="coursesTitle">Courses</h4>
+              <div class="course"><h5 data-i18n="course1">Digital Foundations</h5><p class="muted" data-i18n="course1Copy">Core digital literacy, messaging, and workflows.</p><button class="btn btn-primary course-btn" data-course="Digital Foundations" data-i18n="startCourse">Start course</button></div>
+              <div class="course"><h5 data-i18n="course2">Agritech Fundamentals</h5><p class="muted" data-i18n="course2Copy">Production planning, farm records, and market readiness.</p><button class="btn btn-primary course-btn" data-course="Agritech Fundamentals" data-i18n="startCourse">Start course</button></div>
+              <div class="course"><h5 data-i18n="course3">Telehealth Support</h5><p class="muted" data-i18n="course3Copy">Intake, navigation, and service coordination basics.</p><button class="btn btn-primary course-btn" data-course="Telehealth Support" data-i18n="startCourse">Start course</button></div>
+            </div>
+            <div class="panel">
+              <h4 data-i18n="learnSummary">Learning Summary</h4>
+              <div class="row"><span data-i18n="completedCourses">Completed courses</span><strong id="completedCourses">0</strong></div>
+              <div class="row"><span data-i18n="quizScore">Quiz score</span><strong id="quizScore">0</strong></div>
+              <div class="row"><span data-i18n="certificates">Certificates</span><strong id="certificatesCount">0</strong></div>
+              <div class="section-actions">
+                <button class="btn btn-secondary" id="quizBtn" data-i18n="completeQuiz">Complete quiz</button>
+                <button class="btn btn-secondary" id="certBtn" data-i18n="issueCertificate">Issue certificate</button>
+              </div>
+              <div class="activity" id="learningLog"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="workforceSection">
+          <div class="hero"><h3 data-i18n="workTitle">Workforce</h3><p data-i18n="workIntro">The workforce layer responds to learning progress and lets users simulate job-readiness, matching, and applications.</p></div>
+          <div class="subgrid">
+            <div class="panel">
+              <h4 data-i18n="readinessTitle">Readiness Status</h4>
+              <div class="row"><span data-i18n="readinessScore">Readiness score</span><strong id="readinessScore">32%</strong></div>
+              <div class="row"><span data-i18n="eligibility">Eligibility</span><strong id="eligibilityText">Locked</strong></div>
+              <div class="row"><span data-i18n="careerTrack">Career track</span><strong id="careerTrackValue">Foundation Pathway</strong></div>
+              <div class="mini-stat-grid">
+                <div class="mini-stat"><strong id="placementsValue">0</strong><span data-i18n="placements">Placements</span></div>
+                <div class="mini-stat"><strong id="interviewsValue">0</strong><span data-i18n="interviews">Interviews</span></div>
+                <div class="mini-stat"><strong id="mentorValue">Not yet</strong><span data-i18n="mentorStatus">Mentor</span></div>
+              </div>
+              <div class="section-actions">
+                <button class="btn btn-secondary" id="refreshReadinessBtn" data-i18n="refreshMatches">Refresh matches</button>
+                <button class="btn btn-secondary" id="buildProfileBtn" data-i18n="buildProfile">Build profile</button>
+                <button class="btn btn-secondary" id="orientationBtn" data-i18n="scheduleOrientation">Schedule orientation</button>
+              </div>
+            </div>
+            <div class="panel">
+              <h4 data-i18n="skillsPortfolio">Skills Portfolio</h4>
+              <div class="skill-meter"><div class="meter-label"><span data-i18n="skillDigital">Digital skills</span><strong id="skillDigitalValue">34%</strong></div><div class="meter-track"><div class="meter-fill" id="skillDigitalBar" style="width:34%"></div></div></div>
+              <div class="skill-meter"><div class="meter-label"><span data-i18n="skillField">Field operations</span><strong id="skillFieldValue">28%</strong></div><div class="meter-track"><div class="meter-fill" id="skillFieldBar" style="width:28%"></div></div></div>
+              <div class="skill-meter"><div class="meter-label"><span data-i18n="skillCare">Care coordination</span><strong id="skillCareValue">18%</strong></div><div class="meter-track"><div class="meter-fill" id="skillCareBar" style="width:18%"></div></div></div>
+              <div class="section-actions">
+                <button class="btn btn-secondary" id="pathwayBtn" data-i18n="viewPathway">View pathway</button>
+                <button class="btn btn-secondary" id="mentorBtn" data-i18n="unlockMentor">Unlock mentor</button>
+                <button class="btn btn-secondary" id="shiftBtn" data-i18n="startShift">Start shift simulation</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="subgrid" style="margin-top:14px">
+            <div class="panel">
+              <h4 data-i18n="rolesTitle">Available Roles</h4>
+              <div class="job"><h5 data-i18n="job1">Community Agriculture Support Worker</h5><p data-i18n="job1Copy">Support field visits, farmer onboarding, and local readiness checks.</p><div class="job-meta"><span class="chip" data-i18n="chipEntry">Entry</span><span class="chip">Nigeria / Kenya</span><span class="chip" data-i18n="chipHybrid">Field + Mobile</span></div><button class="btn btn-primary apply-btn" data-job="Community Agriculture Support Worker" data-i18n="applyNow">Apply now</button></div>
+              <div class="job"><h5 data-i18n="job2">Telehealth Access Assistant</h5><p data-i18n="job2Copy">Guide patients through intake, scheduling, and representative escalation.</p><div class="job-meta"><span class="chip" data-i18n="chipGrowth">Growth</span><span class="chip">Egypt / DRC</span><span class="chip" data-i18n="chipRemote">Remote + Hub</span></div><button class="btn btn-primary apply-btn" data-job="Telehealth Access Assistant" data-i18n="applyNow">Apply now</button></div>
+              <div class="job"><h5 data-i18n="job3">Farmer Network Coordinator</h5><p data-i18n="job3Copy">Coordinate buyer pipelines, route readiness, and district field teams.</p><div class="job-meta"><span class="chip" data-i18n="chipAdvanced">Advanced</span><span class="chip">Regional</span><span class="chip" data-i18n="chipLeadership">Leadership</span></div><button class="btn btn-primary apply-btn" data-job="Farmer Network Coordinator" data-i18n="applyNow">Apply now</button></div>
+            </div>
+            <div class="panel">
+              <h4 data-i18n="careerJourney">Career Journey</h4>
+              <div class="timeline">
+                <div class="timeline-step"><div class="timeline-badge">1</div><div><h5 data-i18n="journey1">Learn core skills</h5><p data-i18n="journey1Copy">Complete digital, agritech, or telehealth modules to raise readiness.</p></div></div>
+                <div class="timeline-step"><div class="timeline-badge">2</div><div><h5 data-i18n="journey2">Build a verified profile</h5><p data-i18n="journey2Copy">Create a workforce profile with badges, scores, and pathway recommendations.</p></div></div>
+                <div class="timeline-step"><div class="timeline-badge">3</div><div><h5 data-i18n="journey3">Match to opportunities</h5><p data-i18n="journey3Copy">Receive job matches, interview invites, and shift simulations tied to your country context.</p></div></div>
+                <div class="timeline-step"><div class="timeline-badge">4</div><div><h5 data-i18n="journey4">Advance and mentor</h5><p data-i18n="journey4Copy">Unlock mentor status, leadership tracks, and district or route coordination roles.</p></div></div>
+              </div>
+              <div class="activity" id="workforceLog"></div>
+            </div>
+          </div>
+          <div class="subgrid" style="margin-top:14px">
+            <div class="panel">
+              <h4>Candidate Dashboard</h4>
+              <div class="mini-stat-grid">
+                <div class="mini-stat"><strong id="candidateStageValue">Profile Setup</strong><span>Pipeline stage</span></div>
+                <div class="mini-stat"><strong id="earningsEstimateValue">$180/mo</strong><span>Earnings estimate</span></div>
+                <div class="mini-stat"><strong id="nextShiftValue">Not scheduled</strong><span>Next shift</span></div>
+              </div>
+              <div class="row"><span>Interview pipeline</span><strong id="pipelineSummaryValue">Profile Review → Shortlist → Interview → Placement</strong></div>
+              <div class="section-actions">
+                <button class="btn btn-secondary" id="scheduleInterviewBtn">Schedule interview</button>
+                <button class="btn btn-secondary" id="estimateEarningsBtn">Update earnings estimate</button>
+                <button class="btn btn-secondary" id="calendarBtn">Open shift calendar</button>
+              </div>
+              <div class="timeline" style="margin-top:12px">
+                <div class="timeline-step"><div class="timeline-badge">1</div><div><h5>Profile Review</h5><p id="pipeline1Status">Pending workforce profile completion.</p></div></div>
+                <div class="timeline-step"><div class="timeline-badge">2</div><div><h5>Shortlist</h5><p id="pipeline2Status">Locked until readiness reaches 55%.</p></div></div>
+                <div class="timeline-step"><div class="timeline-badge">3</div><div><h5>Interview</h5><p id="pipeline3Status">Interview slot not booked yet.</p></div></div>
+                <div class="timeline-step"><div class="timeline-badge">4</div><div><h5>Placement</h5><p id="pipeline4Status">Placement opens after interview completion.</p></div></div>
+              </div>
+            </div>
+            <div class="panel">
+              <h4>Shift Calendar</h4>
+              <div class="card-grid" style="grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+                <div class="card"><h5>Monday</h5><p id="calMon">Orientation / Learning Block</p></div>
+                <div class="card"><h5>Tuesday</h5><p id="calTue">Field readiness check</p></div>
+                <div class="card"><h5>Wednesday</h5><p id="calWed">Telehealth support shadowing</p></div>
+                <div class="card"><h5>Thursday</h5><p id="calThu">Market coordination / route review</p></div>
+                <div class="card"><h5>Friday</h5><p id="calFri">Interview prep + mentor time</p></div>
+                <div class="card"><h5>Weekend</h5><p id="calWeekend">Flexible community shift</p></div>
+              </div>
+              <div class="activity" id="candidateLog" style="margin-top:12px"></div>
+            </div>
+          </div>
+
+        </section>
+
+        <section class="section" id="healthSection">
+          <div class="hero"><h3 data-i18n="healthTitle">AFAYAI Health</h3><p data-i18n="healthIntro">Country filters and map selections update program status, facilities, patients, and AI recommendations live.</p></div>
+          <div class="card-grid">
+            <div class="card"><h4 data-i18n="safetyQuality">Safety & Quality</h4><p data-i18n="safetyQualityCopy">Review quality flags, AI overrides, and data quality for the selected country.</p><button class="btn btn-secondary" id="runSafetyBtn" data-i18n="runSafetyReview">Run safety review</button></div>
+            <div class="card"><h4 data-i18n="videoIntake">Telehealth video intake</h4><p data-i18n="videoIntakeCopy">Open a simulated video intake and triage recommendation for the active country.</p><button class="btn btn-secondary" id="startIntakeBtn" data-i18n="startIntake">Start intake</button></div>
+            <div class="card"><h4 data-i18n="aiRecommendations">AI recommendations</h4><p data-i18n="aiRecommendationsCopy">Use map context to tailor recommendations for facilities and patient load.</p><button class="btn btn-secondary" id="readPlanBtn" data-i18n="readPlanAloud">Read plan aloud</button></div>
+            <div class="card">
+              <h4 data-i18n="heatIndexTitle">Heat Index Monitor</h4>
+              <p data-i18n="heatIndexCopy">Track heat pressure and climate-related service risk for the selected country.</p>
+              <div class="row"><span data-i18n="heatIndexLabel">Heat index</span><strong id="heatIndexValue">37°C</strong></div>
+              <div class="row"><span data-i18n="heatRiskLabel">Heat risk</span><strong id="heatRiskValue">High</strong></div>
+              <button class="btn btn-secondary" id="runHeatIndexBtn" data-i18n="refreshHeatIndex">Refresh heat index</button>
+            </div>
+            <div class="card">
+              <h4 data-i18n="dialInTitle">Dial in to Telehealth</h4>
+              <p data-i18n="dialInCopy">Simulate a patient or partner call and connect to a live representative queue.</p>
+              <div class="row"><span data-i18n="dialNumberLabel">Dial-in number</span><strong id="dialNumberValue">+254 700 100 200</strong></div>
+              <div class="row"><span data-i18n="queueStatusLabel">Queue status</span><strong id="queueStatusValue">Representative available</strong></div>
+              <div class="section-actions">
+                <button class="btn btn-primary" id="dialRepBtn" data-i18n="dialRepresentative">Dial representative</button>
+                <button class="btn btn-secondary" id="connectRepBtn" data-i18n="connectRepresentative">Speak to representative</button>
+              </div>
+            </div>
+          </div>
+          <div class="panel" style="margin-top:14px">
+            <h4 data-i18n="countryComparison">Country Comparison</h4>
+            <div class="subgrid">
+              <div>
+                <div class="row"><span data-i18n="selectedCountry">Selected country</span><strong id="healthCountryName">Nigeria</strong></div>
+                <div class="row"><span data-i18n="patientsLabel">Patients</span><strong id="healthPatientsValue">5,600</strong></div>
+                <div class="row"><span data-i18n="facilitiesLabel">Facilities</span><strong id="healthFacilitiesValue">18</strong></div>
+              </div>
+              <div>
+                <div class="row"><span data-i18n="heatIndexLabel">Heat index</span><strong id="healthHeatSummary">37°C</strong></div>
+                <div class="row"><span data-i18n="queueStatusLabel">Queue status</span><strong id="healthQueueSummary">Representative available</strong></div>
+                <div class="row"><span data-i18n="aiRecommendations">AI recommendations</span><strong id="healthAiSummary">Standard staffing</strong></div>
+              </div>
+            </div>
+            <div class="card-grid" style="margin-top:14px">
+              <div class="card">
+                <h4 data-i18n="africaProgramMap">Africa Program Map (Demo)</h4>
+                <p data-i18n="mapInspectorCopy">Use the map inspector to review climate pressure, service readiness, and AI guidance for the selected country.</p>
+                <div class="row"><span data-i18n="heatIndexLabel">Heat index</span><strong id="mapHeatIndexValue">37°C</strong></div>
+                <div class="row"><span data-i18n="mapInspectorLabel">Map inspector AI</span><strong id="mapInspectorValue">Balanced staffing and mobile triage coverage.</strong></div>
+                <button class="btn btn-secondary" id="mapInspectorBtn" data-i18n="runMapInspector">Run map inspector AI</button>
+              </div>
+              <div class="card" style="grid-column: span 2;">
+                <div style="overflow:auto">
+                  <table style="width:100%; border-collapse:collapse; font-size:14px">
+                    <thead>
+                      <tr style="text-align:left; border-bottom:1px solid #d8e3dc">
+                        <th style="padding:8px" data-i18n="tblCountry">Country</th>
+                        <th style="padding:8px" data-i18n="tblStatus">Status</th>
+                        <th style="padding:8px" data-i18n="tblFacilities">Facilities</th>
+                        <th style="padding:8px" data-i18n="tblPatients">Patients enrolled</th>
+                        <th style="padding:8px" data-i18n="tblOutcome">Clinical Outcome Index</th>
+                        <th style="padding:8px" data-i18n="tblAdoption">Clinician Adoption</th>
+                        <th style="padding:8px" data-i18n="tblSafety">Safety Signal Rate</th>
+                        <th style="padding:8px" data-i18n="tblQuality">Data Quality Score</th>
+                      </tr>
+                    </thead>
+                    <tbody id="comparisonTableBody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="activity" id="healthLog"></div>
+          </div>
+        </section>
+
+        <section class="section" id="agritechSection">
+          <div class="hero"><h3 data-i18n="agriTitle">Agritech + Agritrade</h3><p data-i18n="agriIntro">This version includes market listings, quick pay, ledger entries, order tracking, logistics, and AI automation tools.</p></div>
+          <div class="subgrid">
+            <div class="panel">
+              <h4 data-i18n="marketTitle">Market Listings</h4>
+              <div class="product"><h5 data-i18n="prod1">Maize - Nigeria</h5><p class="muted">₦ 12,500 / unit</p><div class="section-actions"><button class="btn btn-primary order-btn" data-product="Maize - Nigeria" data-i18n="simulateOrder">Simulate order</button><button class="btn btn-secondary buyer-btn" data-product="Maize - Nigeria" data-i18n="showBuyerInterest">Show buyer interest</button></div></div>
+              <div class="product"><h5 data-i18n="prod2">Beans - Kenya</h5><p class="muted">KES 3,900 / unit</p><div class="section-actions"><button class="btn btn-primary order-btn" data-product="Beans - Kenya" data-i18n="simulateOrder">Simulate order</button><button class="btn btn-secondary buyer-btn" data-product="Beans - Kenya" data-i18n="showBuyerInterest">Show buyer interest</button></div></div>
+              <div class="product"><h5 data-i18n="prod3">Rice - Egypt</h5><p class="muted">EGP 8,800 / unit</p><div class="section-actions"><button class="btn btn-primary order-btn" data-product="Rice - Egypt" data-i18n="simulateOrder">Simulate order</button><button class="btn btn-secondary buyer-btn" data-product="Rice - Egypt" data-i18n="showBuyerInterest">Show buyer interest</button></div></div>
+            </div>
+            <div class="panel">
+              <h4 data-i18n="walletTitle">Wallet & AgriChat</h4>
+              <div class="section-actions"><button class="btn btn-secondary" id="quickPayMpesa">M-Pesa</button><button class="btn btn-secondary" id="quickPayMtn">MTN</button><button class="btn btn-secondary" id="quickPayAirtel">Airtel</button></div>
+              <div class="section-actions"><button class="btn btn-secondary" id="sendAgriChatBtn" data-i18n="sendToAgriChat">Send to AgriChat</button><button class="btn btn-secondary" id="priceAiBtn" data-i18n="runPriceAi">Run Price AI</button></div>
+              <div class="activity" id="agriLog"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="mapSection">
+          <div class="hero"><h3 data-i18n="mapTitle">Global Map & AI</h3><p data-i18n="mapIntro">A real web map with global view, country zoom, panning, zooming, route lines, checkpoint markers, and live platform updates.</p></div>
+          <div class="map-grid">
+            <div class="map-wrap">
+              <div class="map-toolbar">
+                <div class="section-actions">
+                  <button class="btn btn-secondary focus-country" data-country="Nigeria">Nigeria</button>
+                  <button class="btn btn-secondary focus-country" data-country="Kenya">Kenya</button>
+                  <button class="btn btn-secondary focus-country" data-country="Egypt">Egypt</button>
+                  <button class="btn btn-secondary focus-country" data-country="DRC">DRC</button>
+                </div>
+                <div class="section-actions">
+                  <button class="btn btn-secondary" id="globalViewBtn" data-i18n="globalView">Global view</button>
+                  <button class="btn btn-secondary" id="routesViewBtn" data-i18n="routesView">Routes view</button>
+                </div>
+              </div>
+              <div id="realMap" class="leaflet-map"></div>
+            </div>
+            <div class="panel">
+              <h4 data-i18n="livePanel">Live Panel</h4>
+              <div class="row"><span data-i18n="selectedCountry">Selected country</span><strong id="panelCountry">Nigeria</strong></div>
+              <div class="row"><span data-i18n="selectedRoute">Selected route</span><strong id="panelRoute">West Africa Corridor</strong></div>
+              <div class="row"><span data-i18n="selectedCheckpoint">Selected checkpoint</span><strong id="panelCheckpoint">Lagos Port</strong></div>
+              <div class="row"><span data-i18n="aiRiskLabel">AI risk view</span><strong id="panelAiRisk">Moderate</strong></div>
+              <div class="row"><span data-i18n="patientsLabel">Patients</span><strong id="panelPatients">5,600</strong></div>
+              <div class="row"><span data-i18n="facilitiesLabel">Facilities</span><strong id="panelFacilities">18</strong></div>
+              <div class="activity" id="mapLog"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="profileSection">
+          <div class="hero"><h3 data-i18n="profileTitle">Unified Profile</h3><p data-i18n="profileIntro">The profile updates based on your activity across learning, workforce, health, market, and map interactions.</p></div>
+          <div class="card-grid">
+            <div class="card"><h4 data-i18n="profLearn">Learning</h4><p id="profileLearning"></p></div>
+            <div class="card"><h4 data-i18n="profWork">Workforce</h4><p id="profileWorkforce"></p></div>
+            <div class="card"><h4 data-i18n="profHealth">Health</h4><p id="profileHealth"></p></div>
+            <div class="card"><h4 data-i18n="profWallet">Wallet</h4><p id="profileWallet"></p></div>
+            <div class="card"><h4 data-i18n="profOrders">Orders</h4><p id="profileOrders"></p></div>
+            <div class="card"><h4 data-i18n="profAi">AI Activity</h4><p id="profileAI"></p></div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <div class="toast" id="appToast"></div>
   <script>
-    const state={user:{name:'Demo Operator',email:'demo@agrinexus.org',role:'Coordinator'},selectedCountry:'Global',selectedRoute:'Global network',selectedMarker:null};
-    const countries={'Nigeria':{center:[9.082,8.6753],zoom:6,facilities:48,patients:1280,outcome:14,adoption:74,safety:2.1,quality:89,courses:220,orders:7,summary:'Nigeria combines telehealth expansion with cooperative trade corridors and the largest current facility count.'},'Kenya':{center:[-0.0236,37.9062],zoom:6,facilities:36,patients:860,outcome:17,adoption:78,safety:1.8,quality:91,courses:160,orders:5,summary:'Kenya leads in agri-logistics readiness and digital workforce adoption across hub-and-spoke counties.'},'Egypt':{center:[26.8206,30.8025],zoom:6,facilities:32,patients:640,outcome:13,adoption:69,safety:2.3,quality:87,courses:118,orders:3,summary:'Egypt focuses on telehealth access, climate-smart agriculture, and northbound export route simulation.'},'DRC':{center:[-2.8797,23.656],zoom:5,facilities:40,patients:460,outcome:11,adoption:62,safety:2.9,quality:82,courses:114,orders:3,summary:'The DRC program emphasizes remote coverage, field logistics, and rural service continuity.'}};
-    const routes={'Lagos Corridor':{country:'Nigeria',path:[[6.5244,3.3792],[6.4654,3.4064],[7.3775,3.9470],[9.0765,7.3986]],status:'In transit',eta:'16 hrs',buyer:'Regional wholesaler',recommendation:'Increase cold-chain visibility before final inland handoff.'},'Nairobi Fresh Chain':{country:'Kenya',path:[[-1.2864,36.8172],[-0.3031,36.0800],[0.5143,35.2698]],status:'Quality review',eta:'8 hrs',buyer:'Hospital food supplier',recommendation:'Maintain produce quality checks at the Eldoret checkpoint.'},'Cairo Delta Link':{country:'Egypt',path:[[30.0444,31.2357],[30.5965,32.2715],[31.2001,29.9187]],status:'Ready for dispatch',eta:'5 hrs',buyer:'Export aggregator',recommendation:'Lock vessel window after final pallet scan.'},'Kinshasa River Route':{country:'DRC',path:[[-4.4419,15.2663],[-2.5083,28.8608],[-1.6792,29.2228]],status:'Checkpoint hold',eta:'22 hrs',buyer:'District hospital network',recommendation:'Clear checkpoint documentation to restart the route.'}};
-    const facilities=[{name:'Lagos Telehealth Hub',country:'Nigeria',coords:[6.5244,3.3792],type:'Health hub',note:'High patient throughput and AI-supported triage.'},{name:'Abuja Coordination Center',country:'Nigeria',coords:[9.0765,7.3986],type:'Command center',note:'National coordination and workforce deployment.'},{name:'Nairobi Care Network',country:'Kenya',coords:[-1.2864,36.8172],type:'Health hub',note:'Cross-linked with agritrade routes and county dashboards.'},{name:'Eldoret Produce Node',country:'Kenya',coords:[0.5143,35.2698],type:'Trade checkpoint',note:'Fresh-chain checkpoint with buyer quality checks.'},{name:'Cairo Telehealth Center',country:'Egypt',coords:[30.0444,31.2357],type:'Health hub',note:'Clinical adoption pilot and multilingual patient intake.'},{name:'Alexandria Export Dock',country:'Egypt',coords:[31.2001,29.9187],type:'Port checkpoint',note:'Export staging for cold-chain produce.'},{name:'Kinshasa Program Office',country:'DRC',coords:[-4.4419,15.2663],type:'Command center',note:'Rural health coordination and dispatch routing.'},{name:'Goma Logistics Point',country:'DRC',coords:[-1.6792,29.2228],type:'Trade checkpoint',note:'Final-mile routing and checkpoint verification.'}];
-    let map,markersLayer,routesLayer; const routeLineRefs={};
-    function openLogin(role){document.getElementById('loginModal').classList.add('show'); if(role) document.getElementById('loginRole').value=role}
-    function closeLogin(){document.getElementById('loginModal').classList.remove('show')}
-    function login(){const email=document.getElementById('loginEmail').value.trim(); const password=document.getElementById('loginPassword').value.trim(); if(email!=='demo@agrinexus.org'||password!=='Prototype2026!'){alert('Use demo@agrinexus.org and Prototype2026!');return;} state.user.email=email; state.user.role=document.getElementById('loginRole').value; document.getElementById('roleSwitcher').value=state.user.role; document.getElementById('landing').style.display='none'; document.getElementById('app').classList.add('show'); closeLogin(); ensureMap(); updateAll(); setGlobalView(); log('Signed in as '+state.user.role+'. Global map ready.');}
-    function logout(){document.getElementById('app').classList.remove('show'); document.getElementById('landing').style.display='flex'}
-    function showSection(id,btn){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active')); if(btn) btn.classList.add('active'); if(id==='maphub'&&map) setTimeout(()=>map.invalidateSize(),80)}
-    function jumpTo(id){const btn=document.querySelector('.nav-btn[data-section="'+id+'"]'); showSection(id,btn); if(id==='maphub'&&state.selectedCountry!=='Global') focusCountry(state.selectedCountry)}
-    function switchRole(role){state.user.role=role; updateAll(); log('Role switched to '+role+'.')}
-    function ensureMap(){if(map) return; map=L.map('globalMap',{worldCopyJump:true,zoomControl:true}).setView([12,15],2); L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'&copy; OpenStreetMap contributors'}).addTo(map); markersLayer=L.layerGroup().addTo(map); routesLayer=L.layerGroup().addTo(map); facilities.forEach(f=>{const marker=L.circleMarker(f.coords,{radius:8,color:'#0d5aa6',weight:2,fillColor:'#1e9c6b',fillOpacity:.9}).addTo(markersLayer).bindPopup('<b>'+f.name+'</b><br>'+f.type+'<br>'+f.country); marker.on('click',()=>selectMarker(f));}); Object.entries(countries).forEach(([name,c])=>{const marker=L.marker(c.center).addTo(markersLayer).bindPopup('<b>'+name+'</b><br>'+c.facilities+' facilities'); marker.on('click',()=>focusCountry(name));}); Object.entries(routes).forEach(([name,r])=>{const line=L.polyline(r.path,{color:'#d89b22',weight:4,opacity:.85}).addTo(routesLayer).bindPopup('<b>'+name+'</b><br>'+r.status); line.on('click',()=>selectRoute(name)); routeLineRefs[name]=line; r.path.forEach((pt,idx)=>{const checkpoint=L.circleMarker(pt,{radius:6,color:'#1e9c6b',weight:2,fillColor:'#ffffff',fillOpacity:1}).addTo(routesLayer).bindPopup('<b>'+name+'</b><br>Checkpoint '+(idx+1)); checkpoint.on('click',()=>selectCheckpoint(name,idx+1,pt));});});}
-    function setGlobalView(){state.selectedCountry='Global'; state.selectedRoute='Global network'; state.selectedMarker=null; map.setView([12,15],2); updateAll(); log('Global view restored. All countries and routes visible.')}
-    function focusCountry(name){state.selectedCountry=name; state.selectedRoute='Global network'; state.selectedMarker=null; const c=countries[name]; map.flyTo(c.center,c.zoom,{duration:1.1}); updateAll(); log(name+' selected from map. Country metrics and health table filtered.')}
-    function selectRoute(name){const r=routes[name]; state.selectedRoute=name; state.selectedCountry=r.country; state.selectedMarker=null; map.fitBounds(routeLineRefs[name].getBounds(),{padding:[30,30]}); updateAll(); log(name+' route selected. Logistics and AI route guidance updated.')}
-    function selectCheckpoint(routeName,checkpoint,pt){state.selectedRoute=routeName; state.selectedCountry=routes[routeName].country; state.selectedMarker={label:routeName+' • Checkpoint '+checkpoint,pt}; map.flyTo(pt,6,{duration:.8}); updateAll(); log('Checkpoint '+checkpoint+' on '+routeName+' selected.')}
-    function selectMarker(f){state.selectedMarker=f; state.selectedCountry=f.country; map.flyTo(f.coords,7,{duration:.8}); updateAll(); log(f.name+' selected. Marker context synced to live panels.')}
-    function updateAll(){document.getElementById('sessionLine').textContent=state.user.role+' view • '+state.selectedCountry; document.getElementById('countryFilterPill').textContent='Country: '+state.selectedCountry; document.getElementById('routeFilterPill').textContent='Route: '+state.selectedRoute; document.getElementById('countryTag').textContent=state.selectedCountry; document.getElementById('roleTag').textContent=state.user.role; document.getElementById('routeTag').textContent=state.selectedRoute; renderKPIs(); renderCountryPanel(); renderRoutePanel(); renderMarkerPanel(); renderHealthTable(); renderLearning(); renderOrders(); renderAI(); renderProfile(); document.querySelectorAll('.country-btn').forEach(btn=>btn.classList.toggle('active',btn.textContent===state.selectedCountry));}
-    function renderKPIs(){let patients=0,orders=0,courses=0,facilitiesCount=0,sub='Global program'; if(state.selectedCountry==='Global'){Object.values(countries).forEach(c=>{patients+=c.patients; orders+=c.orders; courses+=c.courses; facilitiesCount+=c.facilities;}); sub='All live countries';} else {const c=countries[state.selectedCountry]; patients=c.patients; orders=c.orders; courses=c.courses; facilitiesCount=c.facilities; sub=state.selectedCountry;} if(state.selectedRoute!=='Global network'){orders=1; sub=state.selectedCountry+' • '+state.selectedRoute;} document.getElementById('kpiPatients').textContent=patients.toLocaleString(); document.getElementById('kpiOrders').textContent=orders.toLocaleString(); document.getElementById('kpiCourses').textContent=courses.toLocaleString(); document.getElementById('kpiFacilities').textContent=facilitiesCount.toLocaleString(); document.getElementById('kpiPatientsSub').textContent=sub; document.getElementById('kpiOrdersSub').textContent=state.selectedRoute==='Global network'?sub:'Filtered route view'; document.getElementById('kpiCoursesSub').textContent=state.selectedCountry==='Global'?'Cross-country learners':state.selectedCountry+' learners'; document.getElementById('kpiFacilitiesSub').textContent=state.selectedCountry==='Global'?'Mapped facilities':state.selectedCountry+' facilities'; document.getElementById('currentCountrySummary').textContent=state.selectedCountry==='Global'?'Global view active. Select a country on the map to update the command summary, live metrics, and route priorities.':countries[state.selectedCountry].summary;}
-    function renderCountryPanel(){const el=document.getElementById('countryPanel'); if(state.selectedCountry==='Global'){el.innerHTML='<p>Global view active. Use the map or country pills to zoom into a served country.</p>'; return;} const c=countries[state.selectedCountry]; el.innerHTML='<div class="list-item"><b>'+state.selectedCountry+'</b><br>'+c.summary+'</div><div class="list-item">Facilities: <b>'+c.facilities+'</b> • Patients: <b>'+c.patients+'</b> • Courses: <b>'+c.courses+'</b></div><div class="list-item">Outcome index: <b>'+c.outcome+'%</b> • Adoption: <b>'+c.adoption+'%</b> • Safety: <b>'+c.safety+'%</b> • Data quality: <b>'+c.quality+'%</b></div>'}
-    function renderRoutePanel(){const el=document.getElementById('routePanel'); if(state.selectedRoute==='Global network'){el.innerHTML='<p>No active route selected. Click a route line on the map to open route status, ETA, and buyer context.</p>'; document.getElementById('routeContextBox').innerHTML='Select a route from the map to view logistics status, ETA, and buyer context.'; return;} const r=routes[state.selectedRoute]; el.innerHTML='<div class="list-item"><b>'+state.selectedRoute+'</b> <span class="route-badge">'+r.status+'</span></div><div class="list-item">Country: <b>'+r.country+'</b> • ETA: <b>'+r.eta+'</b></div><div class="list-item">Buyer: <b>'+r.buyer+'</b><br>'+r.recommendation+'</div>'; document.getElementById('routeContextBox').innerHTML='<b>'+state.selectedRoute+'</b><br>Status: '+r.status+'<br>ETA: '+r.eta+'<br>Buyer: '+r.buyer+'<br><br>'+r.recommendation;}
-    function renderMarkerPanel(){const el=document.getElementById('markerPanel'); if(!state.selectedMarker){el.innerHTML='Click any facility, country marker, or route checkpoint.'; return;} if(state.selectedMarker.name){const f=state.selectedMarker; el.innerHTML='<div class="list-item"><b>'+f.name+'</b><br>'+f.type+' • '+f.country+'</div><div class="list-item">'+f.note+'</div>';} else {el.innerHTML='<div class="list-item"><b>'+state.selectedMarker.label+'</b><br>Checkpoint selected on active route.</div>';}}
-    function renderHealthTable(){const body=document.getElementById('healthTableBody'); body.innerHTML=''; Object.entries(countries).forEach(([name,c])=>{const tr=document.createElement('tr'); if(name===state.selectedCountry) tr.className='active-row'; tr.innerHTML='<td>'+name+'</td><td>'+(name===state.selectedCountry?'Selected':'Live')+'</td><td>'+c.facilities+'</td><td>'+c.patients+'</td><td>'+c.outcome+'%</td><td>'+c.adoption+'%</td><td>'+c.safety+'%</td><td>'+c.quality+'%</td>'; tr.onclick=()=>focusCountry(name); body.appendChild(tr);});}
-    function renderLearning(){const container=document.getElementById('learningCards'); const set=state.selectedCountry==='Global'?Object.entries(countries):[[state.selectedCountry,countries[state.selectedCountry]]]; container.innerHTML=''; set.forEach(([name,c])=>{const div=document.createElement('div'); div.className='card'; div.innerHTML='<h3>'+name+' learning cohort</h3><p>'+c.courses+' completed pathways aligned to health support, agritech operations, and coordination.</p><div class="label-row"><span class="label">Digital</span><span class="label">Field Ops</span><span class="label">Telehealth</span></div>'; container.appendChild(div);});}
-    function renderOrders(){const wrap=document.getElementById('ordersList'); wrap.innerHTML=''; const set=Object.entries(routes).filter(([name,r])=>state.selectedCountry==='Global'||r.country===state.selectedCountry).filter(([name])=>state.selectedRoute==='Global network'||name===state.selectedRoute); set.forEach(([name,r])=>{const div=document.createElement('div'); div.className='list-item'; div.innerHTML='<b>'+name+'</b> <span class="route-badge">'+r.status+'</span><br>'+r.country+' • ETA '+r.eta+' • Buyer '+r.buyer; div.onclick=()=>selectRoute(name); wrap.appendChild(div);}); if(!set.length) wrap.innerHTML='<div class="list-item">No routes in current filter.</div>';}
-    function renderAI(){document.getElementById('priceAiText').textContent=state.selectedRoute==='Global network'?'Select a route to generate pricing and dispatch guidance.':state.selectedRoute+': current recommendation is to maintain buyer alignment and hold margin buffer for last-mile handling.'; document.getElementById('healthAiText').textContent=state.selectedCountry==='Global'?'Select a country to generate staffing and clinical quality recommendations.':state.selectedCountry+': scale clinician coaching in lower-adoption districts and preserve data quality above threshold.'; document.getElementById('commandAiText').textContent=state.selectedCountry==='Global'?'Global command posture is stable. Priority watch: route exceptions and clinician adoption.':state.selectedCountry+': focus on '+(state.selectedRoute==='Global network'?'country-level readiness':'selected route continuity')+' with '+state.user.role.toLowerCase()+' oversight.';}
-    function renderProfile(){document.getElementById('profileBox').innerHTML='<b>'+state.user.name+'</b><br>'+state.user.email+'<br>Role: '+state.user.role+'<br>Country focus: '+state.selectedCountry+'<br>Route focus: '+state.selectedRoute; document.getElementById('profileLog').textContent='Signed in as '+state.user.role+'.
-Country focus: '+state.selectedCountry+'.
-Route focus: '+state.selectedRoute+'.
-Marker: '+(state.selectedMarker?(state.selectedMarker.name||state.selectedMarker.label):'none selected')+'.';}
-    function log(text){document.getElementById('opsLog').textContent=text}
+    const STORAGE_KEY='agrinexus_v15_state';
+    const countries={
+      Nigeria:{lat:9.082,lng:8.6753,zoom:6,patients:5600,facilities:18,route:'West Africa Corridor',risk:'Moderate'},
+      Kenya:{lat:0.0236,lng:37.9062,zoom:6,patients:4300,facilities:16,route:'East Africa Corridor',risk:'Elevated'},
+      Egypt:{lat:26.8206,lng:30.8025,zoom:6,patients:4700,facilities:22,route:'North Africa Corridor',risk:'Low'},
+      DRC:{lat:-2.8797,lng:23.656,zoom:5,patients:3800,facilities:14,route:'Central Africa Corridor',risk:'High'}
+    };
+    const routes=[
+      {name:'West Africa Corridor', points:[[6.45,3.39],[7.38,3.95],[9.08,8.67],[11.85,13.16]], color:'#1b9b6b', checkpoint:'Lagos Port'},
+      {name:'East Africa Corridor', points:[[-1.286,36.817],[0.52,35.28],[-0.42,36.95],[-4.04,39.67]], color:'#1677d8', checkpoint:'Nairobi Hub'},
+      {name:'North Africa Corridor', points:[[30.04,31.24],[29.97,32.55],[26.82,30.80],[24.09,32.89]], color:'#0d5ab7', checkpoint:'Cairo Gateway'}
+    ];
+    const heatByCountry={
+      'Nigeria':{temp:'38°C',risk:'High',dial:'+234 700 200 1000',queue:'Representative available',ai:'Heat surge staffing adjustment recommended'},
+      'Kenya':{temp:'31°C',risk:'Moderate',dial:'+254 700 100 200',queue:'Representative available',ai:'Normal staffing with dehydration screening'},
+      'Egypt':{temp:'41°C',risk:'Very High',dial:'+20 150 300 4000',queue:'1 caller ahead',ai:'Expand clinician coverage and triage heat cases'},
+      'DRC':{temp:'29°C',risk:'Elevated',dial:'+243 990 100 500',queue:'Representative available',ai:'Monitor rural outreach and mobile coverage'}
+    };
+    const comparisonStats={
+      'Nigeria':{status:'Scaling',outcome:18,adoption:72,safety:3.1,quality:91},
+      'Kenya':{status:'Active',outcome:22,adoption:79,safety:2.4,quality:94},
+      'Egypt':{status:'Pilot+',outcome:16,adoption:68,safety:3.8,quality:89},
+      'DRC':{status:'Expansion',outcome:14,adoption:61,safety:4.2,quality:86}
+    };
+    const checkpoints=[
+      {name:'Lagos Port',lat:6.45,lng:3.39,route:'West Africa Corridor'},
+      {name:'Abuja Hub',lat:9.08,lng:8.67,route:'West Africa Corridor'},
+      {name:'Nairobi Hub',lat:-1.286,lng:36.817,route:'East Africa Corridor'},
+      {name:'Mombasa Port',lat:-4.04,lng:39.67,route:'East Africa Corridor'},
+      {name:'Cairo Gateway',lat:30.04,lng:31.24,route:'North Africa Corridor'},
+      {name:'Luxor Checkpoint',lat:25.69,lng:32.64,route:'North Africa Corridor'}
+    ];
+    const translations={
+      en:{brandName:'AgriNexus',brandTag:'Connecting agriculture, workforce, health, and opportunity.',landingHero:'A unified platform connecting AFAYAI Health, Koachlearn Lite, Agritrade, workforce development, and AI decision support.',statCountries:'priority countries',statLanguages:'platform languages',statMap:'global map view',statRoutes:'live routes',landingPill:'Blue + green investor demo',landingTitle:'Enter the platform',landingCopy:'Choose a role, pick a language, and open the app directly for testing.',languageLabel:'Language',roleLearner:'Learner',roleLearnerCopy:'Explore courses, quizzes, certificates, and workforce readiness.',roleFarmer:'Farmer',roleFarmerCopy:'Use market, wallet, logistics, and agrichat tools.',roleClinician:'Clinician',roleClinicianCopy:'Open AFAYAI Health, intake tools, and safety dashboards.',roleCoordinator:'Coordinator',roleCoordinatorCopy:'Manage countries, routes, facilities, and program performance.',enterPlatform:'Enter Platform',landingFooter:'This test build uses a real web map with global view, country zoom, panning, route lines, and checkpoint markers.',loginTitle:'Sign in to AgriNexus',loginCopy:'Use the demo credentials below to enter the prototype.',demoCreds:'Demo credentials',emailLabel:'Email',passwordLabel:'Password',countryLabel:'Country',signIn:'Sign in',back:'Back',logout:'Log out',shortcutHealth:'AFAYAI Health',shortcutLearning:'Koachlearn Lite',shortcutAgritrade:'Agritrade',shortcutAI:'AI Tools',navDashboard:'Dashboard',navLearning:'Learning & Development',navWorkforce:'Workforce',navHealth:'AFAYAI Health',navAgritech:'Agritech + Agritrade',navMap:'Global Map & AI',navProfile:'Profile',currentContext:'Current context',ctxRole:'Role',ctxCountry:'Country',ctxRoute:'Route',dashTitle:'AgriNexus Working Prototype',dashIntro:'This version uses a real web map with global view, country zoom, real panning and zooming, markers, route lines, and live platform updates.',openMap:'Open map',openLearning:'Open learning',openHealth:'Open health',kpiOrdersLabel:'Active Orders',kpiPatientsLabel:'Patients Enrolled',kpiFacilitiesLabel:'Facilities',dashCard1:'Learning Progress',dashCard1Text:'Launch course flows, quizzes, and certificate simulation.',dashCard2:'Workforce Pipeline',dashCard2Text:'Track readiness and apply to roles based on completed learning.',dashCard3:'Agritrade Operations',dashCard3Text:'Simulate orders, buyer interest, quick pay, checkpoints, and AI pricing.',goLearning:'Go to learning',goWorkforce:'Go to workforce',goAgritrade:'Go to Agritrade',learnTitle:'Learning & Development',learnIntro:'Koachlearn Lite simulates practical training tied to certifications and workforce readiness.',coursesTitle:'Courses',course1:'Digital Foundations',course1Copy:'Core digital literacy, messaging, and workflows.',course2:'Agritech Fundamentals',course2Copy:'Production planning, farm records, and market readiness.',course3:'Telehealth Support',course3Copy:'Intake, navigation, and service coordination basics.',startCourse:'Start course',learnSummary:'Learning Summary',completedCourses:'Completed courses',quizScore:'Quiz score',certificates:'Certificates',completeQuiz:'Complete quiz',issueCertificate:'Issue certificate',workTitle:'Workforce',workIntro:'The workforce layer responds to learning progress and lets users simulate job-readiness, matching, and applications.',readinessTitle:'Readiness Status',readinessScore:'Readiness score',eligibility:'Eligibility',refreshMatches:'Refresh matches',rolesTitle:'Available Roles',job1:'Community Agriculture Support Worker',job2:'Telehealth Access Assistant',job3:'Farmer Network Coordinator',applyNow:'Apply now',careerTrack:'Career track',placements:'Placements',interviews:'Interviews',mentorStatus:'Mentor',buildProfile:'Build profile',scheduleOrientation:'Schedule orientation',skillsPortfolio:'Skills Portfolio',skillDigital:'Digital skills',skillField:'Field operations',skillCare:'Care coordination',viewPathway:'View pathway',unlockMentor:'Unlock mentor',startShift:'Start shift simulation',job1Copy:'Support field visits, farmer onboarding, and local readiness checks.',job2Copy:'Guide patients through intake, scheduling, and representative escalation.',job3Copy:'Coordinate buyer pipelines, route readiness, and district field teams.',chipEntry:'Entry',chipHybrid:'Field + Mobile',chipGrowth:'Growth',chipRemote:'Remote + Hub',chipAdvanced:'Advanced',chipLeadership:'Leadership',careerJourney:'Career Journey',journey1:'Learn core skills',journey1Copy:'Complete digital, agritech, or telehealth modules to raise readiness.',journey2:'Build a verified profile',journey2Copy:'Create a workforce profile with badges, scores, and pathway recommendations.',journey3:'Match to opportunities',journey3Copy:'Receive job matches, interview invites, and shift simulations tied to your country context.',journey4:'Advance and mentor',journey4Copy:'Unlock mentor status, leadership tracks, and district or route coordination roles.',healthTitle:'AFAYAI Health',healthIntro:'Country filters and map selections update program status, facilities, patients, and AI recommendations live.',safetyQuality:'Safety & Quality',safetyQualityCopy:'Review quality flags, AI overrides, and data quality for the selected country.',runSafetyReview:'Run safety review',videoIntake:'Telehealth video intake',videoIntakeCopy:'Open a simulated video intake and triage recommendation for the active country.',startIntake:'Start intake',aiRecommendations:'AI recommendations',aiRecommendationsCopy:'Use map context to tailor recommendations for facilities and patient load.',readPlanAloud:'Read plan aloud',heatIndexTitle:'Heat Index Monitor',heatIndexCopy:'Track heat pressure and climate-related service risk for the selected country.',heatIndexLabel:'Heat index',heatRiskLabel:'Heat risk',refreshHeatIndex:'Refresh heat index',dialInTitle:'Dial in to Telehealth',dialInCopy:'Simulate a patient or partner call and connect to a live representative queue.',dialNumberLabel:'Dial-in number',queueStatusLabel:'Queue status',dialRepresentative:'Dial representative',connectRepresentative:'Speak to representative',countryComparison:'Country Comparison',agriTitle:'Agritech + Agritrade',agriIntro:'This version includes market listings, quick pay, ledger entries, order tracking, logistics, and AI automation tools.',marketTitle:'Market Listings',prod1:'Maize - Nigeria',prod2:'Beans - Kenya',prod3:'Rice - Egypt',simulateOrder:'Simulate order',showBuyerInterest:'Show buyer interest',walletTitle:'Wallet & AgriChat',sendToAgriChat:'Send to AgriChat',runPriceAi:'Run Price AI',mapTitle:'Global Map & AI',mapIntro:'A real web map with global view, country zoom, panning, zooming, route lines, checkpoint markers, and live platform updates.',globalView:'Global view',routesView:'Routes view',livePanel:'Live Panel',selectedCountry:'Selected country',selectedRoute:'Selected route',selectedCheckpoint:'Selected checkpoint',aiRiskLabel:'AI risk view',patientsLabel:'Patients',facilitiesLabel:'Facilities',profileTitle:'Unified Profile',profileIntro:'The profile updates based on your activity across learning, workforce, health, market, and map interactions.',profLearn:'Learning',profWork:'Workforce',profHealth:'Health',profWallet:'Wallet',profOrders:'Orders',profAi:'AI Activity',kpiCountries:'Countries Served',africaProgramMap:'Africa Program Map (Demo)',mapInspectorCopy:'Use the map inspector to review climate pressure, service readiness, and AI guidance for the selected country.',mapInspectorLabel:'Map inspector AI',runMapInspector:'Run map inspector AI',tblCountry:'Country',tblStatus:'Status',tblFacilities:'Facilities',tblPatients:'Patients enrolled',tblOutcome:'Clinical Outcome Index (% improvement)',tblAdoption:'Clinician Adoption (% active use)',tblSafety:'Safety Signal Rate (% overrides/AI)',tblQuality:'Data Quality Score (%)'},
+      fr:{brandName:'AgriNexus',brandTag:'Relier agriculture, travail, santé et opportunité.',landingHero:'Une plateforme unifiée reliant AFAYAI Health, Koachlearn Lite, Agritrade, le développement de la main-d’œuvre et l’aide à la décision par IA.',statCountries:'pays prioritaires',statLanguages:'langues de la plateforme',statMap:'vue cartographique mondiale',statRoutes:'routes en direct',landingPill:'Démo investisseur bleu + vert',landingTitle:'Entrer dans la plateforme',landingCopy:'Choisissez un rôle, une langue, puis ouvrez directement l’application.',languageLabel:'Langue',roleLearner:'Apprenant',roleLearnerCopy:'Explorez les cours, quiz, certificats et la préparation au travail.',roleFarmer:'Agriculteur',roleFarmerCopy:'Utilisez le marché, le portefeuille, la logistique et AgriChat.',roleClinician:'Clinicien',roleClinicianCopy:'Ouvrez AFAYAI Health, les outils d’admission et les tableaux de qualité.',roleCoordinator:'Coordinateur',roleCoordinatorCopy:'Gérez les pays, routes, établissements et performances.',enterPlatform:'Entrer dans la plateforme',landingFooter:'Cette version de test utilise une vraie carte web avec vue mondiale, zoom pays, panoramique, routes et points de contrôle.',loginTitle:'Se connecter à AgriNexus',loginCopy:'Utilisez les identifiants de démonstration ci-dessous.',demoCreds:'Identifiants de démonstration',emailLabel:'E-mail',passwordLabel:'Mot de passe',countryLabel:'Pays',signIn:'Se connecter',back:'Retour',logout:'Se déconnecter',shortcutHealth:'AFAYAI Health',shortcutLearning:'Koachlearn Lite',shortcutAgritrade:'Agritrade',shortcutAI:'Outils IA',navDashboard:'Tableau de bord',navLearning:'Apprentissage et développement',navWorkforce:'Main-d’œuvre',navHealth:'AFAYAI Health',navAgritech:'Agritech + Agritrade',navMap:'Carte mondiale et IA',navProfile:'Profil',currentContext:'Contexte actuel',ctxRole:'Rôle',ctxCountry:'Pays',ctxRoute:'Route',dashTitle:'Prototype fonctionnel AgriNexus',dashIntro:'Cette version utilise une vraie carte web avec vue mondiale, zoom pays, panoramique réel, routes et mises à jour en direct.',openMap:'Ouvrir la carte',openLearning:'Ouvrir l’apprentissage',openHealth:'Ouvrir la santé',kpiOrdersLabel:'Commandes actives',kpiPatientsLabel:'Patients inscrits',kpiFacilitiesLabel:'Établissements',dashCard1:'Progression d’apprentissage',dashCard1Text:'Lancez les cours, quiz et certificats.',dashCard2:'Pipeline main-d’œuvre',dashCard2Text:'Suivez la préparation et candidatez aux rôles.',dashCard3:'Opérations Agritrade',dashCard3Text:'Simulez commandes, intérêt acheteur, paiements rapides et IA.',goLearning:'Aller à l’apprentissage',goWorkforce:'Aller à la main-d’œuvre',goAgritrade:'Aller à Agritrade',learnTitle:'Apprentissage et développement',learnIntro:'Koachlearn Lite simule une formation pratique liée aux certificats et à l’emploi.',coursesTitle:'Cours',course1:'Fondations numériques',course1Copy:'Compétences numériques, messagerie et flux de travail.',course2:'Fondamentaux Agritech',course2Copy:'Planification, registres agricoles et préparation au marché.',course3:'Soutien télésanté',course3Copy:'Admission, orientation et coordination des services.',startCourse:'Démarrer le cours',learnSummary:'Résumé d’apprentissage',completedCourses:'Cours terminés',quizScore:'Score du quiz',certificates:'Certificats',completeQuiz:'Terminer le quiz',issueCertificate:'Émettre un certificat',workTitle:'Main-d’œuvre',workIntro:'La couche main-d’œuvre réagit aux progrès d’apprentissage et simule préparation et candidatures.',readinessTitle:'État de préparation',readinessScore:'Score de préparation',eligibility:'Éligibilité',refreshMatches:'Actualiser les correspondances',rolesTitle:'Rôles disponibles',job1:'Agent de soutien agricole communautaire',job2:'Assistant d’accès à la télésanté',job3:'Coordinateur du réseau agricole',applyNow:'Postuler',careerTrack:'Parcours',placements:'Placements',interviews:'Entretiens',mentorStatus:'Mentor',buildProfile:'Créer le profil',scheduleOrientation:'Planifier l’orientation',skillsPortfolio:'Portefeuille de compétences',skillDigital:'Compétences numériques',skillField:'Opérations terrain',skillCare:'Coordination des soins',viewPathway:'Voir le parcours',unlockMentor:'Débloquer un mentor',startShift:'Lancer une simulation de quart',job1Copy:'Soutenez les visites terrain, l’intégration des agriculteurs et les contrôles locaux.',job2Copy:'Guidez les patients pour l’admission, la planification et l’escalade.',job3Copy:'Coordonnez les acheteurs, la préparation des routes et les équipes de district.',chipEntry:'Entrée',chipHybrid:'Terrain + Mobile',chipGrowth:'Croissance',chipRemote:'À distance + Hub',chipAdvanced:'Avancé',chipLeadership:'Leadership',careerJourney:'Parcours de carrière',journey1:'Apprendre les compétences clés',journey1Copy:'Terminez les modules numériques, agritech ou télésanté.',journey2:'Créer un profil vérifié',journey2Copy:'Créez un profil avec badges, scores et recommandations.',journey3:'Obtenir des opportunités',journey3Copy:'Recevez des correspondances, invitations et simulations de quart.',journey4:'Évoluer et mentorer',journey4Copy:'Débloquez un statut de mentor et des rôles de coordination.',healthTitle:'AFAYAI Health',healthIntro:'Les filtres pays et la carte mettent à jour le statut programme, les établissements et les recommandations IA.',safetyQuality:'Sécurité et qualité',safetyQualityCopy:'Examinez les signaux qualité et les overrides IA.',runSafetyReview:'Lancer la revue sécurité',videoIntake:'Admission vidéo télésanté',videoIntakeCopy:'Ouvrez une admission vidéo simulée pour le pays actif.',startIntake:'Démarrer l’admission',aiRecommendations:'Recommandations IA',aiRecommendationsCopy:'Utilisez le contexte cartographique pour adapter les recommandations.',readPlanAloud:'Lire le plan à voix haute',countryComparison:'Comparaison des pays',agriTitle:'Agritech + Agritrade',agriIntro:'Cette version inclut marché, paiement rapide, suivi des commandes, logistique et automatisation IA.',marketTitle:'Annonces marché',prod1:'Maïs - Nigeria',prod2:'Haricots - Kenya',prod3:'Riz - Égypte',simulateOrder:'Simuler une commande',showBuyerInterest:'Afficher l’intérêt acheteur',walletTitle:'Portefeuille et AgriChat',sendToAgriChat:'Envoyer à AgriChat',runPriceAi:'Lancer Price AI',mapTitle:'Carte mondiale et IA',mapIntro:'Une vraie carte web avec vue mondiale, zoom, panoramique, routes, checkpoints et mises à jour en direct.',globalView:'Vue mondiale',routesView:'Vue des routes',livePanel:'Panneau en direct',selectedCountry:'Pays sélectionné',selectedRoute:'Route sélectionnée',selectedCheckpoint:'Checkpoint sélectionné',aiRiskLabel:'Vue de risque IA',patientsLabel:'Patients',facilitiesLabel:'Établissements',profileTitle:'Profil unifié',profileIntro:'Le profil se met à jour selon votre activité sur la plateforme.',profLearn:'Apprentissage',profWork:'Main-d’œuvre',profHealth:'Santé',profWallet:'Portefeuille',profOrders:'Commandes',profAi:'Activité IA',kpiCountries:'Pays servis',africaProgramMap:'Carte du programme Afrique (démo)',mapInspectorCopy:'Utilisez l’inspecteur cartographique pour examiner la pression climatique, la préparation des services et les conseils IA pour le pays sélectionné.',mapInspectorLabel:'IA inspecteur cartographique',runMapInspector:'Lancer l’inspecteur cartographique',tblCountry:'Pays',tblStatus:'Statut',tblFacilities:'Établissements',tblPatients:'Patients inscrits',tblOutcome:'Indice de résultat clinique (% amélioration)',tblAdoption:'Adoption des cliniciens (% usage actif)',tblSafety:'Taux de signal de sécurité (% dérogations/IA)',tblQuality:'Score de qualité des données (%)'},
+      ar:{brandName:'AgriNexus',brandTag:'ربط الزراعة والعمل والصحة والفرص.',landingHero:'منصة موحدة تربط AFAYAI Health وKoachlearn Lite وAgritrade وتنمية القوى العاملة ودعم القرار بالذكاء الاصطناعي.',statCountries:'الدول ذات الأولوية',statLanguages:'لغات المنصة',statMap:'عرض خريطة عالمي',statRoutes:'مسارات حية',landingPill:'عرض استثماري أزرق وأخضر',landingTitle:'ادخل إلى المنصة',landingCopy:'اختر الدور واللغة ثم افتح التطبيق مباشرة للاختبار.',languageLabel:'اللغة',roleLearner:'متعلم',roleLearnerCopy:'استكشف الدورات والاختبارات والشهادات والاستعداد للعمل.',roleFarmer:'مزارع',roleFarmerCopy:'استخدم السوق والمحفظة والخدمات اللوجستية وAgriChat.',roleClinician:'طبيب/سريري',roleClinicianCopy:'افتح AFAYAI Health وأدوات الاستقبال ولوحات الجودة.',roleCoordinator:'منسق',roleCoordinatorCopy:'أدر الدول والمسارات والمرافق والأداء.',enterPlatform:'ادخل المنصة',landingFooter:'يستخدم هذا الإصدار خريطة ويب حقيقية مع عرض عالمي وتكبير للدول وتحريك وخطوط مسارات ونقاط تفتيش.',loginTitle:'تسجيل الدخول إلى AgriNexus',loginCopy:'استخدم بيانات العرض التجريبي أدناه.',demoCreds:'بيانات تجريبية',emailLabel:'البريد الإلكتروني',passwordLabel:'كلمة المرور',countryLabel:'الدولة',signIn:'تسجيل الدخول',back:'رجوع',logout:'تسجيل الخروج',shortcutHealth:'AFAYAI Health',shortcutLearning:'Koachlearn Lite',shortcutAgritrade:'Agritrade',shortcutAI:'أدوات الذكاء الاصطناعي',navDashboard:'لوحة التحكم',navLearning:'التعلم والتطوير',navWorkforce:'القوى العاملة',navHealth:'AFAYAI Health',navAgritech:'Agritech + Agritrade',navMap:'الخريطة العالمية والذكاء الاصطناعي',navProfile:'الملف الشخصي',currentContext:'السياق الحالي',ctxRole:'الدور',ctxCountry:'الدولة',ctxRoute:'المسار',dashTitle:'النموذج العملي لـ AgriNexus',dashIntro:'يستخدم هذا الإصدار خريطة ويب حقيقية مع عرض عالمي وتكبير للدول وتحريك حقيقي وخطوط مسارات وتحديثات حية.',openMap:'افتح الخريطة',openLearning:'افتح التعلم',openHealth:'افتح الصحة',kpiOrdersLabel:'الطلبات النشطة',kpiPatientsLabel:'المرضى المسجلون',kpiFacilitiesLabel:'المرافق',dashCard1:'تقدم التعلم',dashCard1Text:'ابدأ مسارات الدورات والاختبارات والشهادات.',dashCard2:'مسار القوى العاملة',dashCard2Text:'تابع الجاهزية وقدّم على الأدوار.',dashCard3:'عمليات Agritrade',dashCard3Text:'حاكِ الطلبات واهتمام المشترين والدفع السريع والذكاء الاصطناعي.',goLearning:'اذهب إلى التعلم',goWorkforce:'اذهب إلى القوى العاملة',goAgritrade:'اذهب إلى Agritrade',learnTitle:'التعلم والتطوير',learnIntro:'يحاكي Koachlearn Lite التدريب العملي المرتبط بالشهادات والجاهزية للعمل.',coursesTitle:'الدورات',course1:'الأساسيات الرقمية',course1Copy:'مهارات رقمية ومراسلة وسير عمل.',course2:'أساسيات Agritech',course2Copy:'التخطيط والسجلات الزراعية والاستعداد للسوق.',course3:'دعم الصحة عن بُعد',course3Copy:'الاستقبال والتوجيه وتنسيق الخدمات.',startCourse:'ابدأ الدورة',learnSummary:'ملخص التعلم',completedCourses:'الدورات المكتملة',quizScore:'درجة الاختبار',certificates:'الشهادات',completeQuiz:'أكمل الاختبار',issueCertificate:'إصدار شهادة',workTitle:'القوى العاملة',workIntro:'تستجيب طبقة القوى العاملة لتقدم التعلم وتحاكي الجاهزية والتقديم.',readinessTitle:'حالة الجاهزية',readinessScore:'درجة الجاهزية',eligibility:'الأهلية',refreshMatches:'تحديث المطابقات',rolesTitle:'الأدوار المتاحة',job1:'عامل دعم زراعي مجتمعي',job2:'مساعد وصول للرعاية عن بعد',job3:'منسق شبكة المزارعين',applyNow:'قدّم الآن',careerTrack:'المسار المهني',placements:'التوظيفات',interviews:'المقابلات',mentorStatus:'المرشد',buildProfile:'أنشئ الملف',scheduleOrientation:'جدولة التهيئة',skillsPortfolio:'ملف المهارات',skillDigital:'المهارات الرقمية',skillField:'العمليات الميدانية',skillCare:'تنسيق الرعاية',viewPathway:'عرض المسار',unlockMentor:'فتح المرشد',startShift:'ابدأ محاكاة الوردية',job1Copy:'دعم الزيارات الميدانية وضم المزارعين وفحوصات الجاهزية.',job2Copy:'إرشاد المرضى خلال الاستقبال والجدولة والتصعيد.',job3Copy:'تنسيق خطوط المشترين وجاهزية المسارات وفرق المناطق.',chipEntry:'مبتدئ',chipHybrid:'ميداني + جوال',chipGrowth:'نمو',chipRemote:'عن بُعد + مركز',chipAdvanced:'متقدم',chipLeadership:'قيادة',careerJourney:'رحلة مهنية',journey1:'تعلّم المهارات الأساسية',journey1Copy:'أكمل الوحدات الرقمية أو الزراعية أو الصحية لرفع الجاهزية.',journey2:'ابنِ ملفًا موثقًا',journey2Copy:'أنشئ ملفًا بوسوم ودرجات وتوصيات.',journey3:'طابق مع الفرص',journey3Copy:'احصل على فرص ومقابلات ومحاكاة ورديات حسب البلد.',journey4:'تقدّم وكن مرشدًا',journey4Copy:'افتح حالة المرشد ومسارات القيادة.',healthTitle:'AFAYAI Health',healthIntro:'تقوم مرشحات الدول واختيارات الخريطة بتحديث حالة البرنامج والمرافق والمرضى وتوصيات الذكاء الاصطناعي.',safetyQuality:'السلامة والجودة',safetyQualityCopy:'راجع مؤشرات الجودة وتجاوزات الذكاء الاصطناعي.',runSafetyReview:'تشغيل مراجعة السلامة',videoIntake:'استقبال فيديو للرعاية عن بعد',videoIntakeCopy:'افتح استقبال فيديو تجريبي للدولة النشطة.',startIntake:'ابدأ الاستقبال',aiRecommendations:'توصيات الذكاء الاصطناعي',aiRecommendationsCopy:'استخدم سياق الخريطة لتكييف التوصيات.',readPlanAloud:'اقرأ الخطة بصوت عالٍ',countryComparison:'مقارنة الدول',agriTitle:'Agritech + Agritrade',agriIntro:'يتضمن هذا الإصدار السوق والدفع السريع وتتبع الطلبات والخدمات اللوجستية والأتمتة بالذكاء الاصطناعي.',marketTitle:'قوائم السوق',prod1:'ذرة - نيجيريا',prod2:'فاصوليا - كينيا',prod3:'أرز - مصر',simulateOrder:'محاكاة طلب',showBuyerInterest:'إظهار اهتمام المشتري',walletTitle:'المحفظة وAgriChat',sendToAgriChat:'أرسل إلى AgriChat',runPriceAi:'تشغيل Price AI',mapTitle:'الخريطة العالمية والذكاء الاصطناعي',mapIntro:'خريطة ويب حقيقية بعرض عالمي وتكبير وتحريك ومسارات ونقاط تفتيش وتحديثات مباشرة.',globalView:'عرض عالمي',routesView:'عرض المسارات',livePanel:'لوحة مباشرة',selectedCountry:'الدولة المحددة',selectedRoute:'المسار المحدد',selectedCheckpoint:'نقطة التفتيش المحددة',aiRiskLabel:'عرض مخاطر الذكاء الاصطناعي',patientsLabel:'المرضى',facilitiesLabel:'المرافق',profileTitle:'الملف الموحد',profileIntro:'يتحدث الملف بناءً على نشاطك عبر المنصة.',profLearn:'التعلم',profWork:'القوى العاملة',profHealth:'الصحة',profWallet:'المحفظة',profOrders:'الطلبات',profAi:'نشاط الذكاء الاصطناعي',kpiCountries:'الدول المخدومة',africaProgramMap:'خريطة برنامج أفريقيا (تجريبية)',mapInspectorCopy:'استخدم أداة فحص الخريطة لمراجعة ضغط المناخ وجهوزية الخدمة وتوجيهات الذكاء الاصطناعي للدولة المحددة.',mapInspectorLabel:'ذكاء اصطناعي لفحص الخريطة',runMapInspector:'تشغيل فحص الخريطة',tblCountry:'الدولة',tblStatus:'الحالة',tblFacilities:'المرافق',tblPatients:'المرضى المسجلون',tblOutcome:'مؤشر النتيجة السريرية (% التحسن)',tblAdoption:'اعتماد الأطباء (% الاستخدام النشط)',tblSafety:'معدل إشارة السلامة (% التجاوزات/الذكاء الاصطناعي)',tblQuality:'درجة جودة البيانات (%)'},
+      sw:{navDashboard:'Dashibodi',navLearning:'Mafunzo na Maendeleo',navWorkforce:'Nguvu Kazi',navHealth:'AFAYAI Health',navAgritech:'Agritech + Agritrade',navMap:'Ramani ya Dunia na AI',navProfile:'Wasifu',shortcutHealth:'AFAYAI Health',shortcutLearning:'Koachlearn Lite',shortcutAgritrade:'Agritrade',shortcutAI:'Zana za AI',enterPlatform:'Ingia Kwenye Jukwaa',signIn:'Ingia',logout:'Toka',languageLabel:'Lugha',landingTitle:'Ingia kwenye jukwaa',landingCopy:'Chagua jukumu, chagua lugha, kisha fungua programu moja kwa moja.',dashTitle:'Mfano wa AgriNexus',dashIntro:'Toleo hili hutumia ramani halisi ya mtandaoni yenye mwonekano wa dunia, zoom ya nchi, pan, route lines, na masasisho ya moja kwa moja.',learnTitle:'Mafunzo na Maendeleo',workTitle:'Nguvu Kazi',careerTrack:'Njia ya kazi',placements:'Ajira',interviews:'Mahojiano',mentorStatus:'Mlezi',buildProfile:'Tengeneza wasifu',scheduleOrientation:'Panga utambulisho',skillsPortfolio:'Jalada la ujuzi',skillDigital:'Ujuzi wa kidijitali',skillField:'Operesheni za shambani',skillCare:'Uratibu wa huduma',viewPathway:'Tazama njia',unlockMentor:'Fungua mlezi',startShift:'Anza zamu ya majaribio',careerJourney:'Safari ya kazi',healthTitle:'AFAYAI Health',agriTitle:'Agritech + Agritrade',mapTitle:'Ramani ya Dunia na AI',profileTitle:'Wasifu Mmoja',openMap:'Fungua ramani',openLearning:'Fungua mafunzo',openHealth:'Fungua afya',goLearning:'Nenda Mafunzo',goWorkforce:'Nenda Nguvu Kazi',goAgritrade:'Nenda Agritrade',startCourse:'Anza kozi',completeQuiz:'Maliza quiz',issueCertificate:'Toa cheti',refreshMatches:'Onyesha upya',applyNow:'Omba sasa',simulateOrder:'Simulate order',showBuyerInterest:'Onyesha hamu ya mnunuzi',sendToAgriChat:'Tuma kwa AgriChat',runPriceAi:'Endesha Price AI',globalView:'Mwonekano wa dunia',routesView:'Mwonekano wa route',currentContext:'Muktadha wa sasa',ctxRole:'Jukumu',ctxCountry:'Nchi',ctxRoute:'Route',countryLabel:'Nchi',back:'Rudi',brandTag:'Kuunganisha kilimo, kazi, afya, na fursa.'},
+      ha:{navDashboard:'Allon Bayanai',navLearning:'Koyo da Ci Gaba',navWorkforce:'Ma’aikata',navHealth:'AFAYAI Health',navAgritech:'Agritech + Agritrade',navMap:'Taswirar Duniya da AI',navProfile:'Bayanan Mai Amfani',shortcutHealth:'AFAYAI Health',shortcutLearning:'Koachlearn Lite',shortcutAgritrade:'Agritrade',shortcutAI:'Kayan AI',enterPlatform:'Shiga Dandali',signIn:'Shiga',logout:'Fita',languageLabel:'Harshe',landingTitle:'Shiga dandali',landingCopy:'Zaɓi rawa, zaɓi harshe, sannan buɗe app ɗin kai tsaye.',dashTitle:'Samfurin AgriNexus',dashIntro:'Wannan sigar na amfani da taswirar yanar gizo ta gaske mai duniya, zoom na ƙasa, pan, route lines, da sabuntawa kai tsaye.',learnTitle:'Koyo da Ci Gaba',workTitle:'Ma’aikata',careerTrack:'Hanyar aiki',placements:'Ayyukan da aka samu',interviews:'Hirarraki',mentorStatus:'Mai jagora',buildProfile:'Gina profile',scheduleOrientation:'Shirya orientation',skillsPortfolio:'Fayil ɗin ƙwarewa',skillDigital:'Ƙwarewar dijital',skillField:'Aikin fili',skillCare:'Daidaita kulawa',viewPathway:'Duba hanya',unlockMentor:'Buɗe mentor',startShift:'Fara gwajin shift',careerJourney:'Tafiyar aiki',healthTitle:'AFAYAI Health',agriTitle:'Agritech + Agritrade',mapTitle:'Taswirar Duniya da AI',profileTitle:'Bayanan Guda ɗaya',openMap:'Buɗe taswira',openLearning:'Buɗe koyo',openHealth:'Buɗe lafiya',goLearning:'Je zuwa koyo',goWorkforce:'Je zuwa ma’aikata',goAgritrade:'Je zuwa Agritrade',startCourse:'Fara kwas',completeQuiz:'Kammala quiz',issueCertificate:'Ba da takarda',refreshMatches:'Sabunta daidaito',applyNow:'Nemi aiki',simulateOrder:'Gwada oda',showBuyerInterest:'Nuna sha’awar mai saya',sendToAgriChat:'Aika zuwa AgriChat',runPriceAi:'Gudanar da Price AI',globalView:'Duba duniya',routesView:'Duba routes',currentContext:'Yanayin yanzu',ctxRole:'Rawa',ctxCountry:'Ƙasa',ctxRoute:'Route',countryLabel:'Ƙasa',back:'Komawa',brandTag:'Haɗa noma, aiki, lafiya, da dama.'},
+      yo:{navDashboard:'Dashibodi',navLearning:'Ẹ̀kọ́ ati Ìdàgbàsókè',navWorkforce:'Agbára Iṣẹ́',navHealth:'AFAYAI Health',navAgritech:'Agritech + Agritrade',navMap:'Máàpù Ayé ati AI',navProfile:'Profaili',shortcutHealth:'AFAYAI Health',shortcutLearning:'Koachlearn Lite',shortcutAgritrade:'Agritrade',shortcutAI:'Awọn irinṣẹ AI',enterPlatform:'Wọlé sí Platform',signIn:'Wọlé',logout:'Jáde',languageLabel:'Èdè',landingTitle:'Wọlé sí platform',landingCopy:'Yan ipa, yan èdè, kí o ṣí app taara.',dashTitle:'Àpẹrẹ AgriNexus',dashIntro:'Ẹ̀dà yìí lo máàpù gidi ori wẹẹbu pẹlu ìwòye ayé, zoom orílẹ̀-èdè, pan, route lines, àti ìmúdójúìwọ̀n laaye.',learnTitle:'Ẹ̀kọ́ ati Ìdàgbàsókè',workTitle:'Agbára Iṣẹ́',careerTrack:'Ọ̀nà iṣẹ́',placements:'Àwọn ìfiṣẹ́',interviews:'Ìfọ̀rọ̀wánilẹ́nuwò',mentorStatus:'Mentọ',buildProfile:'Kọ profaili',scheduleOrientation:'Ṣètò orientation',skillsPortfolio:'Àpò ọgbọ́n',skillDigital:'Ọgbọ́n dídìjítàlì',skillField:'Iṣẹ́ pápá',skillCare:'Ìṣọkan ìtọju',viewPathway:'Wo ọ̀nà',unlockMentor:'Ṣí mentor',startShift:'Bẹ̀rẹ̀ ìdánwò shift',careerJourney:'Ìrìnàjò iṣẹ́',healthTitle:'AFAYAI Health',agriTitle:'Agritech + Agritrade',mapTitle:'Máàpù Ayé ati AI',profileTitle:'Profaili Kan',openMap:'Ṣí máàpù',openLearning:'Ṣí ẹ̀kọ́',openHealth:'Ṣí ìlera',goLearning:'Lọ sí ẹ̀kọ́',goWorkforce:'Lọ sí agbára iṣẹ́',goAgritrade:'Lọ sí Agritrade',startCourse:'Bẹ̀rẹ̀ kóòsì',completeQuiz:'Parí quiz',issueCertificate:'Fun ni ẹ̀rí',refreshMatches:'Tunṣe matches',applyNow:'Bẹ̀rẹ̀ ìbéèrè',simulateOrder:'Ṣe àfihàn oda',showBuyerInterest:'Fi ifẹ́ olùra hàn',sendToAgriChat:'Firanṣẹ sí AgriChat',runPriceAi:'Ṣiṣẹ́ Price AI',globalView:'Ìwòye ayé',routesView:'Ìwòye routes',currentContext:'Ayidayida lọwọlọwọ',ctxRole:'Ipa',ctxCountry:'Orílẹ̀-èdè',ctxRoute:'Route',countryLabel:'Orílẹ̀-èdè',back:'Padà',brandTag:'Sísopọ ogbin, iṣẹ́, ìlera, ati àǹfààní.'},
+      ig:{navDashboard:'Dashbọọdụ',navLearning:'Mmụta na Mmepe',navWorkforce:'Ndị Ọrụ',navHealth:'AFAYAI Health',navAgritech:'Agritech + Agritrade',navMap:'Maapụ Ụwa na AI',navProfile:'Profaịlụ',shortcutHealth:'AFAYAI Health',shortcutLearning:'Koachlearn Lite',shortcutAgritrade:'Agritrade',shortcutAI:'Ngwaọrụ AI',enterPlatform:'Banye na Platform',signIn:'Banye',logout:'Pụọ',languageLabel:'Asụsụ',landingTitle:'Banye na platform',landingCopy:'Họrọ ọrụ, họrọ asụsụ, mepee ngwa ozugbo.',dashTitle:'Nnwale AgriNexus',dashIntro:'Ụdị a na-eji ezigbo map web nwere ọhụụ ụwa, zoom mba, pan, route lines, na mmelite dị ndụ.',learnTitle:'Mmụta na Mmepe',workTitle:'Ndị Ọrụ',careerTrack:'Ụzọ ọrụ',placements:'Ntinye ọrụ',interviews:'Ajụjụ ọnụ',mentorStatus:'Mentọ',buildProfile:'Wuo profaịlụ',scheduleOrientation:'Hazie orientation',skillsPortfolio:'Pọtụfoliyo nka',skillDigital:'Nka dijital',skillField:'Ọrụ ubi',skillCare:'Nhazi nlekọta',viewPathway:'Lee ụzọ',unlockMentor:'Meghee mentọ',startShift:'Malite nnwale shift',careerJourney:'Njem ọrụ',healthTitle:'AFAYAI Health',agriTitle:'Agritech + Agritrade',mapTitle:'Maapụ Ụwa na AI',profileTitle:'Profaịlụ Otu',openMap:'Mepee map',openLearning:'Mepee mmụta',openHealth:'Mepee ahụike',goLearning:'Gaa na mmụta',goWorkforce:'Gaa na ndị ọrụ',goAgritrade:'Gaa na Agritrade',startCourse:'Malite course',completeQuiz:'Mechaa quiz',issueCertificate:'Nye asambodo',refreshMatches:'Mee ka o dị ọhụrụ',applyNow:'Tinye akwụkwọ',simulateOrder:'Mee order',showBuyerInterest:'Gosi mmasị onye zụrụ ahịa',sendToAgriChat:'Zipu na AgriChat',runPriceAi:'Gbaa Price AI',globalView:'Nlele ụwa',routesView:'Nlele routes',currentContext:'Ọnọdụ ugbu a',ctxRole:'Ọrụ',ctxCountry:'Mba',ctxRoute:'Route',countryLabel:'Mba',back:'Laghachi',brandTag:'Ijikọ ugbo, ọrụ, ahụike, na ohere.'}
+    };
+    const defaultState={language:'en',role:'learner',country:'Nigeria',route:'West Africa Corridor',checkpoint:'Lagos Port',completed:0,quiz:0,certs:0,readiness:32,eligibility:'Locked',orders:3,wallet:0,ai:'No analysis yet',pipelineStage:'Profile Setup',earningsEstimate:180,nextShift:'Not scheduled',interviews:0};
+    let state={...defaultState,...JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}')};
+    let map,countryMarkers={},routeLayers={},checkpointLayers={},activeRouteLayer=null,activeCheckpointLayer=null;
+    const qs=id=>document.getElementById(id);
+    const qsa=s=>Array.from(document.querySelectorAll(s));
+    function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
+    function t(key){const lang=translations[state.language]||translations.en; return lang[key]||translations.en[key]||key;}
+    function fillSelect(sel){['en','fr','ar','sw','ha','yo','ig'].forEach(code=>{const o=document.createElement('option');o.value=code;o.textContent={en:'English',fr:'Français',ar:'العربية',sw:'Swahili',ha:'Hausa',yo:'Yorùbá',ig:'Igbo'}[code];sel.appendChild(o);});}
+    fillSelect(qs('landingLang')); fillSelect(qs('languageSelect')); fillSelect(qs('appLang'));
+    Object.keys(countries).forEach(name=>{const o=document.createElement('option');o.value=name;o.textContent=name; qs('countrySelect').appendChild(o);});
+    function applyTranslations(){
+      document.documentElement.lang=state.language; document.documentElement.dir=state.language==='ar'?'rtl':'ltr';
+      qsa('[data-i18n]').forEach(el=>{el.textContent=t(el.dataset.i18n);});
+      qs('landingLang').value=state.language; qs('languageSelect').value=state.language; qs('appLang').value=state.language;
+    }
+    function show(view){qs('landingView').classList.add('hidden');qs('loginView').classList.add('hidden');qs('appView').classList.add('hidden');qs(view).classList.remove('hidden');}
+    function updateContext(){qs('ctxRole').textContent=state.role; qs('ctxCountry').textContent=state.country; qs('ctxRoute').textContent=state.route;}
+    function log(id,msg){const div=document.createElement('div'); div.textContent=msg; qs(id).prepend(div);}    
+    function updateProfile(){qs('profileLearning').textContent=`${state.completed} completed / ${state.certs} certificates / quiz ${state.quiz}`; qs('profileWorkforce').textContent=`${state.readiness}% readiness / ${state.eligibility}`; qs('profileHealth').textContent=`${state.country}: ${countries[state.country].patients.toLocaleString()} patients / ${countries[state.country].facilities} facilities`; qs('profileWallet').textContent=`Wallet balance: ${state.wallet}`; qs('profileOrders').textContent=`${state.orders} active orders on ${state.route}`; qs('profileAI').textContent=state.ai;}
+    function updateKPIs(){qs('kpiCountries').textContent='4'; qs('kpiCountryText').textContent=`${state.country} active`; qs('kpiOrders').textContent=state.orders; qs('kpiOrdersText').textContent=state.route; qs('kpiPatients').textContent=countries[state.country].patients.toLocaleString(); qs('kpiPatientsText').textContent=state.country; qs('kpiFacilities').textContent=countries[state.country].facilities; qs('kpiFacilitiesText').textContent=state.country;}
+    function switchSection(name){qsa('.section').forEach(s=>s.classList.remove('active')); qs(name+'Section').classList.add('active'); qsa('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.section===name)); if(name==='map'){setTimeout(()=>map && map.invalidateSize(),100);} }
+    function setRole(role){state.role=role; qsa('.role-card').forEach(c=>c.classList.toggle('active',c.dataset.role===role)); save(); updateContext();}
+    function renderComparisonTable(){
+      const tbody=qs('comparisonTableBody'); if(!tbody) return;
+      tbody.innerHTML='';
+      Object.keys(countries).forEach(name=>{
+        const c=countries[name], s=comparisonStats[name];
+        const tr=document.createElement('tr');
+        tr.style.borderBottom='1px solid #e6efe8';
+        if(name===state.country){tr.style.background='#eef8f2';}
+        tr.innerHTML=`<td style="padding:8px; font-weight:700">${name}</td>
+          <td style="padding:8px">${s.status}</td>
+          <td style="padding:8px">${c.facilities}</td>
+          <td style="padding:8px">${c.patients.toLocaleString()}</td>
+          <td style="padding:8px">${s.outcome}%</td>
+          <td style="padding:8px">${s.adoption}%</td>
+          <td style="padding:8px">${s.safety}%</td>
+          <td style="padding:8px">${s.quality}%</td>`;
+        tr.onclick=()=>{focusCountry(name); switchSection('health');};
+        tbody.appendChild(tr);
+      });
+    }
+    function runMapInspector(){
+      const c=countries[state.country], h=heatByCountry[state.country], s=comparisonStats[state.country];
+      const guidance = `${state.country}: ${h.risk} heat pressure, ${s.adoption}% clinician adoption, ${s.quality}% data quality. Prioritize ${c.facilities>18?'facility load balancing':'mobile outreach'} and ${s.safety>3.5?'human review of AI overrides':'standard safety monitoring'}.`;
+      if(qs('mapHeatIndexValue')) qs('mapHeatIndexValue').textContent=h.temp;
+      if(qs('mapInspectorValue')) qs('mapInspectorValue').textContent=guidance;
+      log('healthLog', guidance);
+      state.ai = guidance;
+      updateProfile(); save();
+    }
+    function refreshHealthCards(){
+      const c=countries[state.country], h=heatByCountry[state.country];
+      if(qs('heatIndexValue')) qs('heatIndexValue').textContent=h.temp;
+      if(qs('heatRiskValue')) qs('heatRiskValue').textContent=h.risk;
+      if(qs('dialNumberValue')) qs('dialNumberValue').textContent=h.dial;
+      if(qs('queueStatusValue')) qs('queueStatusValue').textContent=h.queue;
+      if(qs('healthCountryName')) qs('healthCountryName').textContent=state.country;
+      if(qs('healthPatientsValue')) qs('healthPatientsValue').textContent=c.patients.toLocaleString();
+      if(qs('healthFacilitiesValue')) qs('healthFacilitiesValue').textContent=c.facilities;
+      if(qs('healthHeatSummary')) qs('healthHeatSummary').textContent=h.temp;
+      if(qs('healthQueueSummary')) qs('healthQueueSummary').textContent=h.queue;
+      if(qs('healthAiSummary')) qs('healthAiSummary').textContent=h.ai;
+    }
+    function refreshHealthPanel(){const c=countries[state.country]; qs('panelCountry').textContent=state.country; qs('panelRoute').textContent=state.route; qs('panelCheckpoint').textContent=state.checkpoint; qs('panelAiRisk').textContent=c.risk; qs('panelPatients').textContent=c.patients.toLocaleString(); qs('panelFacilities').textContent=c.facilities; refreshHealthCards(); renderComparisonTable(); updateKPIs(); updateProfile(); updateContext();}
+    function focusCountry(name){state.country=name; state.route=countries[name].route; const c=countries[name]; map.setView([c.lat,c.lng],c.zoom); refreshHealthPanel(); updateWorkforceVisuals(); log('mapLog',`${name} selected.`); Object.values(countryMarkers).forEach(m=>m.setOpacity(.65)); if(countryMarkers[name]) countryMarkers[name].setOpacity(1); highlightRouteByName(state.route); save();}
+    function highlightRouteByName(name){state.route=name; Object.entries(routeLayers).forEach(([r,l])=>l.setStyle({weight:r===name?6:3,opacity:r===name?1:.5})); const cp=checkpoints.find(c=>c.route===name); if(cp){state.checkpoint=cp.name; map.panTo([cp.lat,cp.lng]); if(activeCheckpointLayer) activeCheckpointLayer.setStyle({radius:7,fillColor:'#1b9b6b'}); activeCheckpointLayer=checkpointLayers[cp.name]; if(activeCheckpointLayer) activeCheckpointLayer.setStyle({radius:10,fillColor:'#ff8c00'});} refreshHealthPanel(); updateWorkforceVisuals(); log('mapLog',`${name} active.`); save();}
+    function initMap(){
+      map=L.map('realMap',{zoomControl:true}).setView([13,18],3);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(map);
+      Object.entries(countries).forEach(([name,c])=>{
+        const marker=L.circleMarker([c.lat,c.lng],{radius:10,fillColor:'#1677d8',color:'#ffffff',weight:2,fillOpacity:.9}).addTo(map).bindTooltip(name);
+        marker.on('click',()=>focusCountry(name)); countryMarkers[name]=marker;
+      });
+      routes.forEach(r=>{const line=L.polyline(r.points,{color:r.color,weight:4,opacity:.75}).addTo(map); line.on('click',()=>highlightRouteByName(r.name)); routeLayers[r.name]=line;});
+      checkpoints.forEach(cp=>{const marker=L.circleMarker([cp.lat,cp.lng],{radius:7,fillColor:'#1b9b6b',color:'#fff',weight:2,fillOpacity:.95}).addTo(map).bindPopup(cp.name); marker.on('click',()=>{state.checkpoint=cp.name; state.route=cp.route; activeCheckpointLayer&&activeCheckpointLayer.setStyle({radius:7,fillColor:'#1b9b6b'}); activeCheckpointLayer=marker; marker.setStyle({radius:10,fillColor:'#ff8c00'}); refreshHealthPanel(); updateWorkforceVisuals(); log('mapLog',`${cp.name} selected.`); save();}); checkpointLayers[cp.name]=marker;});
+      setTimeout(()=>focusCountry(state.country),120);
+    }
+    // Events
+    qsa('.role-card').forEach(c=>c.onclick=()=>setRole(c.dataset.role));
+    qs('openLoginBtn').onclick=(e)=>{pulse(e.currentTarget); show('loginView'); qs('emailInput').focus(); notify('Sign in to enter AgriNexus.');};
+    qs('backBtn').onclick=(e)=>{pulse(e.currentTarget); show('landingView'); notify('Returned to landing page.');};
+    qs('landingLang').onchange=e=>{state.language=e.target.value; save(); applyTranslations();};
+    qs('languageSelect').onchange=e=>{state.language=e.target.value; save(); applyTranslations();};
+    qs('appLang').onchange=e=>{state.language=e.target.value; save(); applyTranslations();};
+    qs('countrySelect').onchange=e=>{state.country=e.target.value; save();};
+    qs('loginBtn').onclick=(e)=>{pulse(e.currentTarget); if(qs('emailInput').value==='demo@agrinexus.org' && qs('passwordInput').value==='Prototype2026!'){show('appView'); state.country=qs('countrySelect').value||state.country; state.language=qs('languageSelect').value||state.language; applyTranslations(); updateContext(); updateProfile(); updateKPIs(); save(); if(!map) initMap(); switchSection('dashboard'); notify('Welcome to AgriNexus.');} else {alert('Use demo@agrinexus.org / Prototype2026!');}};
+    qs('logoutBtn').onclick=(e)=>{pulse(e.currentTarget); show('landingView'); notify('Signed out.');};
+    qsa('.nav-btn').forEach(b=>b.onclick=(e)=>{pulse(e.currentTarget); switchSection(b.dataset.section); notify((b.innerText||'Section').trim());});
+    qsa('[data-jump]').forEach(b=>b.onclick=(e)=>{pulse(e.currentTarget); switchSection(b.dataset.jump); notify('Opened '+b.textContent.trim()+'.');});
+    qsa('[data-shortcut]').forEach(b=>b.onclick=(e)=>{pulse(e.currentTarget); const dest=b.dataset.shortcut==='map'?'map':(b.dataset.shortcut==='health'?'health':(b.dataset.shortcut==='learning'?'learning':'agritech')); switchSection(dest); notify((b.textContent||'Shortcut').trim());});
+    qsa('.focus-country').forEach(b=>b.onclick=(e)=>{pulse(e.currentTarget); switchSection('map'); focusCountry(b.dataset.country); notify('Focused '+b.dataset.country+'.');});
+    qs('globalViewBtn').onclick=(e)=>{pulse(e.currentTarget); if(map){map.setView([13,18],3);} log('mapLog','Global view restored.'); notify('Global map restored.');};
+    qs('routesViewBtn').onclick=(e)=>{pulse(e.currentTarget); if(map && Object.values(routeLayers).length){map.fitBounds(L.featureGroup(Object.values(routeLayers)).getBounds().pad(.2));} log('mapLog','Routes view opened.'); notify('Routes view opened.');};
+    qsa('.course-btn').forEach(b=>b.onclick=(e)=>{pulse(e.currentTarget); state.completed++; state.readiness=Math.min(100,state.readiness+18); if(state.completed>=2) state.eligibility='Eligible'; qs('completedCourses').textContent=state.completed; qs('readinessScore').textContent=state.readiness+'%'; qs('eligibilityText').textContent=state.eligibility; log('learningLog',`${b.dataset.course} started.`); updateWorkforceVisuals(); updateProfile(); save(); notify(b.dataset.course+' started.');});
+    qs('quizBtn').onclick=(e)=>{pulse(e.currentTarget); state.quiz=88; state.readiness=Math.min(100,state.readiness+10); qs('quizScore').textContent=state.quiz; qs('readinessScore').textContent=state.readiness+'%'; log('learningLog','Quiz completed with score 88.'); updateWorkforceVisuals(); updateProfile(); save(); notify('Quiz completed.');};
+    qs('certBtn').onclick=(e)=>{pulse(e.currentTarget); state.certs++; qs('certificatesCount').textContent=state.certs; log('learningLog','Certificate issued.'); updateProfile(); save(); notify('Certificate issued.');};
+    function updateWorkforceVisuals(){
+      const digital=Math.min(100,20+state.completed*18+(state.quiz?10:0));
+      const field=Math.min(100,12+state.completed*14+(state.orders?8:0));
+      const care=Math.min(100,8+(state.country in {Egypt:1,Kenya:1,Nigeria:1,DRC:1}?6:0)+(state.quiz?12:0)+(state.ai?8:0));
+      qs('skillDigitalValue').textContent=digital+'%'; qs('skillDigitalBar').style.width=digital+'%';
+      qs('skillFieldValue').textContent=field+'%'; qs('skillFieldBar').style.width=field+'%';
+      qs('skillCareValue').textContent=care+'%'; qs('skillCareBar').style.width=care+'%';
+      qs('placementsValue').textContent=Math.max(0, state.certs?1:0);
+      state.interviews = Math.max(state.interviews||0, state.readiness>=70?2:(state.readiness>=50?1:0));
+      qs('interviewsValue').textContent=state.interviews;
+      qs('mentorValue').textContent=state.readiness>=80?'Unlocked':'Not yet';
+      const track=state.readiness>=80?'Leadership Pathway':(state.readiness>=55?'Growth Pathway':'Foundation Pathway');
+      qs('careerTrackValue').textContent=track;
+      state.pipelineStage = state.readiness>=85 ? 'Placement Ready' : (state.readiness>=70 ? 'Interview' : (state.readiness>=55 ? 'Shortlist' : 'Profile Setup'));
+      state.earningsEstimate = state.readiness>=85 ? 520 : (state.readiness>=70 ? 360 : (state.readiness>=55 ? 260 : 180));
+      if(!state.nextShift) state.nextShift='Not scheduled';
+      qs('candidateStageValue').textContent=state.pipelineStage;
+      qs('earningsEstimateValue').textContent='$'+state.earningsEstimate+'/mo';
+      qs('nextShiftValue').textContent=state.nextShift;
+      qs('pipeline1Status').textContent = state.readiness>=40 ? 'Profile complete and badges verified.' : 'Pending workforce profile completion.';
+      qs('pipeline2Status').textContent = state.readiness>=55 ? 'Candidate shortlisted for '+state.country+' opportunities.' : 'Locked until readiness reaches 55%.';
+      qs('pipeline3Status').textContent = state.interviews>0 ? 'Interview window open. '+state.interviews+' interview touchpoint(s) unlocked.' : 'Interview slot not booked yet.';
+      qs('pipeline4Status').textContent = state.readiness>=85 ? 'Placement eligible and ready for assignment.' : 'Placement opens after interview completion.';
+      qs('pipelineSummaryValue').textContent='Profile Review → Shortlist → Interview → Placement';
+    }
+    qs('refreshReadinessBtn').onclick=(e)=>{pulse(e.currentTarget); state.readiness=Math.min(100,state.readiness + (state.completed?4:2) + (state.quiz?3:0)); if(state.readiness>=55) state.eligibility='Eligible'; qs('readinessScore').textContent=state.readiness+'%'; qs('eligibilityText').textContent=state.eligibility; updateWorkforceVisuals(); log('workforceLog',`Readiness refreshed: ${state.readiness}% / ${state.eligibility}. New matches unlocked for ${state.country}.`); updateProfile(); save(); notify('Matches refreshed.');};
+    qs('buildProfileBtn').onclick=(e)=>{pulse(e.currentTarget); state.readiness=Math.min(100,state.readiness+6); qs('readinessScore').textContent=state.readiness+'%'; log('workforceLog',`Workforce profile strengthened with badges, language tags, and ${state.country} field context.`); updateWorkforceVisuals(); updateProfile(); save(); notify('Profile strengthened.');};
+    qs('orientationBtn').onclick=(e)=>{pulse(e.currentTarget); log('workforceLog',`Orientation scheduled for the ${state.role} pathway in ${state.country}. Calendar invite and prep checklist generated.`); state.ai='Orientation prep generated for workforce track'; updateProfile(); save(); notify('Orientation scheduled.');};
+    qs('pathwayBtn').onclick=(e)=>{pulse(e.currentTarget); switchSection('workforce'); log('workforceLog',`Recommended pathway: ${qs('careerTrackValue').textContent}. Focus next on ${state.completed<2?'learning modules':'applications and field simulations'}.`); notify('Pathway opened.');};
+    qs('mentorBtn').onclick=(e)=>{pulse(e.currentTarget); if(state.readiness<80){log('workforceLog','Mentor track locked. Raise readiness to 80% and complete one certificate.'); notify('Mentor track still locked.'); return;} log('workforceLog','Mentor track unlocked. Leadership badge issued and district support pathway opened.'); qs('mentorValue').textContent='Unlocked'; state.ai='Mentor pathway activated'; updateProfile(); save(); notify('Mentor track unlocked.');};
+    qs('shiftBtn').onclick=(e)=>{pulse(e.currentTarget); state.readiness=Math.min(100,state.readiness+5); state.nextShift='Tomorrow · 09:00'; qs('readinessScore').textContent=state.readiness+'%'; log('workforceLog',`Shift simulation started for ${state.country}. Tasks assigned across intake, field support, and reporting.`); log('candidateLog',`Shift calendar updated: ${state.nextShift} readiness block for ${state.country}.`); updateWorkforceVisuals(); updateProfile(); save(); notify('Shift simulation started.');};
+    qs('scheduleInterviewBtn').onclick=(e)=>{pulse(e.currentTarget); if(state.readiness<55){log('candidateLog','Interview scheduling locked until shortlist stage. Raise readiness to 55%.'); notify('Raise readiness to 55% first.'); return;} state.interviews=Math.max(1,state.interviews||0); state.pipelineStage='Interview'; state.nextShift='Wednesday · 14:00 Interview'; log('candidateLog',`Interview scheduled for ${state.country} ${state.role} pathway. Calendar and preparation checklist issued.`); updateWorkforceVisuals(); updateProfile(); save(); notify('Interview scheduled.');};
+    qs('estimateEarningsBtn').onclick=(e)=>{pulse(e.currentTarget); state.earningsEstimate = Math.max(state.earningsEstimate||180, 180 + Math.round(state.readiness*4)); log('candidateLog',`Earnings estimate refreshed to $${state.earningsEstimate}/mo based on readiness, route demand, and ${state.country} deployment context.`); updateWorkforceVisuals(); save(); notify('Earnings estimate updated.');};
+    qs('calendarBtn').onclick=(e)=>{pulse(e.currentTarget); state.nextShift = state.nextShift==='Not scheduled' ? 'Monday · 08:30 Orientation' : state.nextShift; log('candidateLog',`Shift calendar opened for ${state.country}. Next focus block: ${state.nextShift}.`); updateWorkforceVisuals(); save(); notify('Shift calendar opened.');};
+    qsa('.apply-btn').forEach(b=>b.onclick=(e)=>{pulse(e.currentTarget); if(state.eligibility!=='Eligible'){log('workforceLog','Complete more learning and refresh matches to unlock applications.'); notify('Complete more learning first.'); return;} state.interviews=Math.max(1,(state.interviews||0)+1); state.pipelineStage='Interview'; log('workforceLog',`Application submitted for ${b.dataset.job}. Interview window opened and hiring note added to your profile.`); log('candidateLog',`Application recorded for ${b.dataset.job}. Recruiter review added to pipeline.`); state.ai=`Application insight generated for ${b.dataset.job}`; updateWorkforceVisuals(); updateProfile(); save(); notify('Application submitted.');});
+    qs('runSafetyBtn').onclick=(e)=>{pulse(e.currentTarget); log('healthLog',`${state.country}: safety review completed. AI override rate acceptable.`); state.ai=`Safety review complete for ${state.country}`; updateProfile(); save(); notify('Safety review complete.');};
+    qs('startIntakeBtn').onclick=(e)=>{pulse(e.currentTarget); log('healthLog',`${state.country}: telehealth intake simulated.`); log('healthLog',`${state.country}: triage slot prepared for remote representative.`); notify('Telehealth intake started.');};
+    qs('readPlanBtn').onclick=(e)=>{pulse(e.currentTarget); log('healthLog',`${state.country}: AI care plan read aloud simulation started.`); notify('Plan read aloud started.');};
+    qs('mapInspectorBtn').onclick=(e)=>{pulse(e.currentTarget); runMapInspector(); notify('Map inspector AI ran.');};
+    qs('runHeatIndexBtn').onclick=(e)=>{pulse(e.currentTarget); const h=heatByCountry[state.country]; log('healthLog',`${state.country}: heat index refreshed at ${h.temp} (${h.risk}).`); refreshHealthCards(); runMapInspector(); notify('Heat index refreshed.');};
+    qs('dialRepBtn').onclick=(e)=>{pulse(e.currentTarget); const h=heatByCountry[state.country]; log('healthLog',`${state.country}: dialed ${h.dial}. Queue status: ${h.queue}.`); notify('Dialing representative…');};
+    qs('connectRepBtn').onclick=(e)=>{pulse(e.currentTarget); const h=heatByCountry[state.country]; log('healthLog',`${state.country}: connected to telehealth representative. Guidance: ${h.ai}.`); state.ai=`Telehealth representative connected for ${state.country}`; qs('queueStatusValue').textContent='Connected'; qs('healthQueueSummary').textContent='Connected'; updateProfile(); save(); notify('Representative connected.');};
+    qsa('.order-btn').forEach(b=>b.onclick=(e)=>{pulse(e.currentTarget); state.orders++; qs('kpiOrders').textContent=state.orders; log('agriLog',`Order simulated for ${b.dataset.product}.`); const route = b.dataset.product.includes('Nigeria') ? 'West Africa Corridor' : b.dataset.product.includes('Kenya') ? 'East Africa Corridor' : 'North Africa Corridor'; switchSection('map'); highlightRouteByName(route); updateProfile(); save(); notify('Order simulated.');});
+    qsa('.buyer-btn').forEach(b=>b.onclick=(e)=>{pulse(e.currentTarget); log('agriLog',`Buyer interest for ${b.dataset.product}: strong.`); notify('Buyer interest updated.');});
+    qs('quickPayMpesa').onclick=(e)=>{pulse(e.currentTarget); state.wallet+=120; log('agriLog','QuickPay via M-Pesa completed.'); updateProfile(); save(); notify('M-Pesa payment complete.');};
+    qs('quickPayMtn').onclick=(e)=>{pulse(e.currentTarget); state.wallet+=90; log('agriLog','QuickPay via MTN completed.'); updateProfile(); save(); notify('MTN payment complete.');};
+    qs('quickPayAirtel').onclick=(e)=>{pulse(e.currentTarget); state.wallet+=75; log('agriLog','QuickPay via Airtel completed.'); updateProfile(); save(); notify('Airtel payment complete.');};
+    qs('sendAgriChatBtn').onclick=(e)=>{pulse(e.currentTarget); log('agriLog',`AgriChat opened for ${state.country}.`); notify('AgriChat opened.');};
+    qs('priceAiBtn').onclick=(e)=>{pulse(e.currentTarget); state.ai=`Price AI updated for ${state.country} / ${state.route}`; log('agriLog',state.ai); updateProfile(); save(); notify('Price AI updated.');};
+
+    // Generic feedback for any remaining buttons without explicit messaging
+    qsa('button').forEach(btn=>{
+      btn.addEventListener('click',()=>{ if(!btn.dataset.noPulse){ pulse(btn); } }, {capture:true});
+    });
+    qs('passwordInput').addEventListener('keydown',e=>{ if(e.key==='Enter') qs('loginBtn').click(); });
+
+    // init
+    qs('countrySelect').value=state.country; qs('landingLang').value=state.language; qs('languageSelect').value=state.language; qs('appLang').value=state.language; applyTranslations(); updateProfile(); updateKPIs(); updateContext(); qsa('.role-card').forEach(c=>c.classList.toggle('active',c.dataset.role===state.role)); qs('completedCourses').textContent=state.completed; qs('quizScore').textContent=state.quiz; qs('certificatesCount').textContent=state.certs; qs('readinessScore').textContent=state.readiness+'%'; qs('eligibilityText').textContent=state.eligibility; refreshHealthPanel(); updateWorkforceVisuals();
   </script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function(){
-  try {
-    var landing = document.getElementById('landing');
-    if (landing) landing.style.display = 'none';
-    var app = document.getElementById('app');
-    if (app) app.classList.add('show');
-    if (typeof ensureMap === 'function') ensureMap();
-    if (typeof setGlobalView === 'function') setGlobalView();
-    if (typeof updateAll === 'function') updateAll();
-    if (typeof log === 'function') log('Direct app test mode enabled. Login skipped for GitHub verification.');
-  } catch (e) {
-    console.error(e);
-  }
-});
-</script>
-
 </body>
 </html>
